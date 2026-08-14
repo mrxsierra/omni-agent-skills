@@ -2,7 +2,7 @@
 # Git Pre-Commit Hook for omni-agent-skills
 set -e
 
-echo "🔍 Running pre-commit security & registry checks..."
+echo "🔍 Running pre-commit security, registry, & benchmark checks..."
 
 # 1. Run Sanitizer Check
 python3 scripts/sanitize.py
@@ -10,7 +10,10 @@ python3 scripts/sanitize.py
 # 2. Auto-rebuild registry.json and llms.txt
 python3 scripts/build-registry.py
 
-# 3. Stage updated registry.json and llms.txt if modified
+# 3. Run Tier 6 Multi-Model Benchmark Verification Suite
+python3 scripts/run-benchmarks.py
+
+# 4. Stage updated registry.json and llms.txt if modified
 git add registry.json llms.txt
 
-echo "✅ Pre-commit verification & auto-update complete!"
+echo "✅ Pre-commit verification, benchmarking, & auto-update complete!"

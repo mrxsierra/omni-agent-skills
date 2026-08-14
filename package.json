@@ -6,7 +6,8 @@
   "scripts": {
     "build": "python3 scripts/build-registry.py",
     "sanitize": "python3 scripts/sanitize.py",
-    "test": "npm run sanitize && npm run build"
+    "benchmark": "python3 scripts/run-benchmarks.py",
+    "test": "npm run sanitize && npm run build && npm run benchmark"
   },
   "repository": {
     "type": "git",

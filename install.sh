@@ -1,21 +1,23 @@
 #!/usr/bin/env bash
-# omni-agent-skills 1-Click Installer
+# Cross-Platform POSIX Installer for omni-agent-skills (Linux / macOS / WSL / Git Bash)
 set -e
 
-echo "🚀 Installing omni-agent-skills..."
+OS_TYPE="$(uname -s 2>/dev/null || echo "Unknown")"
+echo "🚀 Installing omni-agent-skills (v0.0.1) on ${OS_TYPE}..."
 
-TARGET_DIR="${HOME}/.gemini/config"
-REPO_URL="https://github.com/mrxsierra/omni-agent-skills"
+# Determine User Home Directory safely
+USER_HOME="${HOME:-~}"
+TARGET_DIR="${USER_HOME}/.omni-agent-skills"
 
 mkdir -p "${TARGET_DIR}/skills" "${TARGET_DIR}/rules"
 
-echo "📦 Syncing skills to ${TARGET_DIR}/skills..."
-# Copy skills into global config directory
-if [ -d "skills" ]; then
-    cp -r skills/* "${TARGET_DIR}/skills/"
-    echo "✅ Skills installed successfully!"
-else
-    echo "ℹ️ Run this script from the omni-agent-skills repository root."
-fi
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-echo "🛡️ omni-agent-skills installation complete!"
+# Copy files cross-platform
+cp -r "${SCRIPT_DIR}/skills/"* "${TARGET_DIR}/skills/" 2>/dev/null || cp -R "${SCRIPT_DIR}/skills/"* "${TARGET_DIR}/skills/"
+cp -r "${SCRIPT_DIR}/rules/"* "${TARGET_DIR}/rules/" 2>/dev/null || cp -R "${SCRIPT_DIR}/rules/"* "${TARGET_DIR}/rules/"
+cp "${SCRIPT_DIR}/registry.json" "${TARGET_DIR}/"
+cp "${SCRIPT_DIR}/llms.txt" "${TARGET_DIR}/"
+
+echo "✅ Installation complete!"
+echo "📍 Installed to: ${TARGET_DIR}"
