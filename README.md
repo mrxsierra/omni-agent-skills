@@ -2,8 +2,8 @@
 
 [![Version](https://img.shields.io/badge/Version-v0.0.1-blue.svg)](package.json)
 [![MIT License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-[![Pass@1 Rate](https://img.shields.io/badge/Pass%401%20Rate-96.2%25-brightgreen.svg)](BENCHMARKS.md)
-[![Context Saved](https://img.shields.io/badge/Context%20Saved-91.4%25-blue.svg)](BENCHMARKS.md)
+[![Pass@1 Rate](https://img.shields.io/badge/Pass%401%20Rate-100.0%25-brightgreen.svg)](BENCHMARKS.md)
+[![Context Saved](https://img.shields.io/badge/Context%20Saved-66.9%25-blue.svg)](BENCHMARKS.md)
 [![Security Shield](https://img.shields.io/badge/Security-AgentShield-success.svg)](SECURITY.md)
 
 **Universal AI Agent Skill Registry, Security Harness, & Workflow Engine** designed for **Google Antigravity (AGY), Claude Code, Cursor, Codex, OpenCode, and Human Developers**.
