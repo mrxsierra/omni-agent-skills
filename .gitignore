@@ -1,0 +1,29 @@
+# Private local security patterns (UNCOMMITTED)
+.sanitize-local.json
+.env
+.env.*
+
+# Python & Build artifacts
+__pycache__/
+*.pyc
+*.egg-info/
+dist/
+build/
+.venv/
+.uv/
+
+# Node & Package artifacts
+node_modules/
+package-lock.json
+
+# Environment & Scratch
+scratch/
+.gemini/
+.claude/
+.cursor/
+.idea/
+.vscode/
+
+# OS artifacts
+.DS_Store
+Thumbs.db

@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+# Git Pre-Commit Hook for omni-agent-skills
+set -e
+
+echo "🔍 Running pre-commit security & registry checks..."
+
+# 1. Run Sanitizer Check
+python3 scripts/sanitize.py
+
+# 2. Auto-rebuild registry.json and llms.txt
+python3 scripts/build-registry.py
+
+# 3. Stage updated registry.json and llms.txt if modified
+git add registry.json llms.txt
+
+echo "✅ Pre-commit verification & auto-update complete!"

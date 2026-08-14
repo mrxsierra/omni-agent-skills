@@ -1,0 +1,28 @@
+name: CI & Security Verification
+
+on:
+  push:
+    branches: [ main, dev ]
+  pull_request:
+    branches: [ main, dev ]
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+
+    - name: Run Zero-PII Security Sanitizer
+      run: python3 scripts/sanitize.py
+
+    - name: Verify & Rebuild Machine Registry (registry.json & llms.txt)
+      run: python3 scripts/build-registry.py
+
+    - name: Check for Uncommitted Registry Changes
+      run: git diff --exit-code registry.json llms.txt

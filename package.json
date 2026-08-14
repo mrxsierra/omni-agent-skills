@@ -1,0 +1,31 @@
+{
+  "name": "omni-agent-skills",
+  "version": "0.0.1",
+  "description": "Universal AI Agent Skill Registry & Security Harness",
+  "main": "registry.json",
+  "scripts": {
+    "build": "python3 scripts/build-registry.py",
+    "sanitize": "python3 scripts/sanitize.py",
+    "test": "npm run sanitize && npm run build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mrxsierra/omni-agent-skills.git"
+  },
+  "keywords": [
+    "ai-agent",
+    "antigravity",
+    "claude-code",
+    "cursor",
+    "agentic-skills",
+    "security-shield",
+    "mcp",
+    "llms-txt"
+  ],
+  "author": "Sunil Sharma (mrxsierra)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/mrxsierra/omni-agent-skills/issues"
+  },
+  "homepage": "https://github.com/mrxsierra/omni-agent-skills#readme"
+}

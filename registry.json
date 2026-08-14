@@ -1,0 +1,100 @@
+{
+  "$schema": "https://json.schemastore.org/json",
+  "name": "omni-agent-skills",
+  "version": "1.0.0",
+  "description": "Universal AI Agent Skill Registry & Security Harness",
+  "repository": "https://github.com/mrxsierra/omni-agent-skills",
+  "license": "MIT",
+  "skills": [
+    {
+      "id": "ai-eval-benchmarker",
+      "category": "data-and-ai",
+      "summary": "Niche AI Agent Evaluation & Benchmarking Subagent. Benchmarks AI subagent accuracy, prompt regression suites, LLM tool execution safety, and ML model performance metrics.",
+      "path": "skills/data-and-ai/ai-eval-benchmarker/SKILL.md"
+    },
+    {
+      "id": "rag-qa-chunking-engine",
+      "category": "data-and-ai",
+      "summary": "Advanced Q&A-Pair Chunking & RAG Knowledge Base Engine. Transforms unstructured docs, codebases, and web pages into high-precision tagged Q&A pairs (qa_pairs_generic_tagged.json).",
+      "path": "skills/data-and-ai/rag-qa-chunking-engine/SKILL.md"
+    },
+    {
+      "id": "atomic-feature-implementer",
+      "category": "engineering",
+      "summary": "Niche Feature Code Implementation Subagent. Implements targeted code edits, updates invocation callsites, and maintains docstrings strictly following approved architecture plans.",
+      "path": "skills/engineering/atomic-feature-implementer/SKILL.md"
+    },
+    {
+      "id": "clean-code-auditor",
+      "category": "engineering",
+      "summary": "Niche Code Review & Quality Auditor Subagent. Inspects git diffs, detects code smells, audits DRY principles, and enforces workspace conventions.",
+      "path": "skills/engineering/clean-code-auditor/SKILL.md"
+    },
+    {
+      "id": "code-anti-overengineer",
+      "category": "engineering",
+      "summary": "Niche Code Simplification & Anti-Over-Engineering Subagent. Refactors code for maximum clarity, removes dead code, flattens nested conditionals, and enforces \"Less, but better\".",
+      "path": "skills/engineering/code-anti-overengineer/SKILL.md"
+    },
+    {
+      "id": "pytest-verification-runner",
+      "category": "engineering",
+      "summary": "Niche Pytest & Verification Test Engineer Subagent. Authors unit test suites, property-based invariants, and runs empirical test harnesses.",
+      "path": "skills/engineering/pytest-verification-runner/SKILL.md"
+    },
+    {
+      "id": "semver-release-manager",
+      "category": "engineering",
+      "summary": "Niche Release & Documentation Manager Subagent. Updates READMEs, generates changelogs, manages SemVer release tags, and formats GitHub releases via GitHub CLI (gh).",
+      "path": "skills/engineering/semver-release-manager/SKILL.md"
+    },
+    {
+      "id": "system-architecture-planner",
+      "category": "engineering",
+      "summary": "Niche System Architecture & Implementation Planner Subagent. Generates PRDs, 4-tier system specifications, ADRs, and 15-minute atomic task breakdowns with zero code mutations.",
+      "path": "skills/engineering/system-architecture-planner/SKILL.md"
+    },
+    {
+      "id": "advanced-verification-testing",
+      "category": "security-and-governance",
+      "summary": "Design, implement, and run enterprise-grade multi-tier verification test suites across Python, Rust, TypeScript, Go, and C++, including golden snapshot regression testing, property-based invariant testing (Hypothesis/QuickCheck/fast-check), parser fuzzing, conformance matrices, and AI-agent evaluation benchmarks. Trigger when implementing complex verification testing, building compiler or parser test benches, verifying AST invariants, or testing AI agent code generation reliability.",
+      "path": "skills/security-and-governance/advanced-verification-testing/SKILL.md"
+    },
+    {
+      "id": "ai-native-product-design",
+      "category": "security-and-governance",
+      "summary": "Architect and design software projects optimized for AI agent consumption, direct tool execution, and AI recommendation engines (ChatGPT, Perplexity, Claude, Gemini).",
+      "path": "skills/security-and-governance/ai-native-product-design/SKILL.md"
+    },
+    {
+      "id": "oss-launch-governance",
+      "category": "security-and-governance",
+      "summary": "Manage end-to-end Open-Source Phase-0 pre-launch auditing, namespace & registry clearance (PyPI, npm, Crates, Homebrew, USPTO, GitHub Orgs), community health governance (CODEOWNERS, SECURITY.md, GOVERNANCE.md), contributor ladders, T-Minus launch countdown execution (T-30 to T+1), grant/funding readiness, and zero-leak commit sanitization for any open-source software project. Trigger when preparing to open-source a repo, checking namespace availability, auditing pre-launch health, or establishing open-source governance.",
+      "path": "skills/security-and-governance/oss-launch-governance/SKILL.md"
+    },
+    {
+      "id": "secret-leak-shield",
+      "category": "security-and-governance",
+      "summary": "Niche Security & Secret Leak Prevention Subagent. Audits workspace edits for exposed API keys, private tokens, passwords, `.env` entries, and staging-first compliance.",
+      "path": "skills/security-and-governance/secret-leak-shield/SKILL.md"
+    },
+    {
+      "id": "tech-competitive-intelligence",
+      "category": "security-and-governance",
+      "summary": "Conduct unbiased technical competitive analysis, moat defensibility scoring (Weak vs Medium vs Strong), architectural positioning matrices, and author objective \"Why Not X?\" comparison documents for any software project or protocol. Trigger when evaluating competitors, defining unique technical moats, writing comparison documentation, or analyzing industry standards.",
+      "path": "skills/security-and-governance/tech-competitive-intelligence/SKILL.md"
+    },
+    {
+      "id": "a11y-web-auditor",
+      "category": "web-and-geo",
+      "summary": "Niche Web Accessibility & Core Web Vitals Auditor Subagent. Performs automated Web QA, WCAG 2.1 accessibility checks, LCP/INP performance optimization, and UI responsiveness testing.",
+      "path": "skills/web-and-geo/a11y-web-auditor/SKILL.md"
+    },
+    {
+      "id": "ai-first-web-geo",
+      "category": "web-and-geo",
+      "summary": "Generative Engine Optimization (GEO) & AI-First Web Design. Build websites optimized for RAG crawlers, Perplexity/SearchGPT indexing, and AI agent consumption.",
+      "path": "skills/web-and-geo/ai-first-web-geo/SKILL.md"
+    }
+  ]
+}
