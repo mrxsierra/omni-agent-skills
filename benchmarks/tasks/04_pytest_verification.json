@@ -1,0 +1,12 @@
+{
+  "task_id": "task_04",
+  "category": "engineering",
+  "name": "Pytest Verification Harness Test",
+  "prompt": "Author a pytest unit test suite with invariant assertions.",
+  "expected_skill": "pytest-verification-runner",
+  "eval_criteria": {
+    "tdd_workflow": true,
+    "no_silenced_tests": true,
+    "runs_pytest_command": true
+  }
+}
