@@ -17,6 +17,7 @@ omni-agent-skills/
 ├── registry.json                    # Automated 1-line machine index of all skills (v0.0.1)
 ├── qa_pairs_generic_tagged.json      # High-precision vector dataset (>95% match accuracy)
 ├── README.md                        # High-converting open-source landing page
+├── BENCHMARKS.md                    # Empirical Evaluation Proof & Multi-Model Matrix
 ├── SECURITY.md                      # Security policy & secret scanning rules
 ├── LICENSE                          # MIT License
 ├── package.json                     # Node/npm Package metadata (v0.0.1)
