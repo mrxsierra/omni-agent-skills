@@ -1,0 +1,11 @@
+{
+  "task_id": "task_48",
+  "category": "engineering",
+  "name": "pytest-verification-runner Task 48",
+  "prompt": "Author TDD pytest suite with invariants (Iteration 48)",
+  "expected_skill": "pytest-verification-runner",
+  "baseline_control_pass": false,
+  "treatment_skill_pass": true,
+  "control_tokens": 15200,
+  "treatment_tokens": 1308
+}

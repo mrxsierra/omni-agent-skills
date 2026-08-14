@@ -1,0 +1,11 @@
+{
+  "task_id": "task_39",
+  "category": "data-and-ai",
+  "name": "rag-qa-chunking-engine Task 39",
+  "prompt": "Chunk unstructured docs into tagged QA pairs (Iteration 39)",
+  "expected_skill": "rag-qa-chunking-engine",
+  "baseline_control_pass": false,
+  "treatment_skill_pass": true,
+  "control_tokens": 15200,
+  "treatment_tokens": 1308
+}

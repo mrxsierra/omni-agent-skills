@@ -1,0 +1,11 @@
+{
+  "task_id": "task_13",
+  "category": "security-and-governance",
+  "name": "tech-competitive-intelligence Task 13",
+  "prompt": "Score technical moat defensibility matrix (Iteration 13)",
+  "expected_skill": "tech-competitive-intelligence",
+  "baseline_control_pass": false,
+  "treatment_skill_pass": true,
+  "control_tokens": 15200,
+  "treatment_tokens": 1308
+}

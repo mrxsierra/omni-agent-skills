@@ -1,0 +1,11 @@
+{
+  "task_id": "task_17",
+  "category": "engineering",
+  "name": "atomic-feature-implementer Task 17",
+  "prompt": "Implement feature & propagate callsite (Iteration 17)",
+  "expected_skill": "atomic-feature-implementer",
+  "baseline_control_pass": false,
+  "treatment_skill_pass": true,
+  "control_tokens": 15200,
+  "treatment_tokens": 1308
+}

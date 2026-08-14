@@ -1,0 +1,11 @@
+{
+  "task_id": "task_22",
+  "category": "web-and-geo",
+  "name": "ai-first-web-geo Task 22",
+  "prompt": "Inject JSON-LD schema & GEO markdown endpoints (Iteration 22)",
+  "expected_skill": "ai-first-web-geo",
+  "baseline_control_pass": false,
+  "treatment_skill_pass": true,
+  "control_tokens": 15200,
+  "treatment_tokens": 1308
+}

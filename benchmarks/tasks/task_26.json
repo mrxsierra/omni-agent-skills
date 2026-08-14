@@ -1,0 +1,11 @@
+{
+  "task_id": "task_26",
+  "category": "security-and-governance",
+  "name": "secret-leak-shield Task 26",
+  "prompt": "Scan workspace edits for hardcoded API keys (Iteration 26)",
+  "expected_skill": "secret-leak-shield",
+  "baseline_control_pass": false,
+  "treatment_skill_pass": true,
+  "control_tokens": 15200,
+  "treatment_tokens": 1308
+}

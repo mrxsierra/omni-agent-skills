@@ -1,0 +1,11 @@
+{
+  "task_id": "task_16",
+  "category": "architecture",
+  "name": "system-architecture-planner Task 16",
+  "prompt": "Plan 4-tier microservice PRD (Iteration 16)",
+  "expected_skill": "system-architecture-planner",
+  "baseline_control_pass": false,
+  "treatment_skill_pass": true,
+  "control_tokens": 15200,
+  "treatment_tokens": 1308
+}

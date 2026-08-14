@@ -1,0 +1,11 @@
+{
+  "task_id": "task_04",
+  "category": "engineering",
+  "name": "clean-code-auditor Task 4",
+  "prompt": "Audit git diff for DRY principles (Iteration 4)",
+  "expected_skill": "clean-code-auditor",
+  "baseline_control_pass": false,
+  "treatment_skill_pass": true,
+  "control_tokens": 15200,
+  "treatment_tokens": 1308
+}

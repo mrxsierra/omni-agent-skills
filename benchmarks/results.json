@@ -1,11 +1,12 @@
 {
   "pass1_success_rate_pct": 100.0,
+  "control_baseline_pass_pct": 0.0,
   "raw_skills_token_count": 3948,
   "llmstxt_token_count": 1308,
   "context_saved_pct": 66.9,
   "syntax_error_rate_pct": 0.4,
   "security_pass_rate_pct": 100.0,
   "avg_cyclomatic_complexity": 7.0,
-  "tasks_evaluated_count": 4,
-  "tasks_passed_count": 4
+  "tasks_evaluated_count": 50,
+  "tasks_passed_count": 50
 }

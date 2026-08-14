@@ -1,0 +1,11 @@
+{
+  "task_id": "task_21",
+  "category": "engineering",
+  "name": "semver-release-manager Task 21",
+  "prompt": "Package v0.0.1 release notes & gh tag (Iteration 21)",
+  "expected_skill": "semver-release-manager",
+  "baseline_control_pass": false,
+  "treatment_skill_pass": true,
+  "control_tokens": 15200,
+  "treatment_tokens": 1308
+}

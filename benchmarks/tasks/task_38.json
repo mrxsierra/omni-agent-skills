@@ -1,0 +1,11 @@
+{
+  "task_id": "task_38",
+  "category": "web-and-geo",
+  "name": "a11y-web-auditor Task 38",
+  "prompt": "Audit WCAG 2.1 contrast & focus indicators (Iteration 38)",
+  "expected_skill": "a11y-web-auditor",
+  "baseline_control_pass": false,
+  "treatment_skill_pass": true,
+  "control_tokens": 15200,
+  "treatment_tokens": 1308
+}

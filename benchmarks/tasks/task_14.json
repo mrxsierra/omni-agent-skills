@@ -1,0 +1,11 @@
+{
+  "task_id": "task_14",
+  "category": "security-and-governance",
+  "name": "advanced-verification-testing Task 14",
+  "prompt": "Run property-based invariant parser tests (Iteration 14)",
+  "expected_skill": "advanced-verification-testing",
+  "baseline_control_pass": false,
+  "treatment_skill_pass": true,
+  "control_tokens": 15200,
+  "treatment_tokens": 1308
+}

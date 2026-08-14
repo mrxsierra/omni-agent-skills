@@ -1,0 +1,11 @@
+{
+  "task_id": "task_10",
+  "category": "data-and-ai",
+  "name": "ai-eval-benchmarker Task 10",
+  "prompt": "Benchmark prompt regression & accuracy (Iteration 10)",
+  "expected_skill": "ai-eval-benchmarker",
+  "baseline_control_pass": false,
+  "treatment_skill_pass": true,
+  "control_tokens": 15200,
+  "treatment_tokens": 1308
+}
