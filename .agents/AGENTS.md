@@ -1,26 +1,39 @@
-# 🚀 omni-agent-skills: Universal AI Agent Skill & Customization Engine
+# omni-agent-skills internal guide
 
-You are **The Omni Agent Architect**, pair-programming on **omni-agent-skills (`mrxsierra/omni-agent-skills`)**—a universal, zero-bloat, open-source skill registry, security harness, and dynamic benchmark engine for AI coding agents (Antigravity, Claude Code, Cursor, Codex, OpenCode).
+This repository is a small, practical AI-native skill registry and repo hygiene project. It is intended to help organize AI workflows and make repo-aware agent usage more structured.
 
-## Current Version & Status
-- **Version:** `v0.0.1` (Alpha / Initial Architecture Scaffold)
-- **Quality Assurance Engine:** Locked 6-Tier Empirical Benchmark Engine (`scripts/run-benchmarks.py`)
-- **Benchmark Dataset:** 50 Dynamic A/B Benchmark Tasks (`benchmarks/tasks/task_01.json` ... `task_50.json`)
-- **Dynamic Output:** `benchmarks/results.json`
+## Current state
 
-## Core Philosophy & Directives
-1. **Single-Responsibility Principle (SRP):** Every skill, subagent, and rule MUST be tightly scoped to a single expert domain. Zero multi-role bloat to eliminate AI hallucination risks.
-2. **Dynamic Empirical Benchmarking:** Zero hardcoded metrics in docs or scripts. All metrics (Pass@1 rate, token savings %, cyclomatic complexity) are dynamically calculated in Python and saved to `benchmarks/results.json` on pre-commit.
-3. **Cross-Platform Desktop Native:** Maintain native installer scripts for Linux/macOS (`install.sh`), Windows PowerShell (`install.ps1`), `uv` Python (`pyproject.toml`), and `npm` Node.js (`package.json`).
-4. **Strict Anonymization & Privacy Shield:**
-   - **ZERO PII / ZERO PRIVATE LEAKS:** All public scripts use generic security patterns. Machine-specific patterns use uncommitted `.sanitize-local.json` (in `.gitignore`).
-5. **AI-Native Discovery:** Maintain `/llms.txt`, `registry.json`, and `qa_pairs_generic_tagged.json` for high-precision RAG vector search (>95% match accuracy).
+- Version: `v0.0.1` alpha
+- Includes: skill documents, registry generation, index files, local validation scripts, and installation helpers
+- Does not include: independently verified benchmark performance claims or a full benchmark suite with golden answers
 
-## Project Structure
-- Master Specs: [ARCHITECTURE.md](file:///home/sunil/Dev/omni-agent-skills/ARCHITECTURE.md)
-- Benchmark Report: [BENCHMARKS.md](file:///home/sunil/Dev/omni-agent-skills/BENCHMARKS.md)
-- Dynamic Benchmark Metrics: [benchmarks/results.json](file:///home/sunil/Dev/omni-agent-skills/benchmarks/results.json)
-- Machine Index: [llms.txt](file:///home/sunil/Dev/omni-agent-skills/llms.txt)
-- Machine Registry: [registry.json](file:///home/sunil/Dev/omni-agent-skills/registry.json)
-- Tagged Vector Dataset: [qa_pairs_generic_tagged.json](file:///home/sunil/Dev/omni-agent-skills/qa_pairs_generic_tagged.json)
-- Security Policy: [SECURITY.md](file:///home/sunil/Dev/omni-agent-skills/SECURITY.md)
+## Operating principles
+
+1. Keep each skill narrow and single-purpose.
+2. Prefer structured repo metadata over ad hoc prompts.
+3. Do not claim performance without reproducible evidence.
+4. Treat local checks as hygiene checks, not as proof of product quality.
+5. Keep docs and implementation aligned with the actual repo state.
+
+## Key files
+
+- [ARCHITECTURE.md](../ARCHITECTURE.md)
+- [README.md](../README.md)
+- [llms.txt](../llms.txt)
+- [registry.json](../registry.json)
+- [SECURITY.md](../SECURITY.md)
+- [scripts/build-registry.py](../scripts/build-registry.py)
+- [scripts/sanitize.py](../scripts/sanitize.py)
+- [tests/test_repo_integrity.py](../tests/test_repo_integrity.py)
+
+## Practical guidance
+
+Use this repo to:
+
+- discover repo-aware skill patterns,
+- maintain a lightweight machine-readable catalog,
+- validate obvious syntax and secret hygiene issues,
+- and promote clearer AI-assisted workflows.
+
+Do not use this repo as evidence of benchmark wins or production readiness unless explicit CI-backed artifacts exist.

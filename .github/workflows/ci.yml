@@ -24,5 +24,8 @@ jobs:
     - name: Verify & Rebuild Machine Registry (registry.json & llms.txt)
       run: python3 scripts/build-registry.py
 
+    - name: Run project smoke tests
+      run: python3 -m unittest discover -s tests -p 'test_*.py'
+
     - name: Check for Uncommitted Registry Changes
       run: git diff --exit-code registry.json llms.txt

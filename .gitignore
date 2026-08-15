@@ -27,3 +27,7 @@ scratch/
 # OS artifacts
 .DS_Store
 Thumbs.db
+
+# Temporary reports and artifacts
+# Prevent accidental committing of generated forensic or analysis reports
+tmp/

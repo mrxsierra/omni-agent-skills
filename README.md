@@ -1,90 +1,109 @@
-# 🚀 omni-agent-skills
+# omni-agent-skills
 
-[![Version](https://img.shields.io/badge/Version-v0.0.1-blue.svg)](package.json)
-[![MIT License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-[![Pass@1 Rate](https://img.shields.io/badge/Pass%401%20Rate-100.0%25-brightgreen.svg)](BENCHMARKS.md)
-[![Context Saved](https://img.shields.io/badge/Context%20Saved-66.9%25-blue.svg)](BENCHMARKS.md)
-[![Security Shield](https://img.shields.io/badge/Security-AgentShield-success.svg)](SECURITY.md)
+A lightweight repository for AI-native developer workflows: a skill registry, schema/index files for AI discovery, guardrail scripts, and a minimal validation harness.
 
-**Universal AI Agent Skill Registry, Security Harness, & Workflow Engine** designed for **Google Antigravity (AGY), Claude Code, Cursor, Codex, OpenCode, and Human Developers**.
+This project is best understood as a practical starter kit for repository-aware AI workflows, not as a benchmarked production AI platform with independently verified performance claims.
 
-> **"Optimize the context window. Persist everything else."**
+## What this repository contains
 
----
+- A curated set of skill documents under [`skills/`](skills)
+- Machine-readable indexes: [`registry.json`](registry.json) and [`llms.txt`](llms.txt)
+- A small sanitization script for obvious secret-pattern scans: [`scripts/sanitize.py`](scripts/sanitize.py)
+- A registry rebuild script: [`scripts/build-registry.py`](scripts/build-registry.py)
+- A simple integrity test suite: [`tests/test_repo_integrity.py`](tests/test_repo_integrity.py)
+- Local installation helpers: [`install.sh`](install.sh) and [`install.ps1`](install.ps1)
 
-## 📊 Empirical Benchmarks & Performance Proof
+## Truthful status
 
-* **First-Pass Task Completion (Pass@1):** **`96.2%`** *(vs 58.4% without omni-agent-skills)*
-* **Context Token Overhead:** **`1,308 tokens`** *(91.4% Context Window Saved)*
-* **Syntax & Import Errors:** **`0.4%`** *(98.3% Error Reduction)*
-* **Security & Secret Leaks:** **`0 Leaks`** *(100% Security Pass)*
+This repository does not publish benchmark performance claims unless those claims are backed by a reproducible CI run with explicit golden data, raw outputs, and reviewable artifacts.
 
-👉 **[View Full Benchmark Report & Multi-Model Evaluation Matrix (`BENCHMARKS.md`)](BENCHMARKS.md)**
+At the moment, the repo has:
 
----
+- real registry generation logic,
+- real helper scripts,
+- a real test smoke check,
+- and a real security guardrail pattern,
 
-## ⚡ Quick Start & Installation
+but it does not claim to have independently verified benchmark performance or a fully mature production benchmark suite in the checked-in codebase.
 
-### 1. 1-Click Terminal Installer (Humans & CI/CD)
+## Quick start
+
+### Local usage
+
+Clone the repo and inspect the skills directly:
+
 ```bash
-curl -sSL https://raw.githubusercontent.com/mrxsierra/omni-agent-skills/main/install.sh | bash
+git clone https://github.com/mrxsierra/omni-agent-skills.git
+cd omni-agent-skills
+ls skills
 ```
 
-### 2. Node.js / npx Installer
+Then rebuild the machine-readable index if needed:
+
 ```bash
-npx omni-agent-skills install
+python3 scripts/build-registry.py
 ```
 
-### 3. Python / uv Installer
+### Local install
+
+If you want to copy the repo assets into a local directory for use with your own agent setup, review the script before running it:
+
 ```bash
-uv pip install omni-agent-skills
+bash install.sh
 ```
 
-### 4. Claude Code Plugin Marketplace
+Note: do not use a remote `curl | bash` install pattern without first reviewing the script and pinning the exact revision or checksum you trust.
+
+## Validation commands
+
+These are the repo’s current smoke checks:
+
 ```bash
-/plugin marketplace add mrxsierra/omni-agent-skills
+python3 scripts/sanitize.py
+python3 scripts/build-registry.py
+python3 -m unittest discover -s tests -p 'test_*.py'
 ```
 
----
+These checks are useful hygiene and integrity checks, but they are not a substitute for a full benchmark evaluation harness with gold answers and independent verification.
 
-## 🤖 How AI Agents Consume This Repository
+## Skill areas included
 
-AI agents do not need to load all skills into context. They query **`registry.json`** or **`llms.txt`** on demand:
+- Engineering
+  - [`system-architecture-planner`](skills/engineering/system-architecture-planner/SKILL.md)
+  - [`atomic-feature-implementer`](skills/engineering/atomic-feature-implementer/SKILL.md)
+  - [`pytest-verification-runner`](skills/engineering/pytest-verification-runner/SKILL.md)
+  - [`clean-code-auditor`](skills/engineering/clean-code-auditor/SKILL.md)
+  - [`code-anti-overengineer`](skills/engineering/code-anti-overengineer/SKILL.md)
+  - [`semver-release-manager`](skills/engineering/semver-release-manager/SKILL.md)
 
-* **Machine Sitemap:** [`llms.txt`](llms.txt)
-* **Machine Registry:** [`registry.json`](registry.json)
-* **Tagged Vector Dataset (>95% Match Accuracy):** [`qa_pairs_generic_tagged.json`](qa_pairs_generic_tagged.json)
+- Web and GEO
+  - [`ai-first-web-geo`](skills/web-and-geo/ai-first-web-geo/SKILL.md)
+  - [`a11y-web-auditor`](skills/web-and-geo/a11y-web-auditor/SKILL.md)
 
----
+- Data and AI
+  - [`rag-qa-chunking-engine`](skills/data-and-ai/rag-qa-chunking-engine/SKILL.md)
+  - [`ai-eval-benchmarker`](skills/data-and-ai/ai-eval-benchmarker/SKILL.md)
 
-## 🛠️ Included 15-Skill Master Matrix
+- Security and governance
+  - [`secret-leak-shield`](skills/security-and-governance/secret-leak-shield/SKILL.md)
+  - [`oss-launch-governance`](skills/security-and-governance/oss-launch-governance/SKILL.md)
+  - [`tech-competitive-intelligence`](skills/security-and-governance/tech-competitive-intelligence/SKILL.md)
+  - [`advanced-verification-testing`](skills/security-and-governance/advanced-verification-testing/SKILL.md)
+  - [`ai-native-product-design`](skills/security-and-governance/ai-native-product-design/SKILL.md)
 
-| Domain | Skill Name | Description |
-| :--- | :--- | :--- |
-| **Engineering** | [`system-architecture-planner`](skills/engineering/system-architecture-planner/SKILL.md) | PRD generation, 4-tier system design, and 15-min task breakdowns. |
-| **Engineering** | [`atomic-feature-implementer`](skills/engineering/atomic-feature-implementer/SKILL.md) | Atomic feature code implementation & callsite propagation. |
-| **Engineering** | [`pytest-verification-runner`](skills/engineering/pytest-verification-runner/SKILL.md) | Unit test suites (`pytest`) & verification harnesses. |
-| **Engineering** | [`clean-code-auditor`](skills/engineering/clean-code-auditor/SKILL.md) | Git diff audits & clean code refactoring. |
-| **Engineering** | [`code-anti-overengineer`](skills/engineering/code-anti-overengineer/SKILL.md) | Code simplification, dead code elimination, & anti-over-engineering. |
-| **Engineering** | [`semver-release-manager`](skills/engineering/semver-release-manager/SKILL.md) | README polish, changelogs, & GitHub release tags (`gh`). |
-| **Web & GEO** | [`ai-first-web-geo`](skills/web-and-geo/ai-first-web-geo/SKILL.md) | Generative Engine Optimization (GEO), JSON-LD schema, & RAG endpoints. |
-| **Web & GEO** | [`a11y-web-auditor`](skills/web-and-geo/a11y-web-auditor/SKILL.md) | Web accessibility (a11y WCAG 2.1), Core Web Vitals, & UI QA. |
-| **Data & AI** | [`rag-qa-chunking-engine`](skills/data-and-ai/rag-qa-chunking-engine/SKILL.md) | Tagged Q&A-pair dataset generator (`qa_pairs.json`) for RAG. |
-| **Data & AI** | [`ai-eval-benchmarker`](skills/data-and-ai/ai-eval-benchmarker/SKILL.md) | AI agent accuracy benchmarks, prompt regression, & ML evaluation. |
-| **Security & Gov** | [`secret-leak-shield`](skills/security-and-governance/secret-leak-shield/SKILL.md) | Secret scanning, vulnerability checks, & staging safety (`drafts/`). |
-| **Security & Gov** | [`oss-launch-governance`](skills/security-and-governance/oss-launch-governance/SKILL.md) | Pre-launch Phase-0 clearance & open-source launch governance. |
-| **Security & Gov** | [`tech-competitive-intelligence`](skills/security-and-governance/tech-competitive-intelligence/SKILL.md) | Technical moat scoring & "Why Not X?" comparison matrices. |
-| **Security & Gov** | [`advanced-verification-testing`](skills/security-and-governance/advanced-verification-testing/SKILL.md) | Multi-tier testing, golden snapshot regression, & invariant testing. |
-| **Security & Gov** | [`ai-native-product-design`](skills/security-and-governance/ai-native-product-design/SKILL.md) | AI-consumable architecture (`llms.txt`, MCP tools, OpenAPI specs). |
+## Privacy and security
 
----
+This repo has basic guardrails:
 
-## 🛡️ Privacy & Security Shield
+- generic secret regex patterns,
+- a local sanitizer script,
+- CI validation,
+- and a recommended practice of avoiding personal data in repo content.
 
-This repository strictly enforces **Zero-PII Anonymization** and **Zero Secret Leakage**. All skills, rules, and templates use generic placeholders (`your-org`, `YOUR_API_KEY`). See [`SECURITY.md`](SECURITY.md) for details.
+This is useful for local hygiene, but it is not a guarantee of zero leaks in all environments or all future changes. The sanitization logic is intentionally conservative and narrow.
 
----
+See [`SECURITY.md`](SECURITY.md) for the current policy.
 
-## 📜 License
+## License
 
 Distributed under the [MIT License](LICENSE).
