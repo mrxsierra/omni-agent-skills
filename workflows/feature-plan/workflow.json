@@ -1,0 +1,12 @@
+{
+  "id": "feature-plan",
+  "name": "Feature Plan & Implement",
+  "description": "Break down a feature request into atomic tasks, list dependencies, produce a verification checklist, and suggest tests to add.",
+  "steps": [
+    { "title": "Gather context", "description": "Inspect README, ARCHITECTURE.md, and relevant modules to collect context.", "action": "gather-context" },
+    { "title": "Create atomic tasks", "description": "Break the feature into 15-minute atomic tasks and order by dependency.", "action": "plan-tasks" },
+    { "title": "Identify tests & verification", "description": "Define unit/integration tests to prove correctness.", "action": "define-tests" },
+    { "title": "Implement & run tests", "description": "Apply minimal changes and run tests locally.", "action": "implement-tests" },
+    { "title": "Produce changelog and PR summary", "description": "Create a changelog entry and PR description with verification steps.", "action": "changelog" }
+  ]
+}

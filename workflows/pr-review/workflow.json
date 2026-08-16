@@ -1,0 +1,12 @@
+{
+  "id": "pr-review",
+  "name": "Pull Request Quality Review",
+  "description": "A lightweight PR review workflow: run tests, lint, security checks, summarise changes, and generate reviewer checklist.",
+  "steps": [
+    { "title": "Run test suite", "description": "Execute repository tests locally (pytest/unittest) to verify no regressions.", "action": "run-tests" },
+    { "title": "Run linter / static checks", "description": "Run linters and style checks relevant to repository (flake8, eslint, etc).", "action": "lint" },
+    { "title": "Run sanitizer", "description": "Run scripts/sanitize.py to detect obvious secret patterns.", "action": "sanitize" },
+    { "title": "Generate PR summary", "description": "Summarize changed files, highlight risky areas, and produce a checklist for reviewers.", "action": "summarize" },
+    { "title": "Assign reviewers & tags", "description": "Suggest reviewers and necessary tags/labels (security, changelog, release-note).", "action": "tag" }
+  ]
+}

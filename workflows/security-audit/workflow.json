@@ -1,0 +1,11 @@
+{
+  "id": "security-audit",
+  "name": "Security Audit Checklist",
+  "description": "A lightweight security audit workflow: run sanitizer, dependency scan, check for secrets in staged changes, and produce remediation steps.",
+  "steps": [
+    { "title": "Run sanitizer", "description": "Run scripts/sanitize.py to find obvious secret patterns.", "action": "sanitize" },
+    { "title": "Dependency scan", "description": "Run dependency vulnerability checks (safety, npm audit, etc.).", "action": "dep-scan" },
+    { "title": "Staged diff secret scan", "description": "Scan staged/uncommitted diffs for high-risk changes.", "action": "diff-scan" },
+    { "title": "Produce remediation plan", "description": "List files to sanitize, suggest credential rotation, and CI changes.", "action": "remediate" }
+  ]
+}
