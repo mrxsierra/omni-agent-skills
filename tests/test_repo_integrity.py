@@ -55,6 +55,52 @@ class TestRepoIntegrity(unittest.TestCase):
             full_path = os.path.join(REPO_ROOT, relative)
             self.assertTrue(os.path.exists(full_path), f"Required file missing: {relative}")
 
+    def test_repo_has_no_false_benchmark_claims_or_stale_benchmark_artifacts(self):
+        active_files = {
+            "README.md": os.path.join(REPO_ROOT, "README.md"),
+            "ARCHITECTURE.md": os.path.join(REPO_ROOT, "ARCHITECTURE.md"),
+            ".agents/AGENTS.md": os.path.join(REPO_ROOT, ".agents", "AGENTS.md"),
+            ".github/workflows/ci.yml": os.path.join(REPO_ROOT, ".github", "workflows", "ci.yml"),
+        }
+
+        combined_text = ""
+        for label, path in active_files.items():
+            self.assertTrue(os.path.exists(path), f"Missing active repo file for benchmark guard: {label}")
+            with open(path, "r", encoding="utf-8") as f:
+                combined_text += f"\n# {label}\n{f.read().lower()}"
+
+        self.assertIn(
+            "this repository does not publish benchmark performance claims",
+            combined_text,
+            "Expected the repo to explicitly reject unsupported benchmark claims.",
+        )
+        self.assertIn(
+            "python3 -m unittest discover -s tests -p 'test_*.py'",
+            combined_text,
+            "Expected the active CI workflow to use the real smoke-test command, not a stale benchmark runner.",
+        )
+
+        stale_patterns = [
+            "pytest-benchmark",
+            "benchmark.py",
+            "run-benchmark",
+            "benchmark-results",
+            "benchmark_results",
+            "results.json",
+            "coverage.xml",
+            "artifacts/benchmark",
+            "state-of-the-art",
+            "best-in-class",
+            "beats all",
+            "100% accuracy",
+        ]
+        for pattern in stale_patterns:
+            self.assertNotIn(pattern, combined_text, f"Found stale benchmark or unsupported claim pattern: {pattern}")
+
+        ci_text = combined_text.split("# .github/workflows/ci.yml\n", 1)[1] if "# .github/workflows/ci.yml" in combined_text else combined_text
+        self.assertNotIn("upload-artifact", ci_text, "CI workflow should not generate benchmark evidence artifacts.")
+        self.assertNotIn("benchmark", ci_text, "CI workflow should avoid benchmark runner references and generated evidence uploads.")
+
 
 if __name__ == "__main__":
     unittest.main()
