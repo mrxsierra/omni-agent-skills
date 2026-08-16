@@ -46,13 +46,24 @@ python3 scripts/build-registry.py
 
 ### Local install
 
-If you want to copy the repo assets into a local directory for use with your own agent setup, review the script before running it:
+If you want to copy the repo assets into a local directory for use with your own agent setup, review the script before running it.
+
+Preferred: install from a pinned release tag (do not pipe remote scripts to a shell).
 
 ```bash
-bash install.sh
+# clone a specific, pinned tag
+git clone --depth 1 --branch vX.Y.Z https://github.com/mrxsierra/omni-agent-skills.git
+cd omni-agent-skills
+# verify a released tarball before extracting
+curl -fsSL -o ./omni-agent-skills-vX.Y.Z.tar.gz \
+  https://github.com/mrxsierra/omni-agent-skills/archive/refs/tags/vX.Y.Z.tar.gz
+# compute and check the sha256 against the published checksum
+sha256sum ./omni-agent-skills-vX.Y.Z.tar.gz
+# or verify against a published checksum file
+# echo "<expected-sha256>  omni-agent-skills-vX.Y.Z.tar.gz" | sha256sum -c -
 ```
 
-Note: do not use a remote `curl | bash` install pattern without first reviewing the script and pinning the exact revision or checksum you trust.
+If you must run the local helper, inspect `install.sh` first and prefer running it from a checked-out revision (or with `--local`). Avoid `curl | bash` one-liners; always pin a tag or verify checksums and signatures (see INSTALL.md for guidance).
 
 ## Validation commands
 

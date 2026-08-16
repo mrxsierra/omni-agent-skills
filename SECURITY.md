@@ -45,3 +45,13 @@ If you discover a likely secret or a real risk in a checked-in file, report it p
 ## 5. Important caveat
 
 The project is best treated as a small, helpful registry and guardrail repo, not as a fully verified zero-leak security system.
+
+## 6. Secure installation guidance
+
+See INSTALL.md for the repository's secure installation and release verification guidance. In short:
+
+- Prefer pinned-tag installs (don't install from `main` or via unpinned scripts).
+- Verify SHA256 checksums and, where available, signatures (GPG or sigstore/cosign) before extracting or executing code.
+- Do not run `curl | bash` on this project; instead download artifacts, verify them, then install locally.
+
+Maintainers: publish checksum files and signatures with releases so users can validate artifacts before installation.
