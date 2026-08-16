@@ -80,12 +80,17 @@ if [[ "$LOCAL" != "true" ]]; then
 fi
 
 # LOCAL install: copy files from this checkout into the user's home dir
-mkdir -p "${TARGET_DIR}/skills" "${TARGET_DIR}/rules"
+mkdir -p "${TARGET_DIR}/skills" "${TARGET_DIR}/rules" "${TARGET_DIR}/prompts" "${TARGET_DIR}/subagents" "${TARGET_DIR}/snippets" "${TARGET_DIR}/hooks" "${TARGET_DIR}/mcp-configs"
 
 # Copy files cross-platform
-cp -r "${SCRIPT_DIR}/skills/"* "${TARGET_DIR}/skills/" 2>/dev/null || cp -R "${SCRIPT_DIR}/skills/"* "${TARGET_DIR}/skills/"
-cp -r "${SCRIPT_DIR}/rules/"* "${TARGET_DIR}/rules/" 2>/dev/null || cp -R "${SCRIPT_DIR}/rules/"* "${TARGET_DIR}/rules/"
-cp "${SCRIPT_DIR}/registry.json" "${TARGET_DIR}/" || true
+cp -r "${SCRIPT_DIR}/registry/skills/"* "${TARGET_DIR}/skills/" 2>/dev/null || cp -R "${SCRIPT_DIR}/registry/skills/"* "${TARGET_DIR}/skills/"
+cp -r "${SCRIPT_DIR}/registry/rules/"* "${TARGET_DIR}/rules/" 2>/dev/null || cp -R "${SCRIPT_DIR}/registry/rules/"* "${TARGET_DIR}/rules/"
+cp -r "${SCRIPT_DIR}/registry/prompts/"* "${TARGET_DIR}/prompts/" 2>/dev/null || cp -R "${SCRIPT_DIR}/registry/prompts/"* "${TARGET_DIR}/prompts/" 2>/dev/null || true
+cp -r "${SCRIPT_DIR}/registry/subagents/"* "${TARGET_DIR}/subagents/" 2>/dev/null || cp -R "${SCRIPT_DIR}/registry/subagents/"* "${TARGET_DIR}/subagents/" 2>/dev/null || true
+cp -r "${SCRIPT_DIR}/registry/snippets/"* "${TARGET_DIR}/snippets/" 2>/dev/null || cp -R "${SCRIPT_DIR}/registry/snippets/"* "${TARGET_DIR}/snippets/" 2>/dev/null || true
+cp -r "${SCRIPT_DIR}/registry/hooks/"* "${TARGET_DIR}/hooks/" 2>/dev/null || cp -R "${SCRIPT_DIR}/registry/hooks/"* "${TARGET_DIR}/hooks/" 2>/dev/null || true
+cp -r "${SCRIPT_DIR}/registry/mcp-configs/"* "${TARGET_DIR}/mcp-configs/" 2>/dev/null || cp -R "${SCRIPT_DIR}/registry/mcp-configs/"* "${TARGET_DIR}/mcp-configs/" 2>/dev/null || true
+cp "${SCRIPT_DIR}/registry/registry.json" "${TARGET_DIR}/" || true
 cp "${SCRIPT_DIR}/llms.txt" "${TARGET_DIR}/" || true
 
 echo "✅ Installation complete!"

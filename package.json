@@ -2,12 +2,12 @@
   "name": "agent-validation-kit",
   "version": "0.0.1",
   "description": "Universal AI Agent Skill Registry & Security Harness",
-  "main": "registry.json",
+  "main": "registry/registry.json",
   "scripts": {
     "build": "python3 scripts/build-registry.py",
     "sanitize": "python3 scripts/sanitize.py",
     "test": "python3 -m unittest discover -s tests -p 'test_*.py'",
-    "version": "python3 scripts/update-version.py"
+    "version": "python3 scripts/bump.py"
   },
   "repository": {
     "type": "git",

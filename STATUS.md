@@ -2,9 +2,9 @@ Status: v0.0.1 (alpha)
 
 What is present (this tag):
 
-- registry.json (generated from skills/ by scripts/build-registry.py)
+- registry/registry.json (generated from registry/skills/ by scripts/build-registry.py)
 - llms.txt (generated summary)
-- skills/ documentation (SKILL.md files per skill)
+- registry/skills/ documentation (SKILL.md files per skill)
 - scripts/sanitize.py (regex-based secret/PII scanner)
 - scripts/build-registry.py (machine index generator)
 - tests/test_repo_integrity.py (smoke checks for registry and files)
@@ -26,7 +26,7 @@ How to reproduce the registry:
 
    python3 scripts/build-registry.py
 
-3. Inspect registry.json and llms.txt for the generated index and summary.
+3. Inspect registry/registry.json and llms.txt for the generated index and summary.
 
 How to add verified benchmark evidence (future work):
 

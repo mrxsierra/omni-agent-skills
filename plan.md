@@ -15,7 +15,7 @@ Phases:
 - Phase 2 (Workflow engine) [IN PROGRESS]
   - Deliverables:
     - MVP local workflow runner (scripts/run_workflow.py) — implemented (simulation-first)
-    - Example runbooks (workflows/*) — present
+    - Example runbooks (.agents/workflows/*) — present
     - Unit tests verifying runner writes reproducible logs — added
   - Next tasks:
     1. Wire safe, non-destructive step handlers for:

@@ -13,7 +13,7 @@ import sys
 from datetime import datetime
 
 REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-WORKFLOWS_DIR = os.path.join(REPO_ROOT, "workflows")
+WORKFLOWS_DIR = os.path.join(REPO_ROOT, ".agents", "workflows")
 
 
 def load_workflow(workflow_id):

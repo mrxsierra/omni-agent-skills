@@ -6,8 +6,8 @@ This project is best understood as a practical starter kit for repository-aware 
 
 ## What this repository contains
 
-- A curated set of skill documents under [`skills/`](skills)
-- Machine-readable indexes: [`registry.json`](registry.json) and [`llms.txt`](llms.txt)
+- A curated set of skill documents under [`registry/skills/`](registry/skills)
+- Machine-readable indexes: [`registry/registry.json`](registry/registry.json) and [`llms.txt`](llms.txt)
 - A small sanitization script for obvious secret-pattern scans: [`scripts/sanitize.py`](scripts/sanitize.py)
 - A registry rebuild script: [`scripts/build-registry.py`](scripts/build-registry.py)
 - A simple integrity test suite: [`tests/test_repo_integrity.py`](tests/test_repo_integrity.py)
@@ -80,27 +80,27 @@ These checks are useful hygiene and integrity checks, but they are not a substit
 ## Skill areas included
 
 - Engineering
-  - [`system-architecture-planner`](skills/engineering/system-architecture-planner/SKILL.md)
-  - [`atomic-feature-implementer`](skills/engineering/atomic-feature-implementer/SKILL.md)
-  - [`pytest-verification-runner`](skills/engineering/pytest-verification-runner/SKILL.md)
-  - [`clean-code-auditor`](skills/engineering/clean-code-auditor/SKILL.md)
-  - [`code-anti-overengineer`](skills/engineering/code-anti-overengineer/SKILL.md)
-  - [`semver-release-manager`](skills/engineering/semver-release-manager/SKILL.md)
+  - [`system-architecture-planner`](registry/skills/engineering/system-architecture-planner/SKILL.md)
+  - [`atomic-feature-implementer`](registry/skills/engineering/atomic-feature-implementer/SKILL.md)
+  - [`pytest-verification-runner`](registry/skills/engineering/pytest-verification-runner/SKILL.md)
+  - [`clean-code-auditor`](registry/skills/engineering/clean-code-auditor/SKILL.md)
+  - [`code-anti-overengineer`](registry/skills/engineering/code-anti-overengineer/SKILL.md)
+  - [`semver-release-manager`](registry/skills/engineering/semver-release-manager/SKILL.md)
 
 - Web and GEO
-  - [`ai-first-web-geo`](skills/web-and-geo/ai-first-web-geo/SKILL.md)
-  - [`a11y-web-auditor`](skills/web-and-geo/a11y-web-auditor/SKILL.md)
+  - [`ai-first-web-geo`](registry/skills/web-and-geo/ai-first-web-geo/SKILL.md)
+  - [`a11y-web-auditor`](registry/skills/web-and-geo/a11y-web-auditor/SKILL.md)
 
 - Data and AI
-  - [`rag-qa-chunking-engine`](skills/data-and-ai/rag-qa-chunking-engine/SKILL.md)
-  - [`ai-eval-benchmarker`](skills/data-and-ai/ai-eval-benchmarker/SKILL.md)
+  - [`rag-qa-chunking-engine`](registry/skills/data-and-ai/rag-qa-chunking-engine/SKILL.md)
+  - [`ai-eval-benchmarker`](registry/skills/data-and-ai/ai-eval-benchmarker/SKILL.md)
 
 - Security and governance
-  - [`secret-leak-shield`](skills/security-and-governance/secret-leak-shield/SKILL.md)
-  - [`oss-launch-governance`](skills/security-and-governance/oss-launch-governance/SKILL.md)
-  - [`tech-competitive-intelligence`](skills/security-and-governance/tech-competitive-intelligence/SKILL.md)
-  - [`advanced-verification-testing`](skills/security-and-governance/advanced-verification-testing/SKILL.md)
-  - [`ai-native-product-design`](skills/security-and-governance/ai-native-product-design/SKILL.md)
+  - [`secret-leak-shield`](registry/skills/security-and-governance/secret-leak-shield/SKILL.md)
+  - [`oss-launch-governance`](registry/skills/security-and-governance/oss-launch-governance/SKILL.md)
+  - [`tech-competitive-intelligence`](registry/skills/security-and-governance/tech-competitive-intelligence/SKILL.md)
+  - [`advanced-verification-testing`](registry/skills/security-and-governance/advanced-verification-testing/SKILL.md)
+  - [`ai-native-product-design`](registry/skills/security-and-governance/ai-native-product-design/SKILL.md)
 
 ## Privacy and security
 

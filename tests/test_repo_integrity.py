@@ -7,8 +7,8 @@ REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 class TestRepoIntegrity(unittest.TestCase):
     def test_registry_exists_and_has_skill_entries(self):
-        registry_path = os.path.join(REPO_ROOT, "registry.json")
-        self.assertTrue(os.path.exists(registry_path), "registry.json is missing")
+        registry_path = os.path.join(REPO_ROOT, "registry", "registry.json")
+        self.assertTrue(os.path.exists(registry_path), "registry/registry.json is missing")
 
         with open(registry_path, "r", encoding="utf-8") as f:
             registry = json.load(f)
@@ -33,7 +33,7 @@ class TestRepoIntegrity(unittest.TestCase):
         with open(llms_path, "r", encoding="utf-8") as f:
             llms_text = f.read()
 
-        with open(os.path.join(REPO_ROOT, "registry.json"), "r", encoding="utf-8") as f:
+        with open(os.path.join(REPO_ROOT, "registry", "registry.json"), "r", encoding="utf-8") as f:
             registry = json.load(f)
 
         skill_ids = [skill["id"] for skill in registry.get("skills", [])]
@@ -44,7 +44,7 @@ class TestRepoIntegrity(unittest.TestCase):
         required = [
             "README.md",
             "LICENSE",
-            "registry.json",
+            "registry/registry.json",
             "llms.txt",
             "scripts/build-registry.py",
             "scripts/sanitize.py",

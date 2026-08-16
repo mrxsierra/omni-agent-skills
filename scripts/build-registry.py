@@ -5,8 +5,8 @@ import json
 import glob
 
 REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-SKILLS_DIR = os.path.join(REPO_ROOT, "skills")
-REGISTRY_PATH = os.path.join(REPO_ROOT, "registry.json")
+SKILLS_DIR = os.path.join(REPO_ROOT, "registry", "skills")
+REGISTRY_PATH = os.path.join(REPO_ROOT, "registry", "registry.json")
 LLMS_PATH = os.path.join(REPO_ROOT, "llms.txt")
 
 skills_list = []
@@ -19,7 +19,7 @@ llms_content = [
     "omni-agent-skills is a modular, zero-bloat repository of AI agent skills, security rules, and scaffolds.",
     "",
     "## Machine Indexes",
-    "- Registry: https://raw.githubusercontent.com/mrxsierra/omni-agent-skills/main/registry.json",
+    "- Registry: https://raw.githubusercontent.com/mrxsierra/omni-agent-skills/main/registry/registry.json",
     "- Tagged Vector Dataset: https://raw.githubusercontent.com/mrxsierra/omni-agent-skills/main/qa_pairs_generic_tagged.json",
     "",
     "## Core Skills",

@@ -2,7 +2,7 @@
   {
     "id": "qa-v0.0.1-001",
     "question": "What is omni-agent-skills and how do AI coding agents use it?",
-    "answer": "omni-agent-skills is a universal, open-source skill registry and security harness. AI coding agents query registry.json or /llms.txt to fetch specific SKILL.md runbooks on demand without overloading their system prompt or context window.",
+    "answer": "omni-agent-skills is a universal, open-source skill registry and security harness. AI coding agents query registry/registry.json or /llms.txt to fetch specific SKILL.md runbooks on demand without overloading their system prompt or context window.",
     "category": "architecture",
     "tags": ["omni-agent-skills", "architecture", "rag_indexing", "llms_txt"],
     "source": "https://github.com/mrxsierra/omni-agent-skills"
@@ -10,7 +10,7 @@
   {
     "id": "qa-v0.0.1-002",
     "question": "How do you enforce secret scanning and leak prevention across AI subagents?",
-    "answer": "Implement the secret-leak-shield rule (rules/global/security_shield.md) and pre-tool execution hook (hooks/pre-tool/secret-leak-guard.sh) to automatically detect API keys, .env exposure, or private tokens before git commits.",
+    "answer": "Implement the secret-leak-shield rule (registry/rules/global/security_shield.md) and pre-tool execution hook (registry/hooks/pre-tool/secret-leak-guard.sh) to automatically detect API keys, .env exposure, or private tokens before git commits.",
     "category": "security",
     "tags": ["security", "secret_scanning", "agentshield", "hooks"],
     "source": "https://github.com/mrxsierra/omni-agent-skills"
@@ -18,7 +18,7 @@
   {
     "id": "qa-v0.0.1-003",
     "question": "How do you simplify over-engineered code in an AI agent workflow?",
-    "answer": "Invoke the code-anti-overengineer subagent (skills/engineering/code-anti-overengineer/SKILL.md) to strip unnecessary abstractions, replace complex conditionals with early returns, and eliminate dead code while preserving exact system behavior.",
+    "answer": "Invoke the code-anti-overengineer subagent (registry/skills/engineering/code-anti-overengineer/SKILL.md) to strip unnecessary abstractions, replace complex conditionals with early returns, and eliminate dead code while preserving exact system behavior.",
     "category": "engineering",
     "tags": ["refactoring", "clean_code", "code_simplifier", "engineering"],
     "source": "https://github.com/mrxsierra/omni-agent-skills"

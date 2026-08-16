@@ -13,7 +13,6 @@
 ```text
 omni-agent-skills/
 ├── llms.txt                         # AI Search & RAG sitemap (v0.0.1)
-├── registry.json                    # Automated machine index of all skills (v0.0.1)
 ├── qa_pairs_generic_tagged.json      # Tagged Q&A dataset for retrieval and indexing
 ├── README.md                        # Repository landing page and usage docs
 ├── SECURITY.md                      # Security policy & secret scanning guidance
@@ -24,42 +23,28 @@ omni-agent-skills/
 ├── install.sh                       # POSIX (Linux/macOS/WSL) 1-Click Installer
 ├── install.ps1                      # Windows PowerShell 1-Click Installer
 │
-├── subagents/                       # Niche Persona JSON Configs (SRP Scoped)
-│   ├── system-architecture-planner.json
-│   ├── secret-leak-shield.json
-│   └── code-anti-overengineer.json
+├── .agents/                         # Internal repo guidance and agent runbooks
+│   ├── AGENTS.md                    # Operating guidelines for AI agents working on this repo
+│   └── workflows/                   # Internal task execution workflows (feature-plan, pr-review, etc.)
 │
-├── hooks/                           # Executable Pre/Post Tool Hooks
-│   ├── pre-tool/secret-leak-guard.sh
-│   └── post-tool/auto-formatter.sh
-│
-├── prompts/                         # Reusable System & Task Prompts
-│   └── system/architect-persona.md
-│
-├── snippets/                        # Reusable Code Snippets / Gists
-│   ├── python/async_http_client.py
-│   └── typescript/hsl_theme_tokens.ts
-│
-├── mcp-configs/                     # Reusable MCP Server Templates
-│   └── chrome-devtools.json
+├── registry/                        # Shippable Skill Registry & Asset Catalog
+│   ├── registry.json                # Automated machine index of all skills
+│   ├── skills/                      # Niche skill runbooks (engineering, web-and-geo, etc.)
+│   ├── subagents/                   # Niche persona JSON configs (SRP scoped)
+│   ├── rules/                       # Framework & security rules
+│   ├── prompts/                     # Reusable system & task prompts
+│   ├── snippets/                    # Reusable code snippets / gists
+│   ├── hooks/                       # Executable pre/post tool hooks
+│   └── mcp-configs/                 # Reusable MCP server templates
 │
 ├── scripts/                         # Repo maintenance and validation scripts
 │   ├── sanitize.py
 │   ├── build-registry.py
-│   └── tests/ (or smoke checks under tests/)
+│   └── run_workflow.py
 │
-├── tests/                           # Real repo integrity and smoke tests
-│   └── test_repo_integrity.py
-│
-├── skills/                          # Niche skill runbooks
-│   ├── engineering/                 # Planner, Implementer, Pytest, Reviewer, Simplifier, Release
-│   ├── web-and-geo/                 # GEO, A11y Web Auditor
-│   ├── data-and-ai/                 # RAG QA Chunking Engine, AI Eval Benchmarker
-│   └── security-and-governance/     # Secret Shield, OSS Governance, Tech Competitive Intel
-│
-└── rules/                           # Framework & Security Rules
-    ├── global/                      # security_shield.md, self_healing_diagnostics.md
-    └── frameworks/                  # python_rules.md, nextjs_rules.md
+└── tests/                           # Real repo integrity and smoke tests
+    ├── test_repo_integrity.py
+    └── test_workflow_runner.py
 ```
 
 ## 4. Initial Due Diligence & Threat Analysis

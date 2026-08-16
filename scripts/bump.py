@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Update version across all repo files from a single VERSION file."""
+"""Update/Bump version across all repo files from a single VERSION file."""
 import os
 import sys
 import re
@@ -62,7 +62,7 @@ def main():
             f'version = "{new_version}"'
         ),
         (
-            os.path.join(REPO_ROOT, "registry.json"),
+            os.path.join(REPO_ROOT, "registry", "registry.json"),
             f'"version": "{old_version}"',
             f'"version": "{new_version}"'
         ),

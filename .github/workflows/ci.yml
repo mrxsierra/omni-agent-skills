@@ -28,4 +28,4 @@ jobs:
       run: python3 -m unittest discover -s tests -p 'test_*.py'
 
     - name: Check for Uncommitted Registry Changes
-      run: git diff --exit-code registry.json llms.txt
+      run: git diff --exit-code registry/registry.json llms.txt
