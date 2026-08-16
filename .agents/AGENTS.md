@@ -1,4 +1,4 @@
-# omni-agent-skills internal guide
+# agent-validation-kit internal guide
 
 This repository is a small, practical AI-native skill registry and repo hygiene project. It is intended to help organize AI workflows and make repo-aware agent usage more structured.
 

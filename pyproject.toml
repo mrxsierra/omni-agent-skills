@@ -3,7 +3,7 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "omni-agent-skills"
+name = "agent-validation-kit"
 version = "0.0.1"
 description = "Universal AI Agent Skill Registry & Security Harness"
 readme = "README.md"
@@ -31,12 +31,12 @@ classifiers = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/mrxsierra/omni-agent-skills"
-Repository = "https://github.com/mrxsierra/omni-agent-skills.git"
-Issues = "https://github.com/mrxsierra/omni-agent-skills/issues"
+Homepage = "https://github.com/mrxsierra/agent-validation-kit"
+Repository = "https://github.com/mrxsierra/agent-validation-kit.git"
+Issues = "https://github.com/mrxsierra/agent-validation-kit/issues"
 
 [project.scripts]
-omni-agent = "scripts.build-registry:main"
+agent-validation = "scripts.build-registry:main"
 
 [tool.hatch.build.targets.wheel]
 packages = ["scripts"]

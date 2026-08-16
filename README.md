@@ -1,4 +1,4 @@
-# omni-agent-skills
+# agent-validation-kit
 
 A lightweight repository for AI-native developer workflows: a skill registry, schema/index files for AI discovery, guardrail scripts, and a minimal validation harness.
 
@@ -33,8 +33,8 @@ but it does not claim to have independently verified benchmark performance or a 
 Clone the repo and inspect the skills directly:
 
 ```bash
-git clone https://github.com/mrxsierra/omni-agent-skills.git
-cd omni-agent-skills
+git clone https://github.com/mrxsierra/agent-validation-kit.git
+cd agent-validation-kit
 ls skills
 ```
 
@@ -52,15 +52,15 @@ Preferred: install from a pinned release tag (do not pipe remote scripts to a sh
 
 ```bash
 # clone a specific, pinned tag
-git clone --depth 1 --branch vX.Y.Z https://github.com/mrxsierra/omni-agent-skills.git
-cd omni-agent-skills
+git clone --depth 1 --branch vX.Y.Z https://github.com/mrxsierra/agent-validation-kit.git
+cd agent-validation-kit
 # verify a released tarball before extracting
-curl -fsSL -o ./omni-agent-skills-vX.Y.Z.tar.gz \
-  https://github.com/mrxsierra/omni-agent-skills/archive/refs/tags/vX.Y.Z.tar.gz
+curl -fsSL -o ./agent-validation-kit-vX.Y.Z.tar.gz \
+  https://github.com/mrxsierra/agent-validation-kit/archive/refs/tags/vX.Y.Z.tar.gz
 # compute and check the sha256 against the published checksum
-sha256sum ./omni-agent-skills-vX.Y.Z.tar.gz
+sha256sum ./agent-validation-kit-vX.Y.Z.tar.gz
 # or verify against a published checksum file
-# echo "<expected-sha256>  omni-agent-skills-vX.Y.Z.tar.gz" | sha256sum -c -
+# echo "<expected-sha256>  agent-validation-kit-vX.Y.Z.tar.gz" | sha256sum -c -
 ```
 
 If you must run the local helper, inspect `install.sh` first and prefer running it from a checked-out revision (or with `--local`). Avoid `curl | bash` one-liners; always pin a tag or verify checksums and signatures (see INSTALL.md for guidance).
