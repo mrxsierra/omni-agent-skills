@@ -12,8 +12,8 @@ Phase 0 — Truth & Safety (COMPLETED)
 Phase 1 — Product definition (DONE)
 - Product north-star and MVP flows defined in plan.md
 
-Phase 2 — Workflow engine (DESIGN COMPLETE)
-- Core workflow definitions done; implementation pending
+Phase 2 — Workflow engine (IN PROGRESS)
+- Core workflow definitions done; MVP runner implemented with simulated action handlers and tests; next: wire safe non-destructive step implementations and integrate CI for selective execution
 
 Next steps
 - Create PR with these changes for reviewer approval
