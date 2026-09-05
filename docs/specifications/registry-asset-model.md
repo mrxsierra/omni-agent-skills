@@ -30,3 +30,9 @@ support that an asset has not explicitly declared.
 
 `registry/registry.json` and `llms.txt` are generated. Run
 `python3 scripts/build_registry.py` after changing a skill.
+
+Validate the checked-in index without changing it with:
+
+```bash
+python3 scripts/validate_registry.py
+```

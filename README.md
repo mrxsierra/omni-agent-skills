@@ -80,6 +80,7 @@ These are the repo’s current smoke checks:
 ```bash
 python3 scripts/sanitize.py
 python3 scripts/build_registry.py
+python3 scripts/validate_registry.py
 python3 -m unittest discover -s tests -p 'test_*.py'
 ```
 
