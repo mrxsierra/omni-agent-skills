@@ -5,7 +5,7 @@ build-backend = "hatchling.build"
 [project]
 name = "omni-agent-skills"
 version = "0.0.1"
-description = "Universal AI Agent Skill Registry & Security Harness"
+description = "Tool-neutral AI agent skill registry and asset catalog"
 readme = "README.md"
 requires-python = ">=3.9"
 license = { text = "MIT" }

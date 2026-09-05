@@ -1,7 +1,7 @@
 {
   "name": "omni-agent-skills",
   "version": "0.0.1",
-  "description": "Universal AI Agent Skill Registry & Security Harness",
+  "description": "Tool-neutral AI agent skill registry and asset catalog",
   "main": "registry/registry.json",
   "scripts": {
     "build": "python3 scripts/build_registry.py",

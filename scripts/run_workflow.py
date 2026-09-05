@@ -10,7 +10,7 @@ import argparse
 import json
 import os
 import sys
-from datetime import datetime
+from datetime import datetime, timezone
 
 REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 WORKFLOWS_DIR = os.path.join(REPO_ROOT, ".agents", "workflows")
@@ -34,12 +34,13 @@ def run(workflow_id, outdir, execute=False):
     """
     wf = load_workflow(workflow_id)
     os.makedirs(outdir, exist_ok=True)
-    log_path = os.path.join(outdir, f"{workflow_id}-{int(datetime.utcnow().timestamp())}.json")
+    now = datetime.now(timezone.utc)
+    log_path = os.path.join(outdir, f"{workflow_id}-{int(now.timestamp())}.json")
 
     result = {
         "workflow_id": workflow_id,
         "name": wf.get("name"),
-        "started_at": datetime.utcnow().isoformat() + "Z",
+        "started_at": now.strftime("%Y-%m-%dT%H:%M:%SZ"),
         "steps": [],
     }
 
@@ -83,7 +84,7 @@ def run(workflow_id, outdir, execute=False):
 
         result["steps"].append(step_result)
 
-    result["finished_at"] = datetime.utcnow().isoformat() + "Z"
+    result["finished_at"] = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
 
     with open(log_path, "w", encoding="utf-8") as f:
         json.dump(result, f, indent=2)

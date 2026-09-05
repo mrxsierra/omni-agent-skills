@@ -15,7 +15,7 @@
     {
       "id": "rag-qa-chunking-engine",
       "category": "data-and-ai",
-      "summary": "Advanced Q&A-Pair Chunking & RAG Knowledge Base Engine. Transforms unstructured docs, codebases, and web pages into high-precision tagged Q&A pairs (qa_pairs_generic_tagged.json).",
+      "summary": "Advanced Q&A-Pair Chunking & RAG Knowledge Base Engine. Transforms unstructured docs, codebases, and web pages into high-precision tagged Q&A pairs (llms-qa.json).",
       "path": "registry/skills/data-and-ai/rag-qa-chunking-engine/SKILL.md"
     },
     {

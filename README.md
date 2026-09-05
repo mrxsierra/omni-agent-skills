@@ -1,44 +1,44 @@
 # omni-agent-skills
 
-A lightweight repository for AI-native developer workflows: a skill registry, schema/index files for AI discovery, guardrail scripts, and a minimal validation harness.
+A tool-neutral, open-source skill registry and asset catalog for AI-assisted engineering: structured skill runbooks, machine-readable discovery indexes, guardrail scripts, and a minimal validation harness.
 
-This project is best understood as a practical starter kit for repository-aware AI workflows, not as a benchmarked production AI platform with independently verified performance claims.
+This repository publishes portable assets to help developers and AI coding agents (such as Google Antigravity, Claude Code, Cursor, Codex, and OpenCode) execute scoped workflows without overloading prompt context windows.
 
-## Project direction
+---
 
-This repository is the portable registry layer: it publishes reusable skills,
-rules, workflow templates, and related assets for AI-assisted engineering. It
-does not implement a desktop agent-orchestration or delivery-control product.
-See the [project documentation](docs/README.md) for the charter, scope,
-governance, decision records, contribution procedure, and roadmap.
+## Three-Tier Agent Discovery
 
-## What this repository contains
+To support diverse agent workflows, search engines, and RAG systems, the repository provides three distinct discovery layers:
 
-- A curated set of skill documents under [`registry/skills/`](registry/skills)
-- Machine-readable indexes: [`registry/registry.json`](registry/registry.json) and [`llms.txt`](llms.txt)
-- A small sanitization script for obvious secret-pattern scans: [`scripts/sanitize.py`](scripts/sanitize.py)
-- A registry rebuild script: [`scripts/build_registry.py`](scripts/build_registry.py)
-- A simple integrity test suite: [`tests/test_repo_integrity.py`](tests/test_repo_integrity.py)
-- Local installation helpers: [`install.sh`](install.sh) and [`install.ps1`](install.ps1)
+1. **Tier 1 — Executable Asset Registry ([`registry/registry.json`](registry/registry.json)):**
+   Machine-readable catalog generated from [`registry/skills/`](registry/skills/) and validated against [`registry/registry.schema.json`](registry/registry.schema.json). Used by agents to query and load skill runbooks on demand.
+2. **Tier 2 — LLM Context Sitemap ([`llms.txt`](llms.txt)):**
+   Compact markdown summary following the `/llmstxt.org` standard, designed for prompt injection and LLM crawler indexing.
+3. **Tier 3 — Semantic Q&A Retrieval ([`llms-qa.json`](llms-qa.json)):**
+   Pre-chunked, tagged Q&A dataset designed for vector embeddings and RAG search over this repository, dogfooding the [`rag-qa-chunking-engine`](registry/skills/data-and-ai/rag-qa-chunking-engine/SKILL.md) skill.
 
-## Truthful status
+---
+
+## Truthful Status
 
 This repository does not publish benchmark performance claims unless those claims are backed by a reproducible CI run with explicit golden data, raw outputs, and reviewable artifacts.
 
-At the moment, the repo has:
+At present, the repository provides:
+- a verified schema-backed skill registry and build generator,
+- three-tier AI discovery endpoints (`registry.json`, `llms.txt`, `llms-qa.json`),
+- local sanitization and secret-pattern hygiene checks,
+- safe-by-default installation scripts and reference workflow runners, and
+- automated integrity smoke tests.
 
-- real registry generation logic,
-- real helper scripts,
-- a real test smoke check,
-- and a real security guardrail pattern,
+See [docs/README.md](docs/README.md) for the project charter, scope boundary ([ADR 0001](docs/adr/0001-registry-not-control-plane.md)), governance, roadmap, and contribution procedures.
 
-but it does not claim to have independently verified benchmark performance or a fully mature production benchmark suite in the checked-in codebase.
+---
 
-## Quick start
+## Quick Start
 
-### Local usage
+### 1. Explore Skills
 
-Clone the repo and inspect the skills directly:
+Clone the repository and inspect the published skills:
 
 ```bash
 git clone https://github.com/mrxsierra/omni-agent-skills.git
@@ -46,36 +46,28 @@ cd omni-agent-skills
 ls registry/skills
 ```
 
-Then rebuild the machine-readable index if needed:
+Rebuild the machine index and LLM summary at any time:
 
 ```bash
 python3 scripts/build_registry.py
 ```
 
-### Local install
+### 2. Installation
 
-If you want to copy the repo assets into a local directory for use with your own agent setup, review the script before running it.
-
-Preferred: install from a pinned release tag (do not pipe remote scripts to a shell).
+For safe, reproducible installation into your local agent environment, review [`INSTALL.md`](INSTALL.md). The project recommends installing from pinned release tags rather than unpinned remote scripts:
 
 ```bash
-# clone a specific, pinned tag
-git clone --depth 1 --branch vX.Y.Z https://github.com/mrxsierra/omni-agent-skills.git
-cd omni-agent-skills
-# verify a released tarball before extracting
-curl -fsSL -o ./omni-agent-skills-vX.Y.Z.tar.gz \
-  https://github.com/mrxsierra/omni-agent-skills/archive/refs/tags/vX.Y.Z.tar.gz
-# compute and check the sha256 against the published checksum
-sha256sum ./omni-agent-skills-vX.Y.Z.tar.gz
-# or verify against a published checksum file
-# echo "<expected-sha256>  omni-agent-skills-vX.Y.Z.tar.gz" | sha256sum -c -
+# Clone a pinned release tag
+git clone --depth 1 --branch v0.0.1 https://github.com/mrxsierra/omni-agent-skills.git
 ```
 
-If you must run the local helper, inspect `install.sh` first and prefer running it from a checked-out revision (or with `--local`). Avoid `curl | bash` one-liners; always pin a tag or verify checksums and signatures (see INSTALL.md for guidance).
+See [`INSTALL.md`](INSTALL.md) for checksum verification and installer script options (`install.sh` and `install.ps1`).
 
-## Validation commands
+---
 
-These are the repo’s current smoke checks:
+## Validation Commands
+
+Before committing or submitting pull requests, run the repository hygiene checks:
 
 ```bash
 python3 scripts/sanitize.py
@@ -84,45 +76,29 @@ python3 scripts/validate_registry.py
 python3 -m unittest discover -s tests -p 'test_*.py'
 ```
 
-These checks are useful hygiene and integrity checks, but they are not a substitute for a full benchmark evaluation harness with gold answers and independent verification.
+---
 
-## Skill areas included
+## Published Skill Domains
 
-- Engineering
-  - [`system-architecture-planner`](registry/skills/engineering/system-architecture-planner/SKILL.md)
-  - [`atomic-feature-implementer`](registry/skills/engineering/atomic-feature-implementer/SKILL.md)
-  - [`pytest-verification-runner`](registry/skills/engineering/pytest-verification-runner/SKILL.md)
-  - [`clean-code-auditor`](registry/skills/engineering/clean-code-auditor/SKILL.md)
-  - [`code-anti-overengineer`](registry/skills/engineering/code-anti-overengineer/SKILL.md)
-  - [`semver-release-manager`](registry/skills/engineering/semver-release-manager/SKILL.md)
+The registry organizes capabilities into focused, single-responsibility skill runbooks under [`registry/skills/`](registry/skills/):
 
-- Web and GEO
-  - [`ai-first-web-geo`](registry/skills/web-and-geo/ai-first-web-geo/SKILL.md)
-  - [`a11y-web-auditor`](registry/skills/web-and-geo/a11y-web-auditor/SKILL.md)
+- **Engineering:** Architecture planning, atomic implementation, clean code auditing, anti-overengineering, Pytest runner, and SemVer release management.
+- **Web & GEO:** Generative Engine Optimization (GEO) and accessibility (`a11y`) auditing.
+- **Data & AI:** RAG Q&A chunking engine and evaluation benchmarking.
+- **Security & Governance:** Secret leak prevention, open-source launch governance, competitive intelligence, advanced verification testing, and AI-native product design.
 
-- Data and AI
-  - [`rag-qa-chunking-engine`](registry/skills/data-and-ai/rag-qa-chunking-engine/SKILL.md)
-  - [`ai-eval-benchmarker`](registry/skills/data-and-ai/ai-eval-benchmarker/SKILL.md)
+For full descriptions and paths, inspect [`registry/registry.json`](registry/registry.json) or [`llms.txt`](llms.txt).
 
-- Security and governance
-  - [`secret-leak-shield`](registry/skills/security-and-governance/secret-leak-shield/SKILL.md)
-  - [`oss-launch-governance`](registry/skills/security-and-governance/oss-launch-governance/SKILL.md)
-  - [`tech-competitive-intelligence`](registry/skills/security-and-governance/tech-competitive-intelligence/SKILL.md)
-  - [`advanced-verification-testing`](registry/skills/security-and-governance/advanced-verification-testing/SKILL.md)
-  - [`ai-native-product-design`](registry/skills/security-and-governance/ai-native-product-design/SKILL.md)
+---
 
-## Privacy and security
+## Contributing
 
-This repo has basic guardrails:
+We welcome community contributions. Please review:
+- [Contribution & Feature Delivery SOP](docs/sops/contribution-and-feature-delivery.md) for the end-to-end contribution workflow.
+- [CONTRIBUTING.md](CONTRIBUTING.md) for quick local development instructions.
+- [SECURITY.md](SECURITY.md) for our security and secret hygiene policy.
 
-- generic secret regex patterns,
-- a local sanitizer script,
-- CI validation,
-- and a recommended practice of avoiding personal data in repo content.
-
-This is useful for local hygiene, but it is not a guarantee of zero leaks in all environments or all future changes. The sanitization logic is intentionally conservative and narrow.
-
-See [`SECURITY.md`](SECURITY.md) for the current policy.
+---
 
 ## License
 
