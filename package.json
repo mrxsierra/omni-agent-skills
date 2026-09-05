@@ -8,7 +8,10 @@
     "validate": "python3 scripts/validate_registry.py",
     "sanitize": "python3 scripts/sanitize.py",
     "test": "python3 -m unittest discover -s tests -p 'test_*.py'",
-    "version": "python3 scripts/bump.py"
+    "version": "python3 scripts/bump.py",
+    "adr:new": "python3 scripts/manage_adr.py new",
+    "adr:build": "python3 scripts/manage_adr.py build-index",
+    "adr:validate": "python3 scripts/manage_adr.py validate"
   },
   "repository": {
     "type": "git",

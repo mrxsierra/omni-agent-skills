@@ -12,14 +12,16 @@ change through the normal contribution process.
 | --- | --- |
 | Documentation correction or small asset fix | Focused pull request and one maintainer review |
 | New registry asset or workflow | Scope statement, validation, and one maintainer review |
-| Schema, compatibility, installation, security, or release change | ADR plus maintainer approval before merge |
+| Schema, compatibility, installation, security, or release change | ADR in `Proposed` status plus maintainer approval before merge |
+| Major cross-agent protocol, multi-tool specification, or breaking wire format | RFC proposal (`docs/rfc/`), community review period, and consensus approval |
 | Emergency security remediation | Maintainer may act immediately; document the decision and follow-up afterward |
 
 ## Decision rule
 
-Use the smallest process that preserves clarity. A pull request explains *what*
-changed. An ADR explains *why* a consequential decision was chosen and what
-trade-offs it creates.
+Use the smallest process that preserves clarity:
+- A **pull request** explains *what* changed and validates that it works.
+- An **ADR** explains *why* an internal architectural choice was chosen, what trade-offs were accepted, and what invariants must be enforced.
+- An **RFC** invites collaborative feedback on *how* public interfaces, wire protocols, or cross-agent ecosystems should be specified before writing code.
 
 ## Source of truth
 

@@ -117,6 +117,24 @@ python3 scripts/validate_registry.py
 npm run test
 ```
 
+## Architecture Decisions (ADRs & RFCs)
+
+When proposing material architectural changes (such as modifying registry schemas, adding discovery tiers, adjusting installation scripts, or altering repository scope):
+
+1. **Check existing records**: Review [`docs/adr/README.md`](docs/adr/README.md) to understand current invariants and prior trade-offs.
+2. **Scaffold a new ADR**:
+   ```bash
+   npm run adr:new -- "Short Decision Title"
+   # or: python3 scripts/manage_adr.py new "Short Decision Title"
+   ```
+3. **Fill in the record**: Complete the generated file under `docs/adr/XXXX-title.md` (Context, Decision Drivers, Considered Options, Decision Outcome, Consequences, and Invariants).
+4. **Rebuild index & validate**:
+   ```bash
+   npm run adr:build
+   npm run adr:validate
+   ```
+5. **RFCs for major public protocols**: For proposals involving multi-agent wire formats or cross-tool standards, scaffold an RFC via `python3 scripts/manage_adr.py new "Proposal Title" --rfc` and follow [`docs/rfc/README.md`](docs/rfc/README.md).
+
 ## Security and Secrets
 
 Do not commit:
