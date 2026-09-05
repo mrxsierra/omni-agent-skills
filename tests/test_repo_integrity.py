@@ -63,6 +63,9 @@ class TestRepoIntegrity(unittest.TestCase):
             "registry/registry.schema.json",
             "scripts/sanitize.py",
             "package.json",
+            "CODE_OF_CONDUCT.md",
+            "SUPPORT.md",
+            ".github/CODEOWNERS",
         ]
 
         for relative in required:

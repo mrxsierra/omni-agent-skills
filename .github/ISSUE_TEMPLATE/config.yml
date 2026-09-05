@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: "💬 Ask a Question or Share Ideas"
+    url: "https://github.com/mrxsierra/omni-agent-skills/discussions"
+    about: "Ask questions, share workflows, or discuss agent integration in GitHub Discussions."
+  - name: "🔒 Report a Security Vulnerability"
+    url: "https://github.com/mrxsierra/omni-agent-skills/security/advisories/new"
+    about: "Privately report security vulnerabilities or credential leaks."

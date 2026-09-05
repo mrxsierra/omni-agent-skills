@@ -1,0 +1,16 @@
+# Code Owners for omni-agent-skills
+# https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+
+# Default owner for everything
+* @mrxsierra
+
+# Documentation and architecture decision records
+/docs/ @mrxsierra
+/ARCHITECTURE.md @mrxsierra
+
+# Registry published catalog and schemas
+/registry/ @mrxsierra
+
+# Validation, sanitization, and release scripts
+/scripts/ @mrxsierra
+/.github/ @mrxsierra

@@ -40,7 +40,12 @@ python3 -m unittest discover -s tests -p 'test_*.py'
 
 ## 4. Reporting concerns
 
-If you discover a likely secret or a real risk in a checked-in file, report it privately to the maintainer or through an appropriate repository security contact before making it public.
+If you discover a likely secret, vulnerability, or security risk in a checked-in file:
+
+1. **GitHub Private Advisory (Preferred):** Submit a private report via [GitHub Security Advisories](https://github.com/mrxsierra/omni-agent-skills/security/advisories/new).
+2. **Direct Maintainer Contact:** Email `9.sunilsharma@gmail.com` with details and reproduction steps.
+
+Please do not open a public issue for sensitive security or credential exposure concerns until maintainers have reviewed and mitigated the issue. Reports will be acknowledged within 48 hours.
 
 ## 5. Important caveat
 

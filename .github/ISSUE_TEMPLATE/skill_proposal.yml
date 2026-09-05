@@ -1,0 +1,56 @@
+name: "🎯 Skill Proposal"
+description: "Propose a new expert skill runbook for the registry"
+title: "[Skill Proposal]: "
+labels: ["skill-proposal", "catalog"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Propose a new single-responsibility skill for `registry/skills/`.
+        Skills must adhere to [docs/specifications/registry-asset-model.md](https://github.com/mrxsierra/omni-agent-skills/blob/main/docs/specifications/registry-asset-model.md).
+  - type: input
+    id: skill_name
+    attributes:
+      label: "Skill ID / Name"
+      description: "Proposed kebab-case identifier (e.g. `docker-compose-validator`)"
+      placeholder: "e.g., rust-clippy-auditor"
+    validations:
+      required: true
+  - type: dropdown
+    id: category
+    attributes:
+      label: "Category Domain"
+      description: "Which domain does this skill belong to?"
+      options:
+        - "engineering"
+        - "data-and-ai"
+        - "security-and-governance"
+        - "web-and-geo"
+        - "other (requires justification)"
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: "Skill Purpose & Description"
+      description: "What single expert capability does this skill provide?"
+    validations:
+      required: true
+  - type: textarea
+    id: constraints
+    attributes:
+      label: "Inputs, Constraints & Tool Dependencies"
+      description: "What tools, permissions, or context does the agent require to execute this skill?"
+    validations:
+      required: true
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: "Skill Contract Checklist"
+      options:
+        - label: "The skill has a single, narrow responsibility (Single-Responsibility Principle)"
+          required: true
+        - label: "The skill avoids unverified claims (no benchmark promises without CI artifacts)"
+          required: true
+        - label: "The skill directory and SKILL.md frontmatter name will match identically"
+          required: true
