@@ -24,6 +24,9 @@ jobs:
     - name: Verify & Rebuild Machine Registry (registry.json & llms.txt)
       run: python3 scripts/build_registry.py
 
+    - name: Validate generated registry contract
+      run: python3 scripts/validate_registry.py
+
     - name: Run project smoke tests
       run: python3 -m unittest discover -s tests -p 'test_*.py'
 
