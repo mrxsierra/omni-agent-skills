@@ -1,4 +1,4 @@
-# agent-validation-kit internal guide
+# omni-agent-skills internal guide
 
 This repository is a small, practical AI-native skill registry and repo hygiene project. It is intended to help organize AI workflows and make repo-aware agent usage more structured.
 
@@ -25,7 +25,7 @@ This repository is a small, practical AI-native skill registry and repo hygiene 
 - [llms.txt](../llms.txt)
 - [registry.json](../registry.json)
 - [SECURITY.md](../SECURITY.md)
-- [scripts/build-registry.py](../scripts/build-registry.py)
+- [scripts/build_registry.py](../scripts/build_registry.py)
 - [scripts/sanitize.py](../scripts/sanitize.py)
 - [tests/test_repo_integrity.py](../tests/test_repo_integrity.py)
 - [project documentation](../docs/README.md)

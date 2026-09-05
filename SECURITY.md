@@ -34,7 +34,7 @@ Run the repo’s current checks before publication or release:
 
 ```bash
 python3 scripts/sanitize.py
-python3 scripts/build-registry.py
+python3 scripts/build_registry.py
 python3 -m unittest discover -s tests -p 'test_*.py'
 ```
 

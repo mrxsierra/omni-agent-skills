@@ -31,7 +31,7 @@ assistant.
 
 ```bash
 python3 scripts/sanitize.py
-python3 scripts/build-registry.py
+python3 scripts/build_registry.py
 python3 -m unittest discover -s tests -p 'test_*.py'
 git diff --check
 ```

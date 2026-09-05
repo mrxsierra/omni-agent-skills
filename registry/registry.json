@@ -1,8 +1,8 @@
 {
-  "$schema": "https://json.schemastore.org/json",
+  "schema_version": "1.0",
   "name": "omni-agent-skills",
-  "version": "1.0.0",
-  "description": "Universal AI Agent Skill Registry & Security Harness",
+  "version": "0.0.1",
+  "description": "Tool-neutral registry of AI-assisted engineering skills and governance assets",
   "repository": "https://github.com/mrxsierra/omni-agent-skills",
   "license": "MIT",
   "skills": [

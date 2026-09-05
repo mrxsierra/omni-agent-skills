@@ -39,7 +39,7 @@ omni-agent-skills/
 │
 ├── scripts/                         # Repo maintenance and validation scripts
 │   ├── sanitize.py
-│   ├── build-registry.py
+│   ├── build_registry.py
 │   └── run_workflow.py
 │
 └── tests/                           # Real repo integrity and smoke tests

@@ -1,4 +1,4 @@
-# Contributing to agent-validation-kit
+# Contributing to omni-agent-skills
 
 Thank you for considering contributions to this project. This guide explains how to maintain version consistency, run tests, and prepare changes.
 
@@ -17,7 +17,7 @@ When you need to update the version (e.g., from `0.0.1` to `0.1.0`):
 
 1. Run the update script with the new version:
 ```bash
-python3 scripts/update-version.py 0.1.0
+python3 scripts/bump.py 0.1.0
 ```
 
 2. Verify changes:
@@ -56,7 +56,7 @@ Run the sanitizer and registry rebuild:
 
 ```bash
 python3 scripts/sanitize.py
-python3 scripts/build-registry.py
+python3 scripts/build_registry.py
 ```
 
 Or in batch:
@@ -92,7 +92,7 @@ git config core.hooksPath .githooks
 When adding a new skill:
 1. Create a folder under `registry/skills/<category>/<skill-name>/`
 2. Add a `SKILL.md` file with frontmatter (name, description)
-3. Run `python3 scripts/build-registry.py` to auto-generate `registry/registry.json` and `llms.txt`
+3. Run `python3 scripts/build_registry.py` to auto-generate `registry/registry.json` and `llms.txt`
 4. Test with `npm run test` to verify registry consistency
 5. Commit with a clear message
 
@@ -107,7 +107,7 @@ description: A brief description of what this skill does.
 ...
 EOF
 
-python3 scripts/build-registry.py
+python3 scripts/build_registry.py
 npm run test
 ```
 

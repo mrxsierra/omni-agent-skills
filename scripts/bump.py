@@ -3,6 +3,7 @@
 import os
 import sys
 import re
+from build_registry import build_registry
 
 REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 VERSION_FILE = os.path.join(REPO_ROOT, "VERSION")
@@ -34,6 +35,7 @@ def update_file(filepath, old_pattern, new_pattern):
     return True
 
 def main():
+    old_version = read_version()
     if len(sys.argv) > 1:
         new_version = sys.argv[1]
         # Write new version to VERSION file
@@ -44,10 +46,6 @@ def main():
         new_version = read_version()
     
     print(f"🔄 Updating repo version to {new_version}...\n")
-    
-    # Track old versions (assumes prior version exists in files)
-    # For initial setup, we just use the current version
-    old_version = new_version
     
     # List of files and their version patterns
     updates = [
@@ -67,14 +65,9 @@ def main():
             f'"version": "{new_version}"'
         ),
         (
-            os.path.join(REPO_ROOT, "install.sh"),
-            f'echo "🚀 Installing agent-validation-kit (v{old_version})',
-            f'echo "🚀 Installing agent-validation-kit (v{new_version})'
-        ),
-        (
             os.path.join(REPO_ROOT, "install.ps1"),
-            f'Write-Host "🚀 Installing agent-validation-kit (v{old_version})',
-            f'Write-Host "🚀 Installing agent-validation-kit (v{new_version})'
+            f'Write-Host "🚀 Installing omni-agent-skills (v{old_version})',
+            f'Write-Host "🚀 Installing omni-agent-skills (v{new_version})'
         ),
     ]
     
@@ -83,10 +76,11 @@ def main():
         if update_file(filepath, old_pattern, new_pattern):
             success_count += 1
     
-    print(f"\n✨ Version update complete! ({success_count} files updated)")
+    build_registry()
+    print(f"\n✨ Version update complete! ({success_count} files updated; registry regenerated)")
     print(f"📌 Current version: {new_version}")
     print("\nTo bump version, run:")
-    print(f"  python3 scripts/update-version.py <new-version>")
+    print(f"  python3 scripts/bump.py <new-version>")
     print(f"  git add VERSION package.json pyproject.toml registry.json install.sh install.ps1")
     print(f"  git commit -m 'chore: bump version to <new-version>'")
 
