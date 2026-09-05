@@ -1,0 +1,32 @@
+changelog:
+  exclude:
+    labels:
+      - ignore-for-release
+    authors:
+      - dependabot[bot]
+  categories:
+    - title: "🚀 Features & Enhancements"
+      labels:
+        - enhancement
+        - feature
+    - title: "🎯 Skill Catalog Updates"
+      labels:
+        - catalog
+        - skill-proposal
+    - title: "🐛 Bug Fixes"
+      labels:
+        - bug
+        - fix
+    - title: "📚 Documentation & Architecture"
+      labels:
+        - documentation
+        - docs
+        - adr
+    - title: "🛡️ Security & Hygiene"
+      labels:
+        - security
+    - title: "⚙️ Tooling, CI & Maintenance"
+      labels:
+        - chore
+        - ci
+        - dependencies
