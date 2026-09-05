@@ -1,15 +1,15 @@
-# Release workflow: build tarball, create checksums, and upload artifacts.
-# Trigger: push a tag like v1.2.3. This example demonstrates artifact production only.
-# Note: Add signing (sigstore/cosign or GPG) as a follow-up step; do not store private keys in the repo.
-
 name: Release
+
 on:
   push:
     tags:
       - 'v*.*.*'
 
+permissions:
+  contents: write
+
 jobs:
-  build-and-publish:
+  build-and-release:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -22,60 +22,48 @@ jobs:
         run: |
           echo "TAG=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
 
-      - name: Create tarball
+      - name: Verify Tag Matches VERSION
         run: |
-          TAR=omni-agent-skills-${{ steps.tag.outputs.TAG }}.tar.gz
-          git archive --format=tar --prefix="omni-agent-skills-${{ steps.tag.outputs.TAG }}/" ${{ steps.tag.outputs.TAG }} | gzip > $TAR
-          ls -lh $TAR
+          VERSION=$(cat VERSION)
+          TAG="${{ steps.tag.outputs.TAG }}"
+          if [ "$TAG" != "v$VERSION" ]; then
+            echo "❌ Release tag '$TAG' does not match repository VERSION 'v$VERSION'!"
+            exit 1
+          fi
+          echo "✅ Release tag '$TAG' matches VERSION 'v$VERSION'."
 
-      - name: Create SHA256 sums
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Pre-Release Verification Checks
         run: |
-          TAR=omni-agent-skills-${{ steps.tag.outputs.TAG }}.tar.gz
-          sha256sum $TAR > sha256sums.txt
+          python3 scripts/sanitize.py
+          python3 scripts/build_registry.py
+          python3 scripts/validate_registry.py
+          python3 scripts/manage_adr.py validate
+          python3 -m unittest discover -s tests -p 'test_*.py'
+
+      - name: Package Release Assets
+        run: |
+          TAG="${{ steps.tag.outputs.TAG }}"
+          TAR="omni-agent-skills-${TAG}.tar.gz"
+          git archive --format=tar --prefix="omni-agent-skills-${TAG}/" "${TAG}" | gzip > "${TAR}"
+          sha256sum "${TAR}" registry/registry.json llms-qa.json > sha256sums.txt
+          echo "--- Generated Checksums ---"
           cat sha256sums.txt
 
-      - name: Create GitHub Release
-        id: create_release
-        uses: actions/create-release@v1
+      - name: Publish GitHub Release
+        uses: softprops/action-gh-release@v2
         with:
-          tag_name: ${{ steps.tag.outputs.TAG }}
-          release_name: Release ${{ steps.tag.outputs.TAG }}
-          body: "Automated release artifacts. Please verify checksums and signatures before use."
+          files: |
+            omni-agent-skills-${{ steps.tag.outputs.TAG }}.tar.gz
+            registry/registry.json
+            llms-qa.json
+            sha256sums.txt
+          generate_release_notes: true
           draft: false
           prerelease: false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Upload release assets
-        uses: actions/upload-release-asset@v1
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: omni-agent-skills-${{ steps.tag.outputs.TAG }}.tar.gz
-          asset_name: omni-agent-skills-${{ steps.tag.outputs.TAG }}.tar.gz
-          asset_content_type: application/gzip
-
-      - name: Upload checksum
-        uses: actions/upload-release-asset@v1
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: sha256sums.txt
-          asset_name: sha256sums.txt
-          asset_content_type: text/plain
-
-      # Optional: sign artifacts with cosign (recommended)
-      # - name: Sign artifacts with cosign
-      #   run: |
-      #     # Use OIDC or a protected secret to sign; do NOT place private keys in repo
-      #     cosign sign --key $COSIGN_KEY omni-agent-skills-${{ steps.tag.outputs.TAG }}.tar.gz
-      #   env:
-      #     COSIGN_KEY: ${{ secrets.COSIGN_KEY }}
-
-      # Optional: GPG sign the checksum file
-      # - name: GPG sign checksum
-      #   run: |
-      #     gpg --batch --yes --passphrase "$GPG_PASSPHRASE" -u "$GPG_KEY_ID" -o sha256sums.txt.asc --sign sha256sums.txt
-      #   env:
-      #     GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
-      #     GPG_KEY_ID: ${{ secrets.GPG_KEY_ID }}
-
-# Maintainers: add a signing step here (cosign/GPG) and publish the public verification material alongside the release.

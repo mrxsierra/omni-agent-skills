@@ -79,10 +79,17 @@ def main():
     build_registry()
     print(f"\n✨ Version update complete! ({success_count} files updated; registry regenerated)")
     print(f"📌 Current version: {new_version}")
-    print("\nTo bump version, run:")
-    print(f"  python3 scripts/bump.py <new-version>")
-    print(f"  git add VERSION package.json pyproject.toml registry.json install.sh install.ps1")
-    print(f"  git commit -m 'chore: bump version to <new-version>'")
+
+    changelog_path = os.path.join(REPO_ROOT, "CHANGELOG.md")
+    if os.path.exists(changelog_path):
+        with open(changelog_path, "r", encoding="utf-8") as f:
+            if f"## [{new_version}]" not in f.read():
+                print(f"⚠️  Remember to document changes under '## [{new_version}]' in CHANGELOG.md!")
+
+    print("\nNext steps:")
+    print(f"  git add VERSION package.json pyproject.toml registry/registry.json install.ps1 CHANGELOG.md")
+    print(f"  git commit -m 'chore: release v{new_version}'")
+    print(f"  git tag v{new_version}")
 
 if __name__ == "__main__":
     main()

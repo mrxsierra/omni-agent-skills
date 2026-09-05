@@ -66,6 +66,7 @@ class TestRepoIntegrity(unittest.TestCase):
             "CODE_OF_CONDUCT.md",
             "SUPPORT.md",
             ".github/CODEOWNERS",
+            "CHANGELOG.md",
         ]
 
         for relative in required:
