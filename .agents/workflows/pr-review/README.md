@@ -5,6 +5,6 @@ It is intended as an example runbook for teams to adapt.
 
 Usage (local):
 
-  python3 scripts/run-workflow.py --workflow pr-review --outdir ./runs
+  python3 scripts/run_workflow.py --workflow pr-review --outdir ./runs
 
 The run produces a small JSON log describing intended steps and timestamps; it does not execute destructive actions.

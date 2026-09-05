@@ -2,7 +2,7 @@
 """Simple workflow runner for omni-agent-skills example workflows.
 
 Usage:
-  python3 scripts/run-workflow.py --workflow workflow-id --outdir ./workflow-run-output
+  python3 scripts/run_workflow.py --workflow workflow-id --outdir ./workflow-run-output
 
 This is a minimal, local-first runner that prints the steps for a workflow and writes a simple log.
 """

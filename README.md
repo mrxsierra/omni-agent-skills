@@ -1,4 +1,4 @@
-# agent-validation-kit
+# omni-agent-skills
 
 A lightweight repository for AI-native developer workflows: a skill registry, schema/index files for AI discovery, guardrail scripts, and a minimal validation harness.
 
@@ -17,7 +17,7 @@ governance, decision records, contribution procedure, and roadmap.
 - A curated set of skill documents under [`registry/skills/`](registry/skills)
 - Machine-readable indexes: [`registry/registry.json`](registry/registry.json) and [`llms.txt`](llms.txt)
 - A small sanitization script for obvious secret-pattern scans: [`scripts/sanitize.py`](scripts/sanitize.py)
-- A registry rebuild script: [`scripts/build-registry.py`](scripts/build-registry.py)
+- A registry rebuild script: [`scripts/build_registry.py`](scripts/build_registry.py)
 - A simple integrity test suite: [`tests/test_repo_integrity.py`](tests/test_repo_integrity.py)
 - Local installation helpers: [`install.sh`](install.sh) and [`install.ps1`](install.ps1)
 
@@ -41,15 +41,15 @@ but it does not claim to have independently verified benchmark performance or a 
 Clone the repo and inspect the skills directly:
 
 ```bash
-git clone https://github.com/mrxsierra/agent-validation-kit.git
-cd agent-validation-kit
-ls skills
+git clone https://github.com/mrxsierra/omni-agent-skills.git
+cd omni-agent-skills
+ls registry/skills
 ```
 
 Then rebuild the machine-readable index if needed:
 
 ```bash
-python3 scripts/build-registry.py
+python3 scripts/build_registry.py
 ```
 
 ### Local install
@@ -60,15 +60,15 @@ Preferred: install from a pinned release tag (do not pipe remote scripts to a sh
 
 ```bash
 # clone a specific, pinned tag
-git clone --depth 1 --branch vX.Y.Z https://github.com/mrxsierra/agent-validation-kit.git
-cd agent-validation-kit
+git clone --depth 1 --branch vX.Y.Z https://github.com/mrxsierra/omni-agent-skills.git
+cd omni-agent-skills
 # verify a released tarball before extracting
-curl -fsSL -o ./agent-validation-kit-vX.Y.Z.tar.gz \
-  https://github.com/mrxsierra/agent-validation-kit/archive/refs/tags/vX.Y.Z.tar.gz
+curl -fsSL -o ./omni-agent-skills-vX.Y.Z.tar.gz \
+  https://github.com/mrxsierra/omni-agent-skills/archive/refs/tags/vX.Y.Z.tar.gz
 # compute and check the sha256 against the published checksum
-sha256sum ./agent-validation-kit-vX.Y.Z.tar.gz
+sha256sum ./omni-agent-skills-vX.Y.Z.tar.gz
 # or verify against a published checksum file
-# echo "<expected-sha256>  agent-validation-kit-vX.Y.Z.tar.gz" | sha256sum -c -
+# echo "<expected-sha256>  omni-agent-skills-vX.Y.Z.tar.gz" | sha256sum -c -
 ```
 
 If you must run the local helper, inspect `install.sh` first and prefer running it from a checked-out revision (or with `--local`). Avoid `curl | bash` one-liners; always pin a tag or verify checksums and signatures (see INSTALL.md for guidance).
@@ -79,7 +79,7 @@ These are the repo’s current smoke checks:
 
 ```bash
 python3 scripts/sanitize.py
-python3 scripts/build-registry.py
+python3 scripts/build_registry.py
 python3 -m unittest discover -s tests -p 'test_*.py'
 ```
 

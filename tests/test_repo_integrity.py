@@ -40,13 +40,25 @@ class TestRepoIntegrity(unittest.TestCase):
         for skill_id in skill_ids:
             self.assertIn(skill_id, llms_text, f"llms.txt does not include {skill_id}")
 
+    def test_registry_identity_and_version_match_source_of_truth(self):
+        with open(os.path.join(REPO_ROOT, "registry", "registry.json"), "r", encoding="utf-8") as f:
+            registry = json.load(f)
+        with open(os.path.join(REPO_ROOT, "VERSION"), "r", encoding="utf-8") as f:
+            version = f.read().strip()
+
+        self.assertEqual("omni-agent-skills", registry.get("name"))
+        self.assertEqual("1.0", registry.get("schema_version"))
+        self.assertEqual(version, registry.get("version"))
+        self.assertTrue(os.path.exists(os.path.join(REPO_ROOT, "registry", "registry.schema.json")))
+
     def test_required_project_files_exist(self):
         required = [
             "README.md",
             "LICENSE",
             "registry/registry.json",
             "llms.txt",
-            "scripts/build-registry.py",
+            "scripts/build_registry.py",
+            "registry/registry.schema.json",
             "scripts/sanitize.py",
             "package.json",
         ]

@@ -1,17 +1,17 @@
 {
-  "name": "agent-validation-kit",
+  "name": "omni-agent-skills",
   "version": "0.0.1",
   "description": "Universal AI Agent Skill Registry & Security Harness",
   "main": "registry/registry.json",
   "scripts": {
-    "build": "python3 scripts/build-registry.py",
+    "build": "python3 scripts/build_registry.py",
     "sanitize": "python3 scripts/sanitize.py",
     "test": "python3 -m unittest discover -s tests -p 'test_*.py'",
     "version": "python3 scripts/bump.py"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/mrxsierra/agent-validation-kit.git"
+    "url": "git+https://github.com/mrxsierra/omni-agent-skills.git"
   },
   "keywords": [
     "ai-agent",
@@ -26,7 +26,7 @@
   "author": "Sunil Sharma (mrxsierra)",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/mrxsierra/agent-validation-kit/issues"
+    "url": "https://github.com/mrxsierra/omni-agent-skills/issues"
   },
-  "homepage": "https://github.com/mrxsierra/agent-validation-kit#readme"
+  "homepage": "https://github.com/mrxsierra/omni-agent-skills#readme"
 }

@@ -2,11 +2,11 @@ Status: v0.0.1 (alpha)
 
 What is present (this tag):
 
-- registry/registry.json (generated from registry/skills/ by scripts/build-registry.py)
+- registry/registry.json (generated from registry/skills/ by scripts/build_registry.py)
 - llms.txt (generated summary)
 - registry/skills/ documentation (SKILL.md files per skill)
 - scripts/sanitize.py (regex-based secret/PII scanner)
-- scripts/build-registry.py (machine index generator)
+- scripts/build_registry.py (machine index generator)
 - tests/test_repo_integrity.py (smoke checks for registry and files)
 - install.sh and install.ps1 (local install helpers that prefer local installs and pinned tags)
 
@@ -24,7 +24,7 @@ How to reproduce the registry:
 
 2. Run:
 
-   python3 scripts/build-registry.py
+   python3 scripts/build_registry.py
 
 3. Inspect registry/registry.json and llms.txt for the generated index and summary.
 

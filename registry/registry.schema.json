@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "omni-agent-skills registry",
+  "type": "object",
+  "required": ["schema_version", "name", "version", "description", "repository", "license", "skills"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "name": {"const": "omni-agent-skills"},
+    "version": {"type": "string"},
+    "description": {"type": "string"},
+    "repository": {"type": "string"},
+    "license": {"type": "string"},
+    "skills": {"type": "array"}
+  },
+  "additionalProperties": false
+}
