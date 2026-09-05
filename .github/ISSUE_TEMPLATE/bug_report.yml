@@ -1,0 +1,57 @@
+name: "🐛 Bug Report"
+description: "File a bug report for registry generation, validation, or tooling"
+title: "[Bug]: "
+labels: ["bug", "triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to fill out this bug report!
+        Please verify the bug hasn't already been reported in [Issues](https://github.com/mrxsierra/omni-agent-skills/issues).
+  - type: input
+    id: version
+    attributes:
+      label: "Repository Version or Commit"
+      description: "Which version (from `cat VERSION`) or git commit hash are you using?"
+      placeholder: "e.g., v0.0.1 or commit abc1234"
+    validations:
+      required: true
+  - type: input
+    id: environment
+    attributes:
+      label: "Environment"
+      description: "OS, Python version, Node version, Shell"
+      placeholder: "e.g., Linux Fedora 40 / Python 3.11 / bash"
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: "Bug Description"
+      description: "A clear and concise description of what the bug is."
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: "Steps to Reproduce"
+      description: "List the exact commands executed."
+      placeholder: |
+        1. Run '...'
+        2. Inspect output '...'
+        3. See error '...'
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: "Expected Behavior"
+      description: "What did you expect to happen instead?"
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: "Relevant Logs or Command Output"
+      description: "Paste command outputs or traceback here."
+      render: shell
