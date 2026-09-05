@@ -26,6 +26,9 @@ jobs:
     - name: Validate generated registry contract
       run: python3 scripts/validate_registry.py
 
+    - name: Validate ADR and RFC integrity
+      run: python3 scripts/manage_adr.py validate
+
     - name: Run project smoke tests
       run: python3 -m unittest discover -s tests -p 'test_*.py'
 

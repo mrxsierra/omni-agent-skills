@@ -26,9 +26,11 @@ This repository is a small, practical AI-native skill registry and repo hygiene 
 - [registry.json](../registry.json)
 - [SECURITY.md](../SECURITY.md)
 - [scripts/build_registry.py](../scripts/build_registry.py)
+- [scripts/manage_adr.py](../scripts/manage_adr.py)
 - [scripts/sanitize.py](../scripts/sanitize.py)
 - [tests/test_repo_integrity.py](../tests/test_repo_integrity.py)
 - [project documentation](../docs/README.md)
+- [architecture decision records](../docs/adr/README.md)
 - [contribution and feature delivery SOP](../docs/sops/contribution-and-feature-delivery.md)
 
 ## Practical guidance
@@ -41,6 +43,25 @@ Use this repo to:
 - and promote clearer AI-assisted workflows.
 
 Do not use this repo as evidence of benchmark wins or production readiness unless explicit CI-backed artifacts exist.
+
+## Architecture decisions (ADRs & RFCs) for AI agents
+
+Before proposing or implementing significant architectural changes, AI agents must adhere to the ADR process:
+
+1. **When to create an ADR**:
+   - Modifying registry schema contracts (`registry.schema.json`).
+   - Introducing new discovery tiers (e.g. `llms-qa.json`, `llms.txt`).
+   - Changing installation helpers (`install.sh`, `install.ps1`) or execution semantics.
+   - Adjusting project boundaries, security scanning, or release policies.
+2. **When to use an RFC**:
+   - Designing public cross-agent communication protocols or multi-tool wire formats.
+3. **Agent workflow commands**:
+   ```bash
+   python3 scripts/manage_adr.py new "Short Decision Title"
+   # Fill out context, decision, consequences, and validation in docs/adr/XXXX-title.md
+   python3 scripts/manage_adr.py build-index
+   python3 scripts/manage_adr.py validate
+   ```
 
 ## Repository boundary
 

@@ -37,7 +37,17 @@ def parse_skill_metadata(skill_file: Path) -> dict[str, str]:
 
 def build_registry() -> dict[str, object]:
     skills = []
-    llms = ["# omni-agent-skills", "", "> A tool-neutral registry of focused skills, rules, and workflow assets for AI-assisted engineering.", "", "## Skills"]
+    llms = [
+        "# omni-agent-skills",
+        "",
+        "> A tool-neutral registry of focused skills, rules, and workflow assets for AI-assisted engineering.",
+        "",
+        "## AI Discovery & Search",
+        "- Machine Index: `registry/registry.json`",
+        "- Semantic Q&A (RAG): `llms-qa.json`",
+        "",
+        "## Skills",
+    ]
     for domain_path in sorted(path for path in SKILLS_DIR.iterdir() if path.is_dir()):
         category = domain_path.name
         llms.append(f"\n### {category.replace('-', ' ').title()}")

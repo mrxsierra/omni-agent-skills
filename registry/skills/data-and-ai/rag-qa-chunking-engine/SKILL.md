@@ -1,18 +1,18 @@
 ---
 name: rag-qa-chunking-engine
-description: Advanced Q&A-Pair Chunking & RAG Knowledge Base Engine. Transforms unstructured docs, codebases, and web pages into high-precision tagged Q&A pairs (qa_pairs_generic_tagged.json).
+description: Advanced Q&A-Pair Chunking & RAG Knowledge Base Engine. Transforms unstructured docs, codebases, and web pages into high-precision tagged Q&A pairs (llms-qa.json).
 ---
 
 # 🧩 RAG Q&A-Pair Chunking & Vector Ingestion Engine
 
-This skill governs the creation, formatting, and indexing of tagged Question-Answer pair datasets (`qa_pairs_generic_tagged.json`) for maximum RAG retrieval accuracy and AI agent consumption.
+This skill governs the creation, formatting, and indexing of tagged Question-Answer pair datasets (`llms-qa.json`) for maximum RAG retrieval accuracy and AI agent consumption.
 
 ## 1. Why Q&A-Pair Chunking Outperforms Fixed-Token Splitting
 - **Embedding Match Accuracy:** Ultra-High (>95% cosine similarity vs 65% for raw text blocks).
 - **Context Fragmentation:** Zero (self-contained Answer block).
 - **Metadata Filtering:** Instant Tag Filtering (`tags: [...]`).
 
-## 2. Standard Schema Spec (`qa_pairs_generic_tagged.json`)
+## 2. Standard Schema Spec (`llms-qa.json`)
 ```json
 [
   {

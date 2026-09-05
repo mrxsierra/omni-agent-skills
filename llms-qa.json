@@ -1,0 +1,50 @@
+[
+  {
+    "id": "qa-v0.0.1-001",
+    "question": "What is omni-agent-skills and how do AI coding agents use it?",
+    "answer": "omni-agent-skills is a tool-neutral, open-source registry of focused skills, rules, and workflow assets for AI-assisted engineering. AI coding agents query registry/registry.json for machine indexing, read llms.txt for quick markdown context, or query llms-qa.json for semantic Q&A retrieval, loading specific SKILL.md runbooks on demand without overloading their context window.",
+    "category": "architecture",
+    "tags": ["omni-agent-skills", "architecture", "rag_indexing", "llms_txt", "agent_skills"],
+    "source": "https://github.com/mrxsierra/omni-agent-skills"
+  },
+  {
+    "id": "qa-v0.0.1-002",
+    "question": "How do you enforce secret scanning and leak prevention across AI subagents?",
+    "answer": "Implement the secret-leak-shield rule (registry/rules/global/security_shield.md) and pre-tool execution hook (registry/hooks/pre-tool/secret-leak-guard.sh) or local sanitizer (scripts/sanitize.py) to detect API keys, .env exposure, or private tokens before staging and git commits.",
+    "category": "security",
+    "tags": ["security", "secret_scanning", "sanitizer", "hooks"],
+    "source": "https://github.com/mrxsierra/omni-agent-skills"
+  },
+  {
+    "id": "qa-v0.0.1-003",
+    "question": "How do you simplify over-engineered code in an AI agent workflow?",
+    "answer": "Invoke the code-anti-overengineer skill (registry/skills/engineering/code-anti-overengineer/SKILL.md) to strip unnecessary abstractions, replace complex conditionals with early returns, and eliminate dead code while preserving exact system behavior.",
+    "category": "engineering",
+    "tags": ["refactoring", "clean_code", "code_simplifier", "engineering"],
+    "source": "https://github.com/mrxsierra/omni-agent-skills"
+  },
+  {
+    "id": "qa-v0.0.1-004",
+    "question": "How does omni-agent-skills structure its AI agent discovery layers?",
+    "answer": "The repository provides three distinct discovery layers: registry/registry.json for tool integration and machine catalog queries, llms.txt for lightweight markdown sitemaps and LLM crawler context, and llms-qa.json for pre-chunked semantic search and RAG vector ingestion.",
+    "category": "architecture",
+    "tags": ["discovery", "rag", "llms_txt", "three_tier_architecture"],
+    "source": "https://github.com/mrxsierra/omni-agent-skills"
+  },
+  {
+    "id": "qa-v0.0.1-005",
+    "question": "What commands validate repository integrity, registry schemas, and tests?",
+    "answer": "Run `python3 scripts/sanitize.py` to scan for secrets, `python3 scripts/build_registry.py` to compile registry.json and llms.txt, `python3 scripts/validate_registry.py` to validate schemas against skills, and `python3 -m unittest discover -s tests -p 'test_*.py'` to execute the smoke and integrity test suite.",
+    "category": "hygiene",
+    "tags": ["testing", "validation", "hygiene", "ci"],
+    "source": "https://github.com/mrxsierra/omni-agent-skills"
+  },
+  {
+    "id": "qa-v0.0.1-006",
+    "question": "How do contributors add a new skill to the registry?",
+    "answer": "Create a directory under `registry/skills/<category>/<skill-name>/` containing a `SKILL.md` file with YAML frontmatter (name, description) matching the directory name. Then run `python3 scripts/build_registry.py` and validate with `python3 scripts/validate_registry.py` following the contribution SOP in docs/sops/contribution-and-feature-delivery.md.",
+    "category": "contributing",
+    "tags": ["contributing", "skills", "sop", "schema"],
+    "source": "https://github.com/mrxsierra/omni-agent-skills"
+  }
+]

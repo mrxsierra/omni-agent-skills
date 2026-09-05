@@ -2,11 +2,15 @@
 
 > A tool-neutral registry of focused skills, rules, and workflow assets for AI-assisted engineering.
 
+## AI Discovery & Search
+- Machine Index: `registry/registry.json`
+- Semantic Q&A (RAG): `llms-qa.json`
+
 ## Skills
 
 ### Data And Ai
 - ai-eval-benchmarker: Niche AI Agent Evaluation & Benchmarking Subagent. Benchmarks AI subagent accuracy, prompt regression suites, LLM tool execution safety, and ML model performance metrics. (registry/skills/data-and-ai/ai-eval-benchmarker/SKILL.md)
-- rag-qa-chunking-engine: Advanced Q&A-Pair Chunking & RAG Knowledge Base Engine. Transforms unstructured docs, codebases, and web pages into high-precision tagged Q&A pairs (qa_pairs_generic_tagged.json). (registry/skills/data-and-ai/rag-qa-chunking-engine/SKILL.md)
+- rag-qa-chunking-engine: Advanced Q&A-Pair Chunking & RAG Knowledge Base Engine. Transforms unstructured docs, codebases, and web pages into high-precision tagged Q&A pairs (llms-qa.json). (registry/skills/data-and-ai/rag-qa-chunking-engine/SKILL.md)
 
 ### Engineering
 - atomic-feature-implementer: Niche Feature Code Implementation Subagent. Implements targeted code edits, updates invocation callsites, and maintains docstrings strictly following approved architecture plans. (registry/skills/engineering/atomic-feature-implementer/SKILL.md)

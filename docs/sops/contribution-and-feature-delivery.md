@@ -16,13 +16,15 @@ assistant.
    `chore/` followed by a concise name. Do not make material changes directly
    on `main`.
 4. **Plan proportionately.** For significant changes, identify affected assets,
-   compatibility risks, verification, and whether an ADR is required.
+   compatibility risks, verification, and whether an ADR is required. If required,
+   scaffold an ADR using `python3 scripts/manage_adr.py new "<Title>"`.
 5. **Implement the smallest coherent change.** Keep unrelated cleanup out of
    the branch.
-6. **Regenerate and verify.** Run the sanitizer, registry build, test suite,
-   and any change-specific checks. Review the final diff.
-7. **Document the result.** Update public documentation, an ADR, or a roadmap
-   item when the change alters behavior, direction, or process.
+6. **Regenerate and verify.** Run the sanitizer, registry build, ADR checks, test
+   suite, and any change-specific checks. Review the final diff.
+7. **Document the result.** Update public documentation, an ADR (via
+   `python3 scripts/manage_adr.py build-index`), or a roadmap item when the change
+   alters behavior, direction, or process.
 8. **Commit and prepare review.** Use a focused conventional-style commit.
    The pull request states intent, scope, verification performed, risks, and
    follow-up work.
@@ -33,6 +35,7 @@ assistant.
 python3 scripts/sanitize.py
 python3 scripts/build_registry.py
 python3 scripts/validate_registry.py
+python3 scripts/manage_adr.py validate
 python3 -m unittest discover -s tests -p 'test_*.py'
 git diff --check
 ```
@@ -41,6 +44,6 @@ git diff --check
 
 - Scope and non-goals are clear.
 - Generated registry files are current when registry assets changed.
-- Relevant docs and ADRs are updated.
+- Relevant docs and ADRs are updated and `manage_adr.py validate` passes.
 - Verification results are recorded.
 - No secrets, credentials, or unrelated changes are included.

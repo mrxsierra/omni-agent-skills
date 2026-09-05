@@ -58,6 +58,8 @@ class TestRepoIntegrity(unittest.TestCase):
             "registry/registry.json",
             "llms.txt",
             "scripts/build_registry.py",
+            "scripts/manage_adr.py",
+            "docs/adr/template.md",
             "registry/registry.schema.json",
             "scripts/sanitize.py",
             "package.json",
@@ -66,6 +68,14 @@ class TestRepoIntegrity(unittest.TestCase):
         for relative in required:
             full_path = os.path.join(REPO_ROOT, relative)
             self.assertTrue(os.path.exists(full_path), f"Required file missing: {relative}")
+
+    def test_adr_directory_integrity_and_index_parity(self):
+        import sys
+        sys.path.insert(0, os.path.join(REPO_ROOT, "scripts"))
+        from manage_adr import validate_adrs
+
+        errors = validate_adrs()
+        self.assertEqual([], errors, f"ADR validation failed: {errors}")
 
     def test_repo_has_no_false_benchmark_claims_or_stale_benchmark_artifacts(self):
         active_files = {
