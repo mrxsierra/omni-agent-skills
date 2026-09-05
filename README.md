@@ -4,6 +4,14 @@ A lightweight repository for AI-native developer workflows: a skill registry, sc
 
 This project is best understood as a practical starter kit for repository-aware AI workflows, not as a benchmarked production AI platform with independently verified performance claims.
 
+## Project direction
+
+This repository is the portable registry layer: it publishes reusable skills,
+rules, workflow templates, and related assets for AI-assisted engineering. It
+does not implement a desktop agent-orchestration or delivery-control product.
+See the [project documentation](docs/README.md) for the charter, scope,
+governance, decision records, contribution procedure, and roadmap.
+
 ## What this repository contains
 
 - A curated set of skill documents under [`registry/skills/`](registry/skills)
