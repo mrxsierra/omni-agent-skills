@@ -15,6 +15,8 @@ This repository is a small, practical AI-native skill registry and repo hygiene 
 3. Do not claim performance without reproducible evidence.
 4. Treat local checks as hygiene checks, not as proof of product quality.
 5. Keep docs and implementation aligned with the actual repo state.
+6. Make material changes on a scoped feature branch, never directly on `main`.
+7. Follow the contribution and feature delivery SOP before committing a change.
 
 ## Key files
 
@@ -26,6 +28,8 @@ This repository is a small, practical AI-native skill registry and repo hygiene 
 - [scripts/build-registry.py](../scripts/build-registry.py)
 - [scripts/sanitize.py](../scripts/sanitize.py)
 - [tests/test_repo_integrity.py](../tests/test_repo_integrity.py)
+- [project documentation](../docs/README.md)
+- [contribution and feature delivery SOP](../docs/sops/contribution-and-feature-delivery.md)
 
 ## Practical guidance
 
@@ -37,3 +41,10 @@ Use this repo to:
 - and promote clearer AI-assisted workflows.
 
 Do not use this repo as evidence of benchmark wins or production readiness unless explicit CI-backed artifacts exist.
+
+## Repository boundary
+
+This repository publishes portable registry assets. It is not the future
+engineering control-plane application that may consume those assets. Read
+`docs/foundation/scope-and-non-goals.md` before proposing work that involves
+agent execution, worktrees, delivery gates, or user interfaces.
