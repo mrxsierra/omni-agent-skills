@@ -4,7 +4,7 @@ This repository is a small, practical AI-native skill registry and repo hygiene 
 
 ## Current state
 
-- Version: `v0.0.1` alpha
+- Version: `v0.0.2` alpha
 - Includes: skill documents, registry generation, index files, local validation scripts, and installation helpers
 - Does not include: independently verified benchmark performance claims or a full benchmark suite with golden answers
 

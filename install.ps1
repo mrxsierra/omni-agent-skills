@@ -1,7 +1,7 @@
 # Cross-Platform PowerShell Installer for omni-agent-skills (Windows / macOS / Linux PowerShell)
 $ErrorActionPreference = "Stop"
 
-Write-Host "🚀 Installing omni-agent-skills (v0.0.1) across desktop platforms..." -ForegroundColor Cyan
+Write-Host "🚀 Installing omni-agent-skills (v0.0.2) across desktop platforms..." -ForegroundColor Cyan
 
 # Determine User Home Directory
 $UserHome = [System.Environment]::GetFolderPath("UserProfile")

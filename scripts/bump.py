@@ -73,6 +73,11 @@ def main():
             f'Write-Host "🚀 Installing omni-agent-skills (v{old_version})',
             f'Write-Host "🚀 Installing omni-agent-skills (v{new_version})'
         ),
+        (
+            os.path.join(REPO_ROOT, ".agents", "AGENTS.md"),
+            f'- Version: `v{old_version}` alpha',
+            f'- Version: `v{new_version}` alpha'
+        ),
     ]
     
     success_count = 0
