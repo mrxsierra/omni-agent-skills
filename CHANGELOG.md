@@ -12,13 +12,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `llms-qa.json`: Pre-chunked, tagged Q&A semantic retrieval dataset for RAG vector search over this repository.
 - Architecture Decision Record (ADR) and RFC management CLI tool (`scripts/manage_adr.py`) with automatic catalog table building and invariant validation.
 - Standard ADR and RFC templates under `docs/adr/template.md` and `docs/rfc/template.md`.
+- Architecture Decision Record [ADR 0002](docs/adr/0002-unified-documentation-layering-and-autonomous-agent-sdlc.md) defining canonical documentation layering and autonomous agent SDLC protocols.
+- Autonomous agent SDLC protocol and workflow runner instructions in `.agents/AGENTS.md` and `.agents/workflows/feature-delivery`.
 - Contributor Covenant Code of Conduct v2.1 (`CODE_OF_CONDUCT.md`).
 - Repository support guidelines (`SUPPORT.md`) and code ownership rules (`.github/CODEOWNERS`).
 - Structured GitHub YAML issue forms for bugs, feature requests, and skill proposals.
 - Contribution SOP-aligned pull request template (`.github/pull_request_template.md`).
+- Modernized GitHub Actions release workflow (`.github/workflows/release.yml`) with automated tag-vs-`VERSION` parity gating and release drafter config (`.github/release.yml`).
 - ADR and RFC integrity checks integrated into CI and pre-commit hooks.
 
 ### Changed
+- Standardized all 15 skills in the skill catalog (`registry/skills/`) into the canonical 4-section contract (Inputs, Procedure, Outputs, Constraints) with truthful scope, tool neutrality, and zero unverified benchmark claims.
+- Hardened global security rule (`registry/rules/global/security_shield.md`) to focus strictly on staging-first, zero-secret, and non-destructive software engineering protocols.
 - Streamlined `README.md` and completely rewrote `ARCHITECTURE.md` to align with ADR 0001.
 - Updated `CONTRIBUTING.md` with ADR/RFC procedures and `scripts/validate_registry.py` checks.
 - Refactored `tests/test_workflow_runner.py` into a standard `unittest.TestCase` suite.
