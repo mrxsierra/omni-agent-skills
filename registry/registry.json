@@ -9,91 +9,91 @@
     {
       "id": "ai-eval-benchmarker",
       "category": "data-and-ai",
-      "summary": "Niche AI Agent Evaluation & Benchmarking Subagent. Benchmarks AI subagent accuracy, prompt regression suites, LLM tool execution safety, and ML model performance metrics.",
+      "summary": "Evaluates AI agent responses, tool invocation schemas, prompt regression suites, and model outputs against reproducible test cases.",
       "path": "registry/skills/data-and-ai/ai-eval-benchmarker/SKILL.md"
     },
     {
       "id": "rag-qa-chunking-engine",
       "category": "data-and-ai",
-      "summary": "Advanced Q&A-Pair Chunking & RAG Knowledge Base Engine. Transforms unstructured docs, codebases, and web pages into high-precision tagged Q&A pairs (llms-qa.json).",
+      "summary": "Transforms documentation, codebases, and technical knowledge bases into structured, high-relevance Q&A pair datasets (llms-qa.json) for semantic search and retrieval.",
       "path": "registry/skills/data-and-ai/rag-qa-chunking-engine/SKILL.md"
     },
     {
       "id": "atomic-feature-implementer",
       "category": "engineering",
-      "summary": "Niche Feature Code Implementation Subagent. Implements targeted code edits, updates invocation callsites, and maintains docstrings strictly following approved architecture plans.",
+      "summary": "Executes minimal, focused code modifications strictly adhering to approved architecture plans, propagating callsite updates and preserving existing behavioral contracts.",
       "path": "registry/skills/engineering/atomic-feature-implementer/SKILL.md"
     },
     {
       "id": "clean-code-auditor",
       "category": "engineering",
-      "summary": "Niche Code Review & Quality Auditor Subagent. Inspects git diffs, detects code smells, audits DRY principles, and enforces workspace conventions.",
+      "summary": "Audits git diffs and code modifications for code smells, DRY violations, adherence to repository conventions, and architectural consistency.",
       "path": "registry/skills/engineering/clean-code-auditor/SKILL.md"
     },
     {
       "id": "code-anti-overengineer",
       "category": "engineering",
-      "summary": "Niche Code Simplification & Anti-Over-Engineering Subagent. Refactors code for maximum clarity, removes dead code, flattens nested conditionals, and enforces \"Less, but better\".",
+      "summary": "Simplifies over-engineered code, removes dead abstractions and redundant dependencies, flattens nested conditionals into early returns, and preserves exact behavioral contracts.",
       "path": "registry/skills/engineering/code-anti-overengineer/SKILL.md"
     },
     {
       "id": "pytest-verification-runner",
       "category": "engineering",
-      "summary": "Niche Pytest & Verification Test Engineer Subagent. Authors unit test suites, property-based invariants, and runs empirical test harnesses.",
+      "summary": "Authors and executes unit, integration, and property-based verification test suites using Pytest and unittest to empirically catch regressions and validate invariants.",
       "path": "registry/skills/engineering/pytest-verification-runner/SKILL.md"
     },
     {
       "id": "semver-release-manager",
       "category": "engineering",
-      "summary": "Niche Release & Documentation Manager Subagent. Updates READMEs, generates changelogs, manages SemVer release tags, and formats GitHub releases via GitHub CLI (gh).",
+      "summary": "Manages Semantic Versioning lifecycle, validates release metadata, updates changelogs, and orchestrates GitHub release workflows.",
       "path": "registry/skills/engineering/semver-release-manager/SKILL.md"
     },
     {
       "id": "system-architecture-planner",
       "category": "engineering",
-      "summary": "Niche System Architecture & Implementation Planner Subagent. Generates PRDs, 4-tier system specifications, ADRs, and 15-minute atomic task breakdowns with zero code mutations.",
+      "summary": "Analyzes system requirements, evaluates codebase dependencies, formulates architecture specifications, and scopes atomic implementation tasks.",
       "path": "registry/skills/engineering/system-architecture-planner/SKILL.md"
     },
     {
       "id": "advanced-verification-testing",
       "category": "security-and-governance",
-      "summary": "Design, implement, and run enterprise-grade multi-tier verification test suites across Python, Rust, TypeScript, Go, and C++, including golden snapshot regression testing, property-based invariant testing (Hypothesis/QuickCheck/fast-check), parser fuzzing, conformance matrices, and AI-agent evaluation benchmarks. Trigger when implementing complex verification testing, building compiler or parser test benches, verifying AST invariants, or testing AI agent code generation reliability.",
+      "summary": "Designs, implements, and executes multi-tier verification suites including unit, integration, golden snapshot regression, and property-based invariant testing.",
       "path": "registry/skills/security-and-governance/advanced-verification-testing/SKILL.md"
     },
     {
       "id": "ai-native-product-design",
       "category": "security-and-governance",
-      "summary": "Architect and design software projects optimized for AI agent consumption, direct tool execution, and AI recommendation engines (ChatGPT, Perplexity, Claude, Gemini).",
+      "summary": "Architects software repositories and products for direct AI agent integration, tool exposure via protocols (MCP, OpenAPI), and structured discoverability.",
       "path": "registry/skills/security-and-governance/ai-native-product-design/SKILL.md"
     },
     {
       "id": "oss-launch-governance",
       "category": "security-and-governance",
-      "summary": "Manage end-to-end Open-Source Phase-0 pre-launch auditing, namespace & registry clearance (PyPI, npm, Crates, Homebrew, USPTO, GitHub Orgs), community health governance (CODEOWNERS, SECURITY.md, GOVERNANCE.md), contributor ladders, T-Minus launch countdown execution (T-30 to T+1), grant/funding readiness, and zero-leak commit sanitization for any open-source software project. Trigger when preparing to open-source a repo, checking namespace availability, auditing pre-launch health, or establishing open-source governance.",
+      "summary": "Manages open-source pre-launch auditing, namespace availability verification, community governance documentation, and release readiness checklists.",
       "path": "registry/skills/security-and-governance/oss-launch-governance/SKILL.md"
     },
     {
       "id": "secret-leak-shield",
       "category": "security-and-governance",
-      "summary": "Niche Security & Secret Leak Prevention Subagent. Audits workspace edits for exposed API keys, private tokens, passwords, `.env` entries, and staging-first compliance.",
+      "summary": "Audits workspace edits and staged files for exposed API keys, private tokens, passwords, and sensitive environment variables to prevent accidental credential commits.",
       "path": "registry/skills/security-and-governance/secret-leak-shield/SKILL.md"
     },
     {
       "id": "tech-competitive-intelligence",
       "category": "security-and-governance",
-      "summary": "Conduct unbiased technical competitive analysis, moat defensibility scoring (Weak vs Medium vs Strong), architectural positioning matrices, and author objective \"Why Not X?\" comparison documents for any software project or protocol. Trigger when evaluating competitors, defining unique technical moats, writing comparison documentation, or analyzing industry standards.",
+      "summary": "Conducts objective technical competitive analysis, architectural positioning evaluations, trade-off matrices, and \"Why Not X?\" documentation.",
       "path": "registry/skills/security-and-governance/tech-competitive-intelligence/SKILL.md"
     },
     {
       "id": "a11y-web-auditor",
       "category": "web-and-geo",
-      "summary": "Niche Web Accessibility & Core Web Vitals Auditor Subagent. Performs automated Web QA, WCAG 2.1 accessibility checks, LCP/INP performance optimization, and UI responsiveness testing.",
+      "summary": "Audits web applications for accessibility compliance (WCAG 2.1), responsive layout behavior, semantic markup, and Core Web Vitals performance.",
       "path": "registry/skills/web-and-geo/a11y-web-auditor/SKILL.md"
     },
     {
       "id": "ai-first-web-geo",
       "category": "web-and-geo",
-      "summary": "Generative Engine Optimization (GEO) & AI-First Web Design. Build websites optimized for RAG crawlers, Perplexity/SearchGPT indexing, and AI agent consumption.",
+      "summary": "Structures web applications and documentation for Generative Engine Optimization (GEO), RAG search indexing, and machine-readable context discovery.",
       "path": "registry/skills/web-and-geo/ai-first-web-geo/SKILL.md"
     }
   ]
