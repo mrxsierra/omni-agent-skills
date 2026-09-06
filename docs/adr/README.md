@@ -56,4 +56,5 @@ Create an ADR for decisions involving:
 | ID | Title | Status | Date | Summary / Core Decision |
 | :--- | :--- | :--- | :--- | :--- |
 | `0001` | [Keep the registry separate from the engineering control plane](0001-registry-not-control-plane.md) | `Accepted` | 2026-09-05 | `omni-agent-skills` will remain a portable open-source registry. It publishes |
+| `0002` | [Unified Documentation Layering and Autonomous Agent SDLC](0002-unified-documentation-layering-and-autonomous-agent-sdlc.md) | `Accepted` | 2026-09-06 | Chosen option: **"Option 3: Unified 3-Tier Layering with Dynamic Document Routing"**, b... |
 <!-- ADR_CATALOG_END -->
