@@ -39,6 +39,14 @@ class TestWorkflowRunner(unittest.TestCase):
         self.assertEqual(data["workflow_id"], "security-audit")
         self.assertIn("steps", data)
 
+    def test_run_feature_delivery_creates_log(self):
+        log = run("feature-delivery", self.outdir)
+        self.assertTrue(os.path.exists(log))
+        with open(log, "r", encoding="utf-8") as f:
+            data = json.load(f)
+        self.assertEqual(data["workflow_id"], "feature-delivery")
+        self.assertIn("steps", data)
+
 
 if __name__ == "__main__":
     unittest.main()

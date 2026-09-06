@@ -1,6 +1,6 @@
 # Contributing to omni-agent-skills
 
-Thank you for considering contributions to this project. All material changes follow our formal [Contribution and Feature Delivery SOP](docs/sops/contribution-and-feature-delivery.md). This guide provides a quick reference for local development commands, version management, and skill creation.
+Thank you for considering contributions to this project. All contributors—whether human developers or AI agents—follow our formal [Contribution and Feature Delivery SOP](docs/sops/contribution-and-feature-delivery.md) and [ADR 0002](docs/adr/0002-unified-documentation-layering-and-autonomous-agent-sdlc.md). This guide provides a quick reference for local development commands, version management, and skill creation.
 
 ## Version Management
 
@@ -37,27 +37,17 @@ The script updates:
 - `pyproject.toml` — Python package metadata
 - `registry/registry.json` — registry metadata
 
-## Running Tests
+## Running Tests and Validation Suite
 
-Before committing, run the repo's validation suite:
-
-```bash
-python3 -m unittest discover -s tests -p 'test_*.py'
-```
-
-Or use the npm script:
-```bash
-npm run test
-```
-
-## Code Quality and Validation
-
-Run the sanitizer, registry rebuild, and registry schema validation:
+Before committing, run the repo's full verification suite:
 
 ```bash
 python3 scripts/sanitize.py
 python3 scripts/build_registry.py
 python3 scripts/validate_registry.py
+python3 scripts/manage_adr.py validate
+python3 -m unittest discover -s tests -p 'test_*.py'
+git diff --check
 ```
 
 Or in batch:

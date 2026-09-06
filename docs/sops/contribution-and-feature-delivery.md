@@ -3,8 +3,9 @@
 ## Purpose
 
 Use this procedure for every material change to the repository. It keeps work
-scoped, reviewable, and traceable whether it is performed by a human or an AI
-assistant.
+scoped, reviewable, and traceable whether it is performed by a human developer or
+an AI assistant. See [ADR 0002](../adr/0002-unified-documentation-layering-and-autonomous-agent-sdlc.md)
+for the underlying documentation layering and autonomous delivery architecture.
 
 ## Procedure
 

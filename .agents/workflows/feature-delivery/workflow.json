@@ -1,0 +1,13 @@
+{
+  "id": "feature-delivery",
+  "name": "Feature Delivery & Contribution SOP",
+  "description": "Autonomous end-to-end delivery workflow implementing the contribution SOP: branch isolation, minimal edits, verification checks, conventional commit, and PR creation.",
+  "steps": [
+    { "title": "Check branch & isolate", "description": "Verify current git branch; ensure work is on a dedicated scoped branch (feat/, fix/, docs/, chore/) rather than main.", "action": "branch-guard" },
+    { "title": "Gather context & routing", "description": "Consult canonical docs/ and root markdown files to establish requirements and determine if an ADR is needed.", "action": "context-routing" },
+    { "title": "Implement minimal coherent change", "description": "Apply targeted, focused changes keeping unrelated modifications out of the branch.", "action": "implement-change" },
+    { "title": "Execute local verification suite", "description": "Run sanitize.py, build_registry.py, validate_registry.py, manage_adr.py validate, and test suite.", "action": "verify" },
+    { "title": "Stage and conventional commit", "description": "Stage affected files and produce a structured conventional commit message.", "action": "commit" },
+    { "title": "Push and open Pull Request", "description": "Push branch to origin and create a PR with structured summary, scope, and verification evidence.", "action": "pr-delivery" }
+  ]
+}

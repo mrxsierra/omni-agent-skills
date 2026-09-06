@@ -17,32 +17,55 @@ This repository is a small, practical AI-native skill registry and repo hygiene 
 5. Keep docs and implementation aligned with the actual repo state.
 6. Make material changes on a scoped feature branch, never directly on `main`.
 7. Follow the contribution and feature delivery SOP before committing a change.
+8. Treat `docs/` and root `.md` files as the single source of truth; do not duplicate documentation in `.agents/`.
 
-## Key files
+## Key files & Document Routing
 
-- [ARCHITECTURE.md](../ARCHITECTURE.md)
-- [README.md](../README.md)
-- [llms.txt](../llms.txt)
-- [registry.json](../registry.json)
-- [SECURITY.md](../SECURITY.md)
-- [scripts/build_registry.py](../scripts/build_registry.py)
-- [scripts/manage_adr.py](../scripts/manage_adr.py)
-- [scripts/sanitize.py](../scripts/sanitize.py)
-- [tests/test_repo_integrity.py](../tests/test_repo_integrity.py)
-- [project documentation](../docs/README.md)
-- [architecture decision records](../docs/adr/README.md)
-- [contribution and feature delivery SOP](../docs/sops/contribution-and-feature-delivery.md)
+AI agents must actively read and utilize the canonical files in `docs/` and the repository root rather than assuming rules or duplicating documentation:
 
-## Practical guidance
+- [README.md](../README.md): Project overview, installation, and public index catalog.
+- [ARCHITECTURE.md](../ARCHITECTURE.md): System design, asset hierarchy, and verification pipeline.
+- [CONTRIBUTING.md](../CONTRIBUTING.md): Unified developer on-ramp and contribution standard.
+- [SECURITY.md](../SECURITY.md): Security policy and vulnerability disclosure procedures.
+- [docs/sops/contribution-and-feature-delivery.md](../docs/sops/contribution-and-feature-delivery.md): Formal 8-step delivery and quality-gate SOP.
+- [docs/adr/README.md](../docs/adr/README.md): Architecture Decision Records catalog.
+- [docs/foundation/](../docs/foundation/): Charter, scope boundaries, and non-goals.
+- [registry.json](../registry.json) & [llms.txt](../llms.txt): Machine-readable registry and LLM context indexes.
+- [scripts/build_registry.py](../scripts/build_registry.py): Canonical registry compiler.
+- [scripts/manage_adr.py](../scripts/manage_adr.py): ADR and RFC lifecycle tooling.
+- [scripts/sanitize.py](../scripts/sanitize.py): Zero-secret and zero-PII pattern scanner.
+- [tests/test_repo_integrity.py](../tests/test_repo_integrity.py): Test suite enforcing repo integrity and claim policies.
 
-Use this repo to:
+## Autonomous Agent SDLC Protocol
 
-- discover repo-aware skill patterns,
-- maintain a lightweight machine-readable catalog,
-- validate obvious syntax and secret hygiene issues,
-- and promote clearer AI-assisted workflows.
+When an AI agent is tasked with implementing a feature, fix, documentation update, or cleanup, it must execute the delivery pipeline **autonomously end-to-end** without pausing for micro-approvals unless blocked:
 
-Do not use this repo as evidence of benchmark wins or production readiness unless explicit CI-backed artifacts exist.
+1. **Pre-flight Branch Guard (Mandatory):**
+   - Check current git branch (`git status` / `git branch --show-current`).
+   - If on `main` or `master`, automatically create and switch to a scoped branch (`feat/<name>`, `fix/<name>`, `docs/<name>`, `chore/<name>`) *before* modifying any files.
+2. **Context & Document Routing:**
+   - Inspect relevant canonical documentation in `docs/` or root files to gather context without hallucinating requirements.
+   - If significant architectural changes or schema modifications are introduced, scaffold an ADR (`python3 scripts/manage_adr.py new "<Title>"`).
+3. **Implement Minimal Coherent Change:**
+   - Apply focused, single-purpose edits. Keep unrelated cleanup out of the branch.
+4. **Run Local Verification Suite:**
+   - Execute all required local verification checks:
+     ```bash
+     python3 scripts/sanitize.py
+     python3 scripts/build_registry.py
+     python3 scripts/validate_registry.py
+     python3 scripts/manage_adr.py validate
+     python3 -m unittest discover -s tests -p 'test_*.py'
+     git diff --check
+     ```
+5. **Stage & Commit:**
+   - Stage affected files and create a conventional commit (`feat:`, `fix:`, `docs:`, `chore:`).
+6. **Push & Open Pull Request:**
+   - Push branch to origin (`git push -u origin <branch-name>`).
+   - Create a Pull Request via GitHub CLI (`gh pr create`) using the structured template with clear scope, verification results, and checklists.
+7. **Monitor CI to Completion:**
+   - Monitor remote GitHub Actions CI status (`gh pr checks <PR_NUM> --watch`) until checks pass.
+   - Report the PR link, CI status, and summary back to the user.
 
 ## Architecture decisions (ADRs & RFCs) for AI agents
 
@@ -52,7 +75,7 @@ Before proposing or implementing significant architectural changes, AI agents mu
    - Modifying registry schema contracts (`registry.schema.json`).
    - Introducing new discovery tiers (e.g. `llms-qa.json`, `llms.txt`).
    - Changing installation helpers (`install.sh`, `install.ps1`) or execution semantics.
-   - Adjusting project boundaries, security scanning, or release policies.
+   - Adjusting project boundaries, security scanning, documentation layering, or release policies.
 2. **When to use an RFC**:
    - Designing public cross-agent communication protocols or multi-tool wire formats.
 3. **Agent workflow commands**:
