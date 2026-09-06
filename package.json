@@ -1,6 +1,6 @@
 {
   "name": "omni-agent-skills",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Tool-neutral AI agent skill registry and asset catalog",
   "main": "registry/registry.json",
   "scripts": {

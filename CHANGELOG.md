@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.0.2] - 2026-09-06
+
 ### Added
 - Three-Tier Agent Discovery model (`registry/registry.json`, `llms.txt`, and `llms-qa.json`).
 - `llms-qa.json`: Pre-chunked, tagged Q&A semantic retrieval dataset for RAG vector search over this repository.
