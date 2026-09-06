@@ -33,31 +33,43 @@ Without an explicit taxonomy and admission rubric, the registry risks devolving 
   Publish loose Markdown runbooks without formal asset classification, workflow orchestrations, or standardized quality gates. Rely on end users to manually compose prompt chains.
 - **Option 2: Monolithic Agent Runtime & Control Plane**
   Expand the repository to include an execution daemon, state engine, dynamic worktree orchestrator, and web UI to execute agent tasks. (*Evaluated and rejected in ADR 0001*).
-- **Option 3: Four-Class Asset Taxonomy with 7-Phase SDLC Lifecycle Mapping and 5-Gate Inclusion Filter**
-  Formally define four distinct published asset classes (`skills`, `workflows`, `rules`, `helpers`), map them systematically across the 7 phases of software delivery, and enforce a strict 5-Gate Inclusion Filter for all additions.
+- **Option 3: Unified Eight-Asset-Type Taxonomy across Two Tiers with 3D SDLC Discovery Coordinates and 5-Gate Inclusion Filter**
+  Formally define eight concrete published asset types structured across two functional tiers (`Core Orchestration` vs `Deterministic Integration`), map them systematically across a 3-Dimensional Coordinate System (SDLC Phase, Domain/Stack Archetype, and Relational Composition), and enforce a strict 5-Gate Inclusion Filter for all additions.
 
 ## Decision
 
-Chosen option: **"Option 3: Four-Class Asset Taxonomy with 7-Phase SDLC Lifecycle Mapping and 5-Gate Inclusion Filter"**, because:
+Chosen option: **"Option 3: Unified Eight-Asset-Type Taxonomy across Two Tiers with 3D SDLC Discovery Coordinates and 5-Gate Inclusion Filter"**, because:
+- It eliminates taxonomy naming confusion by maintaining strict 1-to-1 parity between published asset types and their physical directories in `registry/`, removing abstract "phantom" terms like generic "helpers".
 - It maintains the strict separation of concerns established in ADR 0001 (keeping this repository a portable asset registry, not an execution control plane).
-- It provides users and AI agents with clear compositional primitives that assemble into predictable, end-to-end engineering lifecycles.
+- It provides users and AI agents with a multi-dimensional coordinate system (Phase, Domain, Stack, and Complements) so agents make contextual, high-precision asset choices without cognitive friction.
 - It provides maintainers and contributors with an objective, auditable standard for accepting or rejecting new registry assets.
 
 ---
 
-### 1. Published Asset Taxonomy
+### 1. Published Asset Taxonomy (1-to-1 Directory Alignment)
 
-The registry formally recognizes and publishes four asset classes:
+To eliminate naming divergence between abstract concepts and physical storage, the registry formally recognizes **8 Concrete Asset Types** organized across **Two Functional Tiers**:
 
 ```text
-omni-agent-skills Registry Assets
- ├── 1. Skills       (registry/skills/<domain>/<id>/SKILL.md)  ──► Atomic Runbooks
- ├── 2. Workflows    (registry/workflows/<id>/)               ──► Multi-Step SDLC Orchestrations
- ├── 3. Rules        (registry/rules/<category>/<id>.md)      ──► Invariant Behavioral Constraints
- └── 4. Helpers      (scripts/ or skill-bundled utilities)    ──► Deterministic Executable Scripts
+omni-agent-skills Published Asset Hierarchy
+├── Tier 1: Core Orchestration & Reasoning Primitives (Agent Planning & Logic)
+│   ├── skills/          (registry/skills/<domain>/<id>/SKILL.md)  ──► Atomic Runbooks
+│   ├── workflows/       (registry/workflows/<id>/WORKFLOW.md)     ──► Multi-Step SDLC Pipelines
+│   ├── rules/           (registry/rules/<category>/<id>.md)       ──► Invariant Behavioral Constraints
+│   └── subagents/       (registry/subagents/<id>.json)            ──► Persona & Tool Isolation Manifests
+│
+└── Tier 2: Deterministic Integration & Context Primitives (Execution Substrate)
+    ├── hooks/           (registry/hooks/<pre|post>-tool/<id>.sh)   ──► Lifecycle Guard Shell Scripts
+    ├── mcp-configs/     (registry/mcp-configs/<id>.json)          ──► Tool Server Wire Configurations
+    ├── snippets/        (registry/snippets/<lang>/<id>)           ──► Battle-Tested Reference Code & Tokens
+    └── prompts/         (registry/prompts/<category>/<id>.md)     ──► System Prompt & Persona Templates
 ```
 
-#### A. Skills (`registry/skills/<domain>/<skill-id>/`)
+*(Note: Repository-level verification, schema compilers, and lifecycle tooling reside separately in root `scripts/`).*
+
+#### Tier 1: Core Orchestration & Reasoning Primitives
+
+##### A. Skills (`registry/skills/<domain>/<skill-id>/SKILL.md`)
 - **Nature:** Atomic, domain-specific engineering runbooks executing a single focused task.
 - **Contract:** Must strictly implement the canonical 4-section runbook contract:
   1. `Inputs & Context Required`: Declares preconditions, configuration, and environment dependencies.
@@ -66,28 +78,41 @@ omni-agent-skills Registry Assets
   4. `Constraints & Tool Neutrality`: States boundaries, prohibited actions, and portability requirements.
 - **Schema:** Indexed in `registry/registry.json` and validated by `registry/registry.schema.json`.
 
-#### B. Workflows (`registry/workflows/<workflow-id>/`)
-- **Nature:** Composite, multi-step operational orchestrations that chain together skills, tools, and quality gates to achieve an end-to-end SDLC outcome (e.g., `workflow-project-initiation`, `workflow-repo-scaffolding`, `workflow-feature-delivery`, `workflow-container-deploy`).
-- **Contract:** Defined by a structured workflow manifest (`WORKFLOW.md` and machine-readable metadata) specifying:
-  - Sequence of discrete stages.
-  - Entry preconditions and required context.
-  - Skills and tools invoked at each stage.
-  - Mandatory verification gates between stages (e.g., tests must pass before PR creation).
-  - Terminal deliverables and release artifacts.
+##### B. Workflows (`registry/workflows/<workflow-id>/WORKFLOW.md`)
+- **Nature:** Composite, multi-step operational orchestrations that chain together skills, subagents, and quality gates to achieve an end-to-end SDLC outcome (e.g., `workflow-project-initiation`, `workflow-repo-scaffolding`, `workflow-feature-delivery`, `workflow-container-deploy`).
+- **Contract:** Defined by a structured workflow manifest specifying discrete stages, entry preconditions, invoked skills/subagents, mandatory transition gates, and terminal deliverables.
 
-#### C. Rules (`registry/rules/<category>/<rule-id>.md`)
+##### C. Rules (`registry/rules/<category>/<rule-id>.md`)
 - **Nature:** Persistent behavioral invariants, security shields, and engineering constraints loaded into agent system contexts.
-- **Scope:** Universal principles that apply across multiple tasks (e.g., `security_shield.md` enforcing branch isolation, zero secrets, non-destructive file operations, and staging-first execution).
+- **Scope:** Universal and framework principles (e.g., `security_shield.md` enforcing branch isolation, zero secrets, non-destructive file operations, and staging-first execution).
 
-#### D. Deterministic Helpers & Scaffolding Scripts (`scripts/` or skill-bundled)
-- **Nature:** Executable Python or POSIX shell scripts bundled with skills or repo tooling.
-- **Purpose:** Eliminate LLM guesswork, hallucinations, and syntax divergence by providing pre-tested, deterministic executables for verification, sanitization, schema checking, and project scaffolding.
+##### D. Subagents (`registry/subagents/<subagent-id>.json`)
+- **Nature:** Declarative persona manifests defining isolated execution boundaries, system instructions, and tool whitelists.
+- **Role:** Workflow execution actors. Workflows delegate discrete stages to scoped subagents (e.g., `system-architecture-planner.json`, `secret-leak-shield.json`, `code-anti-overengineer.json`) to prevent context pollution.
+
+#### Tier 2: Deterministic Integration & Context Primitives
+
+##### E. Hooks (`registry/hooks/<pre|post>-tool/<hook-id>.sh`)
+- **Nature:** Deterministic shell scripts executed before or after tool calls (`pre-tool`, `post-tool`).
+- **Role:** Operational guardrails. Mechanically enforce rules (e.g. `secret-leak-guard.sh` intercepting destructive edits or secret exposures; `auto-formatter.sh` reformatting modified code).
+
+##### F. MCP Configs (`registry/mcp-configs/<mcp-id>.json`)
+- **Nature:** Model Context Protocol configuration templates connecting agents to external tool servers.
+- **Role:** Open tool wire specifications (e.g., `chrome-devtools.json` for DOM inspection, a11y testing, and CWV audits) portable across Claude Desktop, Cursor, and Antigravity.
+
+##### G. Snippets (`registry/snippets/<language>/<snippet-id>`)
+- **Nature:** Reusable, battle-tested code implementations, boilerplate, and design tokens (e.g., `async_http_client.py`, `hsl_theme_tokens.ts`).
+- **Role:** Anti-hallucination code primitives. Agents reference or drop in pre-tested code rather than generating boilerplate from scratch.
+
+##### H. Prompts (`registry/prompts/<category>/<prompt-id>.md`)
+- **Nature:** Reusable system prompt templates and specialized role on-ramps (e.g., `architect-persona.md`).
+- **Role:** Cognitive priming. Initializes agent mindset and constraints prior to workflow or skill invocation.
 
 ---
 
 ### 2. End-to-End 7-Phase SDLC Lifecycle Matrix
 
-All published assets must map explicitly to one or more phases in the 7-Phase SDLC:
+All published assets map explicitly across the 7-Phase SDLC:
 
 | Phase | Lifecycle Stage | Primary Objective | Example Registry Assets | Key Verification Gate |
 | :--- | :--- | :--- | :--- | :--- |
@@ -101,7 +126,51 @@ All published assets must map explicitly to one or more phases in the 7-Phase SD
 
 ---
 
-### 3. The 5-Gate Inclusion Filter
+### 3. The 3-Dimensional Coordinate System for Agent Discovery & Composition
+
+To prevent decision paralysis and enable autonomous agents to make optimal, context-aware choices when executing tasks, all assets navigate along three orthogonal dimensions:
+
+```text
+               DIMENSION 1: SDLC Phase (WHEN?)
+      Inception ──► Scaffolding ──► Implementation ──► Shipping
+           │
+           │           DIMENSION 2: Domain & Stack (WHERE?)
+           ├──► Universal Foundation (Any repository regardless of stack)
+           ├──► Web & Frontend (Next.js, TypeScript, CSS, DOM)
+           ├──► Backend & Systems (Python, Go, Node, REST APIs, SQL)
+           └──► Data & AI (RAG, Evals, Benchmarks, Pipelines)
+           │
+           │           DIMENSION 3: Relational Composition (WITH WHAT?)
+           └──► Cohesive Stack: Workflow + Subagent + Skill + Rule + Hook + Snippet + MCP
+```
+
+#### Dimension 1: Temporal Phase (When does it apply?)
+Defines the lifecycle moment in the 7-Phase SDLC (`Phase 1` through `Phase 7`). Assets specify which phases they activate in, preventing early-phase tasks (like PRD writing) from triggering late-phase tooling (like deployment).
+
+#### Dimension 2: Domain & Stack Archetype (Where does it apply?)
+Distinguishes universal engineering baselines from domain-specific toolchains:
+1. **Universal Foundation (Cross-Cutting):**
+   Applies to *any* software project regardless of language or architecture.
+   - Examples: `security_shield.md` (zero-leak rule), `secret-leak-guard.sh` (pre-tool hook), `semver-release-manager` (skill), `clean-code-auditor` (skill), `oss-launch-governance` (skill).
+2. **Domain-Specific Stacks:**
+   Activated *only* when the workspace matches the domain or technology stack:
+   - **Web & Frontend:** `ai-first-web-geo`, `a11y-web-auditor`, `nextjs_rules.md`, `hsl_theme_tokens.ts`, `chrome-devtools.json`.
+   - **Backend & Systems:** `pytest-verification-runner`, `python_rules.md`, `async_http_client.py`.
+   - **Data & AI Systems:** `rag-qa-chunking-engine`, `ai-eval-benchmarker`, `system-architecture-planner.json`.
+
+#### Dimension 3: Relational Composition & Archetype Presets (With what does it work?)
+Assets work in complementing bundles rather than isolated silos. The registry curates standard **Archetype Stacks**:
+
+| Archetype Stack | Target Task / Workspace | Workflow & Subagent | Skills Invoked | Rules & Prompts | Hooks & Snippets | MCP Tooling |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| **Universal OSS Baseline** | Any repo scaffolding, PR, or release | `workflow-repo-scaffolding`, `secret-leak-shield.json` | `oss-launch-governance`, `semver-release-manager` | `security_shield.md` | `secret-leak-guard.sh`, `auto-formatter.sh` | — |
+| **Modern Web & Frontend** | Next.js / React UI feature delivery | `workflow-feature-delivery`, `system-architecture-planner.json` | `atomic-feature-implementer`, `ai-first-web-geo`, `a11y-web-auditor` | `nextjs_rules.md`, `architect-persona.md` | `auto-formatter.sh`, `hsl_theme_tokens.ts` | `chrome-devtools.json` |
+| **Python Backend / CLI** | Python service, testing, and clean code | `workflow-feature-delivery`, `code-anti-overengineer.json` | `atomic-feature-implementer`, `clean-code-auditor`, `pytest-verification-runner` | `python_rules.md` | `auto-formatter.sh`, `async_http_client.py` | — |
+| **Data & AI Systems** | RAG pipelines, model eval, dataset chunks | `workflow-feature-delivery`, `system-architecture-planner.json` | `rag-qa-chunking-engine`, `ai-eval-benchmarker` | `security_shield.md` | `async_http_client.py` | — |
+
+---
+
+### 4. The 5-Gate Inclusion Filter
 
 To be accepted into `omni-agent-skills`, every proposed asset must pass all five mandatory gates:
 
@@ -117,7 +186,7 @@ To be accepted into `omni-agent-skills`, every proposed asset must pass all five
 4. **Gate 4: Canonical Contract Conformance**
    - Skills must implement all 4 required sections without omission.
    - Workflows must define discrete stages, input requirements, and transition gates.
-   - Asset metadata must pass `scripts/validate_registry.py` and conform to `registry.schema.json`.
+   - Subagents, rules, hooks, snippets, and MCP configs must conform to their directory standards and pass local validation.
 5. **Gate 5: Zero-Secret, Zero-PII, Zero-Hype**
    - Must pass `python3 scripts/sanitize.py` with zero hardcoded credentials, keys, or private identifiers.
    - Must NOT contain unverified benchmark marketing claims (e.g., "state-of-the-art", "guaranteed 100% accuracy", "beats all rivals") as enforced by `test_repo_integrity.py`.
@@ -128,15 +197,15 @@ To be accepted into `omni-agent-skills`, every proposed asset must pass all five
 
 ### Positive Consequences
 
-- **Unambiguous Catalog Boundaries:** Maintainers and contributors have an explicit rubric for reviewing pull requests and evaluating new asset proposals.
-- **End-to-End Usability:** Users and AI agents can execute the entire software lifecycle using published registry assets rather than cobbling together isolated prompt snippets.
-- **Deterministic Quality:** Eliminates unverified benchmark hype and replaces speculative AI suggestions with verifiable engineering procedures.
-- **Preserved ADR 0001 Scope:** Maintains the registry as a lightweight, portable asset catalog without turning it into a heavy execution runtime.
+- **Zero Naming Confusion:** Perfect 1-to-1 parity between published asset types and `registry/` directories eliminates phantom folder confusion.
+- **Context-Aware Agent Execution:** Agents query assets by SDLC Phase, Domain, and Stack, activating pre-composed archetype bundles instead of guessing combinations.
+- **Universal vs. Domain Clarity:** Clear separation ensures universal hygiene rules (security, clean git diffs, semver) are never mixed up with stack-specific tooling (Next.js, Python).
+- **Deterministic Quality:** Preserves the 5-Gate filter and zero-hype integrity invariant across all 8 asset types.
 
 ### Negative Consequences / Trade-offs
 
-- **Higher Contribution Friction:** Contributors must satisfy all 5 quality gates and format their assets to strict schema contracts.
-- *Mitigation:* Clear templates, scaffold tooling (`scripts/manage_adr.py`), and automated validation scripts (`scripts/validate_registry.py`) provide rapid, localized feedback.
+- **Catalog Governance Overhead:** Maintaining 8 asset directories requires consistent validation scripts and clear documentation.
+- *Mitigation:* Automated validation scripts (`scripts/validate_registry.py`, `scripts/sanitize.py`, `scripts/manage_adr.py`) provide rapid, mechanical enforcement in CI.
 
 ## Pros and Cons of Options
 
@@ -148,8 +217,8 @@ To be accepted into `omni-agent-skills`, every proposed asset must pass all five
 - Good: Full end-to-end execution within a single codebase.
 - Bad: Violates project charter, introduces heavy runtime dependencies, duplicates existing agent platforms, and creates massive maintenance overhead.
 
-### Option 3: Four-Class Asset Taxonomy with 7-Phase SDLC Mapping and 5-Gate Inclusion Filter
-- Good: Combines portable, tool-neutral assets with end-to-end lifecycle coverage, strict quality gates, and high architectural clarity.
+### Option 3: Unified Eight-Asset-Type Taxonomy across Two Tiers with 3D SDLC Discovery Coordinates and 5-Gate Inclusion Filter
+- Good: Combines portable, tool-neutral assets with 1-to-1 directory clarity, 3D agent discovery coordinates, and multi-tier quality gates.
 - Bad: Requires active catalog curation and maintenance of JSON schemas.
 
 ## Validation & Invariants

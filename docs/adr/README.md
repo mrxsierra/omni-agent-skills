@@ -57,5 +57,5 @@ Create an ADR for decisions involving:
 | :--- | :--- | :--- | :--- | :--- |
 | `0001` | [Keep the registry separate from the engineering control plane](0001-registry-not-control-plane.md) | `Accepted` | 2026-09-05 | `omni-agent-skills` will remain a portable open-source registry. It publishes |
 | `0002` | [Unified Documentation Layering and Autonomous Agent SDLC](0002-unified-documentation-layering-and-autonomous-agent-sdlc.md) | `Accepted` | 2026-09-06 | Chosen option: **"Option 3: Unified 3-Tier Layering with Dynamic Document Routing"**, b... |
-| `0003` | [Registry Asset Taxonomy Shipped Capabilities and Inclusion Criteria](0003-registry-asset-taxonomy-shipped-capabilities-and-inclusion-criteria.md) | `Accepted` | 2026-09-06 | Chosen option: **"Option 3: Four-Class Asset Taxonomy with 7-Phase SDLC Lifecycle Mappi... |
+| `0003` | [Registry Asset Taxonomy Shipped Capabilities and Inclusion Criteria](0003-registry-asset-taxonomy-shipped-capabilities-and-inclusion-criteria.md) | `Accepted` | 2026-09-06 | Chosen option: **"Option 3: Unified Eight-Asset-Type Taxonomy across Two Tiers with 3D ... |
 <!-- ADR_CATALOG_END -->
