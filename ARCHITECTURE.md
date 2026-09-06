@@ -35,13 +35,23 @@ To support diverse agent workflows and search engines, the repository exposes th
 
 ---
 
-## 3. Core Architectural Principles
+## 3. Core Architectural Principles & Asset Taxonomy
 
+Per [ADR 0002](docs/adr/0002-unified-documentation-layering-and-autonomous-agent-sdlc.md) and [ADR 0003](docs/adr/0003-registry-asset-taxonomy-shipped-capabilities-and-inclusion-criteria.md), the repository establishes a disciplined engineering foundation based on four published asset classes, mapped across the 7-Phase Software Development Lifecycle (SDLC):
+
+### Published Asset Classes
+1. **Skills (`registry/skills/<domain>/<id>/`):** Atomic, domain-specific runbooks implementing the canonical 4-section contract (Inputs, Procedure, Expected Outputs, Constraints).
+2. **Workflows (`registry/workflows/<id>/`):** Composite, multi-step lifecycle orchestrations chaining skills, tools, and verification gates across SDLC phases.
+3. **Rules (`registry/rules/<category>/<id>.md`):** Persistent behavioral invariants and safety constraints (e.g. `security_shield.md` enforcing branch isolation, zero secrets, and non-destructive operations).
+4. **Deterministic Helpers & Scripts (`scripts/` or skill-bundled):** Executable Python or POSIX shell utilities providing reproducible validation and project scaffolding without LLM guesswork.
+
+### Core Operating Principles
 1. **Single-Responsibility Principle (SRP):** Each skill, rule, and asset is strictly scoped to a single expert capability to prevent context bleed and maintain high precision.
 2. **Verification Over Claiming:** This repository does not publish benchmark performance claims unless backed by reproducible CI runs with explicit golden data and reviewable artifacts.
 3. **Safe-by-Default Execution:** Reference runners and installation helpers are simulation-first and non-destructive. Shell execution requires explicit maintainer configuration.
 4. **Tool Neutrality:** Published assets declare clear constraints, inputs, and expected outputs without assuming vendor-specific runtime privileges.
 5. **Secret Hygiene:** Scans for obvious secret and credential patterns using `scripts/sanitize.py` and protects private local overrides via `.gitignore`.
+6. **5-Gate Inclusion Filter:** Every addition must satisfy Orthogonality, Tool Neutrality, Deterministic Verification Invariants, Contract Conformance, and Zero-Secret/Zero-Hype criteria.
 
 ---
 
@@ -63,7 +73,7 @@ omni-agent-skills/
 │
 ├── docs/                            # Human-readable architectural and governance docs
 │   ├── README.md                    # Documentation index and lifecycle guide
-│   ├── adr/                         # Architecture Decision Records (e.g. ADR 0001)
+│   ├── adr/                         # Architecture Decision Records (ADRs 0001-0003)
 │   ├── foundation/                  # Charter, scope, non-goals, and principles
 │   ├── governance/                  # Maintainer responsibility and review rules
 │   ├── roadmap/                     # Active milestones and long-term direction
@@ -78,6 +88,7 @@ omni-agent-skills/
 │   ├── registry.json                # Generated machine index of published skills
 │   ├── registry.schema.json         # JSON Schema validating registry.json
 │   ├── skills/                      # Scoped skill runbooks (engineering, web-and-geo, etc.)
+│   ├── workflows/                   # Shipped lifecycle workflows
 │   ├── subagents/                   # Focused persona configurations
 │   ├── rules/                       # Coding and security rules
 │   ├── prompts/                     # Reusable system and task prompts
@@ -88,6 +99,7 @@ omni-agent-skills/
 ├── scripts/                         # Maintenance, validation, and build tooling
 │   ├── build_registry.py            # Generates registry.json and llms.txt
 │   ├── validate_registry.py         # Validates registry.json against schema and skills
+│   ├── manage_adr.py                # ADR and RFC lifecycle tooling
 │   ├── bump.py                      # Multi-file version synchronizer
 │   ├── sanitize.py                  # Local regex-based secret/PII scanner
 │   └── run_workflow.py              # Safe simulation-first reference workflow runner
@@ -108,6 +120,7 @@ The repository enforces hygiene and integrity via reproducible local commands:
 python3 scripts/sanitize.py
 python3 scripts/build_registry.py
 python3 scripts/validate_registry.py
+python3 scripts/manage_adr.py validate
 python3 -m unittest discover -s tests -p 'test_*.py'
 ```
 
@@ -120,3 +133,7 @@ Active and upcoming milestones are maintained in [`docs/roadmap/roadmap.md`](doc
 - **Milestone 2:** Registry contract, three-tier discovery usability, and documentation alignment.
 - **Milestone 3:** Reliable tooling, community health, and release automation.
 - **Milestone 4:** Curated catalog quality and schema enforcement.
+- **Milestone 5:** Shipped workflows & lifecycle orchestration.
+- **Milestone 6:** Greenfield scaffolding & deployment skills.
+- **Milestone 7:** Distribution, installation UX & consumer verification.
+- **Milestone 8:** Production release v0.1.0.
