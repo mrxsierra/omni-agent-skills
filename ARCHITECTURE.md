@@ -87,7 +87,6 @@ omni-agent-skills/
 │
 ├── scripts/                         # Maintenance, validation, and build tooling
 │   ├── build_registry.py            # Generates registry.json and llms.txt
-│   ├── build-registry.py            # Compatibility wrapper
 │   ├── validate_registry.py         # Validates registry.json against schema and skills
 │   ├── bump.py                      # Multi-file version synchronizer
 │   ├── sanitize.py                  # Local regex-based secret/PII scanner

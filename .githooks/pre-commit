@@ -21,12 +21,22 @@ fi
 # 2. Rebuild registry and llms.txt if needed
 TIMEOUT_BUILD="${TIMEOUT_PRECOMMIT_BUILD:-10}"
 if command -v timeout >/dev/null 2>&1; then
-  timeout "${TIMEOUT_BUILD}s" python3 scripts/build-registry.py || echo "⚠️ build-registry timed out or failed (non-fatal locally)."
+  timeout "${TIMEOUT_BUILD}s" python3 scripts/build_registry.py || echo "⚠️ build_registry timed out or failed (non-fatal locally)."
 else
-  python3 scripts/build-registry.py || echo "⚠️ build-registry failed (non-fatal locally)."
+  python3 scripts/build_registry.py || echo "⚠️ build_registry failed (non-fatal locally)."
 fi
 
-# 3. Run the real project test suite (no benchmark script)
+# 3. Validate registry schema and skills parity
+if [ -f scripts/validate_registry.py ]; then
+  python3 scripts/validate_registry.py || echo "⚠️ Registry validation failed."
+fi
+
+# 4. Validate ADRs and RFCs
+if [ -f scripts/manage_adr.py ]; then
+  python3 scripts/manage_adr.py validate || echo "⚠️ ADR validation failed."
+fi
+
+# 5. Run the real project test suite (no benchmark script)
 TIMEOUT_TESTS="${TIMEOUT_PRECOMMIT_TESTS:-20}"
 if command -v timeout >/dev/null 2>&1; then
   timeout "${TIMEOUT_TESTS}s" python3 -m unittest discover -s tests -p 'test_*.py' || echo "⚠️ Project tests failed or timed out. Fix issues before final commit."

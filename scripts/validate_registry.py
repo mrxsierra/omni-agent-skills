@@ -6,11 +6,11 @@ import json
 import sys
 from pathlib import Path
 
-try:
-    from .build_registry import REPO_ROOT, parse_skill_metadata, read_version
-except ImportError:  # Direct execution: python3 scripts/validate_registry.py
-    from build_registry import REPO_ROOT, parse_skill_metadata, read_version
+REPO_ROOT = Path(__file__).resolve().parent.parent
+if str(REPO_ROOT) not in sys.path:
+    sys.path.insert(0, str(REPO_ROOT))
 
+from scripts.build_registry import parse_skill_metadata, read_version
 
 REGISTRY_PATH = REPO_ROOT / "registry" / "registry.json"
 REQUIRED_FIELDS = {"id", "category", "summary", "path"}

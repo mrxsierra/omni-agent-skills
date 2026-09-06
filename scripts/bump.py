@@ -3,9 +3,13 @@
 import os
 import sys
 import re
-from build_registry import build_registry
 
 REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+if REPO_ROOT not in sys.path:
+    sys.path.insert(0, REPO_ROOT)
+
+from scripts.build_registry import build_registry
+
 VERSION_FILE = os.path.join(REPO_ROOT, "VERSION")
 
 def read_version():
