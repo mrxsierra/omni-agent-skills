@@ -32,5 +32,11 @@ jobs:
     - name: Run project smoke tests
       run: python3 -m unittest discover -s tests -p 'test_*.py'
 
+    - name: Run Deterministic Asset Evaluation Gate (Mock Provider)
+      run: |
+        python3 scripts/eval_asset.py --asset registry/skills/engineering/clean-code-auditor/SKILL.md --provider mock --strict
+        python3 scripts/eval_asset.py --asset registry/rules/global/security_shield.md --provider mock --strict
+        python3 scripts/eval_asset.py --asset registry/skills/web-and-geo/a11y-web-auditor/SKILL.md --provider mock --strict
+
     - name: Check for Uncommitted Registry Changes
       run: git diff --exit-code registry/registry.json llms.txt

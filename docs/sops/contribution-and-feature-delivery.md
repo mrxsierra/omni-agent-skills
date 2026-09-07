@@ -53,6 +53,7 @@ python3 scripts/eval_asset.py --asset <path> --provider mock --strict
 - Scope and non-goals are clear.
 - Generated registry files are current when registry assets changed.
 - Relevant docs and ADRs are updated and `manage_adr.py validate` passes.
-- Empirical evaluation passes with positive delta-utility for added/modified assets.
+- Empirical evaluation passes with positive delta-utility for added assets.
+- Existing asset updates prove zero regressions and update snapshots in `evals/baselines/`.
 - Verification results are recorded.
 - No secrets, credentials, or unrelated changes are included.

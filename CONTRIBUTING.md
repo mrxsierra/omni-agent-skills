@@ -188,6 +188,16 @@ When proposing a new skill or rule, include a matching task suite in [`evals/tas
 
 An asset is **accepted** when $\Delta \text{Utility} > 0$ and the context token tax is proportional to value added.
 
+### 4. Updating Existing Assets (A/B Regression Measurement)
+
+When modifying or refactoring an existing published asset ($A_{\text{old}} \to A_{\text{new}}$), contributors must demonstrate **positive revision delta or token efficiency gains** without regression:
+
+1. **Zero Regression Invariant:** $A_{\text{new}}$ must solve any new edge cases without breaking previously passing tasks ($\text{Regressions} = 0$).
+2. **Improvement Metrics:**
+   - **$\Delta\Delta$ Utility Gain:** $\Delta \text{Improvement} = \text{Score}(A_{\text{new}}) - \text{Score}(A_{\text{old}})$
+   - **Token Economy Gain:** If the pass rate is unchanged, did $A_{\text{new}}$ reduce prompt verbosity and context token tax?
+3. **Record Snapshot:** Update the baseline record in [`evals/baselines/<suite_id>.json`](evals/baselines/) with your latest benchmark numbers and paste the JSON summary into your PR description.
+
 ---
 
 ## Step-by-Step Asset Contribution Flow
