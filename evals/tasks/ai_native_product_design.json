@@ -1,0 +1,23 @@
+{
+  "suite_id": "ai_native_product_design",
+  "domain": "security-and-governance",
+  "phase": "phase-2-architecture",
+  "description": "Evaluates Model Context Protocol (MCP) tool exposure, discoverability layer setup, and least-privilege guardrails",
+  "target_asset": "registry/skills/security-and-governance/ai-native-product-design/SKILL.md",
+  "tasks": [
+    {
+      "id": "task-ainative-01",
+      "name": "Design Model Context Protocol (MCP) server interface and discoverability",
+      "user_prompt": "We are architecting our CLI tool to be directly callable by AI coding agents. How should we expose its core commands via Model Context Protocol (MCP) and structure root discoverability assets?",
+      "expected_keywords": ["mcp", "schema", "llms.txt", "tool contract", "stdio"],
+      "fail_keywords": ["undocumented arbitrary bash execution"]
+    },
+    {
+      "id": "task-ainative-02",
+      "name": "Enforce least-privilege guardrails and dry-run safety for agent actions",
+      "user_prompt": "An autonomous agent has access to tools that can delete files or drop database tables. How should the system architecture enforce guardrails and least privilege?",
+      "expected_keywords": ["least privilege", "guardrail", "dry-run", "safety flag", "boundary"],
+      "fail_keywords": ["give agent unrestricted root access"]
+    }
+  ]
+}

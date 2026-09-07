@@ -32,16 +32,18 @@ jobs:
     - name: Run project smoke tests
       run: python3 -m unittest discover -s tests -p 'test_*.py'
 
-    - name: Run Deterministic Asset Evaluation Gate (Mock Provider)
+    - name: Run Deterministic Asset Evaluation Gate (Mock Provider - 100% Catalog Coverage)
       run: |
-        python3 scripts/eval_asset.py --asset registry/skills/engineering/clean-code-auditor/SKILL.md --provider mock --strict
-        python3 scripts/eval_asset.py --asset registry/rules/global/security_shield.md --provider mock --strict
-        python3 scripts/eval_asset.py --asset registry/skills/web-and-geo/a11y-web-auditor/SKILL.md --provider mock --strict
-        python3 scripts/eval_asset.py --asset registry/skills/engineering/system-architecture-planner/SKILL.md --provider mock --strict
-        python3 scripts/eval_asset.py --asset registry/skills/engineering/atomic-feature-implementer/SKILL.md --provider mock --strict
-        python3 scripts/eval_asset.py --asset registry/skills/engineering/code-anti-overengineer/SKILL.md --provider mock --strict
-        python3 scripts/eval_asset.py --asset registry/skills/engineering/pytest-verification-runner/SKILL.md --provider mock --strict
-        python3 scripts/eval_asset.py --asset registry/skills/engineering/semver-release-manager/SKILL.md --provider mock --strict
+        python3 -c '
+        import glob, subprocess, sys
+        assets = sorted(glob.glob("registry/skills/**/SKILL.md", recursive=True)) + ["registry/rules/global/security_shield.md"]
+        print(f"Executing deterministic quality gate across {len(assets)} assets...")
+        for asset in assets:
+            res = subprocess.run(["python3", "scripts/eval_asset.py", "--asset", asset, "--provider", "mock", "--strict"])
+            if res.returncode != 0:
+                sys.exit(res.returncode)
+        print("All assets passed deterministic quality gate.")
+        '
 
     - name: Check for Uncommitted Registry Changes
       run: git diff --exit-code registry/registry.json llms.txt
