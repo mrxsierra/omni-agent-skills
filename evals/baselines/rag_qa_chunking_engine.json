@@ -1,0 +1,19 @@
+{
+  "suite_id": "rag_qa_chunking_engine",
+  "target_asset": "registry/skills/data-and-ai/rag-qa-chunking-engine/SKILL.md",
+  "domain": "data-and-ai",
+  "phase": "phase-2-architecture",
+  "last_updated": "2026-09-07",
+  "baselines": {
+    "mock": {
+      "provider": "mock",
+      "model": "mock-deterministic-v1",
+      "baseline_pass_rate": 0.0,
+      "augmented_pass_rate": 100.0,
+      "delta_utility": 100.0,
+      "token_tax_per_turn": 624,
+      "passed_gate": true,
+      "verdict": "ACCEPTED (Positive Delta Utility)"
+    }
+  }
+}

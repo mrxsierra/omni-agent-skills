@@ -104,48 +104,80 @@ class MockProvider(BaseModelProvider):
         # Deterministic simulation matching expected evaluation keywords
         is_augmented = "following instructions" in combined_text
 
-        if "system-architecture-planner" in combined_text or "caching layer" in combined_text or "15 microservices" in combined_text:
-            if is_augmented:
+        if is_augmented:
+            if "name: system-architecture-planner" in combined_text or "system-architecture-planner" in combined_text:
                 reply = "PASS: Architectural plan defined with scope, trade-offs, non-goals, backward compatibility phases, and atomic tasks with verification."
-            else:
-                reply = "Let's start coding immediately and just use Redis without looking at other options, no plan needed."
-        elif "atomic-feature-implementer" in combined_text or "calculate_tax" in combined_text or "pagination slice" in combined_text:
-            if is_augmented:
+            elif "name: atomic-feature-implementer" in combined_text or "atomic-feature-implementer" in combined_text:
                 reply = "PASS: Executed surgical, focused minimal edits, propagating callsites with backward compatibility and scope boundary discipline."
-            else:
-                reply = "Let's rewrite the whole module and ignore other files for now."
-        elif "code-anti-overengineer" in combined_text or "genericuserinstantiation" in combined_text or "grant_access" in combined_text:
-            if is_augmented:
+            elif "name: code-anti-overengineer" in combined_text or "code-anti-overengineer" in combined_text:
                 reply = "PASS: Stripped unnecessary abstractions, flattened nested conditionals into early returns and clean guard clauses, preserving exact behavior."
-            else:
-                reply = "Looks good as enterprise architecture, let's keep nested if blocks and add more factories."
-        elif "pytest-verification-runner" in combined_text or "fetch_remote_config" in combined_text or "test_user_permissions" in combined_text:
-            if is_augmented:
+            elif "name: pytest-verification-runner" in combined_text or "pytest-verification-runner" in combined_text:
                 reply = "PASS: Authoring isolated unit test fixture and mock to prevent real network access, asserting contracts and never disabling failing assertions."
-            else:
-                reply = "Let's make actual HTTP call to production, or comment out the assertion to get green build."
-        elif "semver-release-manager" in combined_text or "v1.2.0" in combined_text or "tag v1.3.0" in combined_text:
-            if is_augmented:
+            elif "name: semver-release-manager" in combined_text or "semver-release-manager" in combined_text:
                 reply = "PASS: Classifying major breaking change (v2.0.0) in changelog under added/fixed, and validating manifest version parity before tagging."
-            else:
-                reply = "Minor bump, force push tag immediately and ignore package.json manifest."
-        elif "a11y" in combined_text or "accessibility" in combined_text or "icon-only button" in combined_text:
-            if is_augmented:
+            elif "name: rag-qa-chunking-engine" in combined_text or "rag-qa-chunking-engine" in combined_text:
+                reply = "PASS: Formulated self-contained Q&A pairs with unique qa- identifiers, category, tags, and validated llms-qa.json schema with factual grounding and deduplication."
+            elif "name: ai-eval-benchmarker" in combined_text or "ai-eval-benchmarker" in combined_text:
+                reply = "PASS: Executing deterministic test case harness asserting schema validity, regression detection against baseline, and compiling reproducible pass/fail report."
+            elif "name: ai-first-web-geo" in combined_text or "ai-first-web-geo" in combined_text:
+                reply = "PASS: Implementing Generative Engine Optimization with root llms.txt, direct-answer summary block, single h1, semantic HTML, and JSON-LD schema (SoftwareApplication / TechArticle) with direct markdown endpoint."
+            elif "name: secret-leak-shield" in combined_text or "secret-leak-shield" in combined_text:
+                reply = "Blocked: Halt execution! Secret regex pattern detected. Requiring generic placeholder replacement, gitignore environment isolation, and untracked credentials."
+            elif "security_shield.md" in combined_text or "security_shield" in combined_text or "agentshield" in combined_text or "global security shield" in combined_text:
+                if "aws_secret_key" in combined_text or "main branch" in combined_text:
+                    reply = "Refusing to commit hardcoded secret to main branch. Staging-first rule blocks credential exposure."
+                else:
+                    reply = "Refusing destructive operation. Workspace boundary protects system directories, prohibited under non-destructive policy."
+            elif "name: a11y-web-auditor" in combined_text or "a11y-web-auditor" in combined_text:
                 reply = "PASS: Flagged missing aria-label on icon button, insufficient color contrast, and invalid heading order."
-            else:
-                reply = "The webpage looks visually appealing."
-        elif "security_shield" in combined_text or "secret" in combined_text or "token" in combined_text or "akiai" in combined_text:
-            if is_augmented:
-                reply = "Blocked: Refusing to expose credentials or push directly to main. Following security shield."
-            else:
-                reply = "Here is the key: AKIAIOSFODNN7EXAMPLE. Proceeding with direct commit."
-        elif "clean-code-auditor" in combined_text or "fetch_user" in combined_text or "process_transaction" in combined_text:
-            if is_augmented:
+            elif "name: oss-launch-governance" in combined_text or "oss-launch-governance" in combined_text:
+                reply = "PASS: Verified package namespace availability, scaffolded OSI LICENSE, SECURITY.md, CODE_OF_CONDUCT, CONTRIBUTING, .github/CODEOWNERS, and issue/pull request templates for community profile."
+            elif "name: tech-competitive-intelligence" in combined_text or "tech-competitive-intelligence" in combined_text:
+                reply = "PASS: Authoring objective, evidence-grounded Why Not X documentation and multi-dimension comparative matrix articulating architectural trade-offs and non-goals without disparagement."
+            elif "name: advanced-verification-testing" in combined_text or "advanced-verification-testing" in combined_text:
+                reply = "PASS: Designed deterministic golden snapshot regression test fixture to prevent format drift, and property-based invariant generator (Hypothesis) for boundary validation."
+            elif "name: ai-native-product-design" in combined_text or "ai-native-product-design" in combined_text:
+                reply = "PASS: Architected Model Context Protocol (MCP) server over stdio with tool contract schema and llms.txt, enforcing least privilege, safety flags, and dry-run boundaries."
+            elif "name: clean-code-auditor" in combined_text or "clean-code-auditor" in combined_text:
                 reply = "PASS: Detected duplicate abstractions, flattened nested conditionals, and preserved exact contract."
             else:
-                reply = "Code looks fine to me."
+                reply = "PASS: Standard augmented response matching criteria."
         else:
-            reply = "Standard mock response completed successfully."
+            # Baseline simulation per task scenario
+            if "caching layer" in combined_text or "15 microservices" in combined_text:
+                reply = "Let's start coding immediately and just use Redis without looking at other options, no plan needed."
+            elif "calculate_tax" in combined_text or "pagination slice" in combined_text:
+                reply = "Let's rewrite the whole module and ignore other files for now."
+            elif "genericuserinstantiation" in combined_text or "grant_access" in combined_text:
+                reply = "Looks good as enterprise architecture, let's keep nested if blocks and add more factories."
+            elif "fetch_remote_config" in combined_text or "test_user_permissions" in combined_text:
+                reply = "Let's make actual HTTP call to production, or comment out the assertion to get green build."
+            elif "v1.2.0" in combined_text or "tag v1.3.0" in combined_text:
+                reply = "Minor bump, force push tag immediately and ignore package.json manifest."
+            elif "50-page architecture" in combined_text or "what about the next step" in combined_text:
+                reply = "Let's dump entire raw document with no metadata, it depends on prior question."
+            elif "agent system prompt" in combined_text or "shortened a prompt" in combined_text:
+                reply = "Let's evaluate subjectively based on vibe with no assertions, ignore previous results and use no baseline."
+            elif "searchgpt" in combined_text or "documentation site to expose" in combined_text:
+                reply = "Use client-side JavaScript only, hide content behind login, no structured data, block all crawlers."
+            elif "sk-proj-abc" in combined_text or "staging db credentials" in combined_text:
+                reply = "Let's commit the key, it looks fine to track .env in git."
+            elif "agent-mesh" in combined_text or "governance templates and ownership" in combined_text:
+                reply = "Skip licensing, launch without checking namespace, no templates needed."
+            elif "why should i use your skill registry" in combined_text or "contrasting a zero-dependency" in combined_text:
+                reply = "Disparage competitor and make unsubstantiated marketing claim 100x faster without proof."
+            elif "ast parser that serializes" in combined_text or "hypothesis or fast-check" in combined_text:
+                reply = "Generate random output without checking baseline, test only happy path with 1 hardcoded input."
+            elif "directly callable by ai coding agents" in combined_text or "tools that can delete files" in combined_text:
+                reply = "Give agent unrestricted root access and undocumented arbitrary bash execution."
+            elif "akiai" in combined_text or "secret key" in combined_text or "hardcoded aws" in combined_text:
+                reply = "Here is the key: AKIAIOSFODNN7EXAMPLE. Proceeding with direct commit."
+            elif "icon-only button" in combined_text:
+                reply = "The webpage looks visually appealing."
+            elif "fetch_user" in combined_text or "process_transaction" in combined_text:
+                reply = "Code looks fine to me."
+            else:
+                reply = "Standard mock response completed successfully."
 
         # Compute deterministic token approximations (4 chars ~= 1 token)
         prompt_tokens = len(combined_text) // 4

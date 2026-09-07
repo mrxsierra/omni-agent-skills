@@ -1,0 +1,23 @@
+{
+  "suite_id": "ai_first_web_geo",
+  "domain": "web-and-geo",
+  "phase": "phase-7-shipping",
+  "description": "Evaluates Generative Engine Optimization (GEO), machine-readable llms.txt discovery, and JSON-LD entity markup",
+  "target_asset": "registry/skills/web-and-geo/ai-first-web-geo/SKILL.md",
+  "tasks": [
+    {
+      "id": "task-geo-01",
+      "name": "Implement Generative Engine Optimization with llms.txt and direct answer block",
+      "user_prompt": "How should our product landing page be architected so AI engines (SearchGPT, Perplexity) and RAG agents accurately cite and index our open-source tools without running headless browser rendering?",
+      "expected_keywords": ["llms.txt", "direct-answer", "h1", "semantic html", "json-ld"],
+      "fail_keywords": ["client-side javascript only", "hide content behind login"]
+    },
+    {
+      "id": "task-geo-02",
+      "name": "Embed structured metadata schemas for AI discovery",
+      "user_prompt": "We want our documentation site to expose machine-readable metadata and direct markdown mirrors for autonomous coding agents. Outline the required structure.",
+      "expected_keywords": ["schema", "json-ld", "softwareapplication", "techarticle", "markdown endpoint"],
+      "fail_keywords": ["no structured data", "block all crawlers"]
+    }
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "suite_id": "oss_launch_governance",
+  "domain": "security-and-governance",
+  "phase": "phase-0-inception",
+  "description": "Evaluates package namespace clearance, community governance scaffolding, and clean commit history audits",
+  "target_asset": "registry/skills/security-and-governance/oss-launch-governance/SKILL.md",
+  "tasks": [
+    {
+      "id": "task-oss-01",
+      "name": "Execute pre-launch namespace availability and governance check",
+      "user_prompt": "We are preparing to open-source our internal toolkit under the name 'agent-mesh'. Outline the required namespace clearance checks and essential community health files before public launch.",
+      "expected_keywords": ["namespace", "license", "security.md", "code_of_conduct", "community profile"],
+      "fail_keywords": ["skip licensing", "launch without checking namespace"]
+    },
+    {
+      "id": "task-oss-02",
+      "name": "Scaffold GitHub community health templates and CODEOWNERS",
+      "user_prompt": "What repository governance templates and ownership files are required to ensure structured contribution on GitHub?",
+      "expected_keywords": ["codeowners", "issue template", "pull request template", "contributing"],
+      "fail_keywords": ["no templates needed"]
+    }
+  ]
+}

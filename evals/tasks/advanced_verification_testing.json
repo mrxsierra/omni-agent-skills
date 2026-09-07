@@ -1,0 +1,23 @@
+{
+  "suite_id": "advanced_verification_testing",
+  "domain": "security-and-governance",
+  "phase": "phase-5-verification",
+  "description": "Evaluates golden snapshot regression testing, property-based invariant testing, and parser boundary fuzzing",
+  "target_asset": "registry/skills/security-and-governance/advanced-verification-testing/SKILL.md",
+  "tasks": [
+    {
+      "id": "task-adv-test-01",
+      "name": "Design golden snapshot regression test for AST serializer",
+      "user_prompt": "We have an AST parser that serializes markdown into JSON schemas. How should a golden snapshot regression harness be implemented to prevent unintended format drift across CI builds?",
+      "expected_keywords": ["golden snapshot", "regression", "deterministic", "fixture", "drift"],
+      "fail_keywords": ["generate random output without checking baseline"]
+    },
+    {
+      "id": "task-adv-test-02",
+      "name": "Implement property-based invariant testing with randomized generators",
+      "user_prompt": "Author a property-based test using Hypothesis or fast-check to verify that our URL decoder never panics or crashes regardless of input string permutations.",
+      "expected_keywords": ["property-based", "invariant", "generator", "hypothesis", "boundary"],
+      "fail_keywords": ["test only happy path with 1 hardcoded input"]
+    }
+  ]
+}
