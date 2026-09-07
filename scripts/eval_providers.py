@@ -102,23 +102,48 @@ class MockProvider(BaseModelProvider):
         combined_text = (system_prompt + " " + " ".join(m.get("content", "") for m in messages)).lower()
 
         # Deterministic simulation matching expected evaluation keywords
-        if "security_shield" in combined_text or "secret" in combined_text or "token" in combined_text:
-            if "registry/rules/global/security_shield.md" in combined_text or "staging-first" in combined_text:
-                # With rule: refuses leak and redirects safely
-                reply = "Blocked: Refusing to expose credentials or push directly to main. Following security shield."
+        is_augmented = "following instructions" in combined_text
+
+        if "system-architecture-planner" in combined_text or "caching layer" in combined_text or "15 microservices" in combined_text:
+            if is_augmented:
+                reply = "PASS: Architectural plan defined with scope, trade-offs, non-goals, backward compatibility phases, and atomic tasks with verification."
             else:
-                # Baseline: simulates unsafe or naive response
-                reply = "Here is the key: AKIAIOSFODNN7EXAMPLE. Proceeding with direct commit."
-        elif "clean-code-auditor" in combined_text or "refactor" in combined_text:
-            if "dry violation" in combined_text or "clean-code-auditor" in combined_text:
-                reply = "PASS: Detected duplicate abstractions, flattened nested conditionals, and preserved exact contract."
+                reply = "Let's start coding immediately and just use Redis without looking at other options, no plan needed."
+        elif "atomic-feature-implementer" in combined_text or "calculate_tax" in combined_text or "pagination slice" in combined_text:
+            if is_augmented:
+                reply = "PASS: Executed surgical, focused minimal edits, propagating callsites with backward compatibility and scope boundary discipline."
             else:
-                reply = "Code looks fine to me."
-        elif "a11y" in combined_text or "accessibility" in combined_text:
-            if "a11y-web-auditor" in combined_text or "aria" in combined_text:
+                reply = "Let's rewrite the whole module and ignore other files for now."
+        elif "code-anti-overengineer" in combined_text or "genericuserinstantiation" in combined_text or "grant_access" in combined_text:
+            if is_augmented:
+                reply = "PASS: Stripped unnecessary abstractions, flattened nested conditionals into early returns and clean guard clauses, preserving exact behavior."
+            else:
+                reply = "Looks good as enterprise architecture, let's keep nested if blocks and add more factories."
+        elif "pytest-verification-runner" in combined_text or "fetch_remote_config" in combined_text or "test_user_permissions" in combined_text:
+            if is_augmented:
+                reply = "PASS: Authoring isolated unit test fixture and mock to prevent real network access, asserting contracts and never disabling failing assertions."
+            else:
+                reply = "Let's make actual HTTP call to production, or comment out the assertion to get green build."
+        elif "semver-release-manager" in combined_text or "v1.2.0" in combined_text or "tag v1.3.0" in combined_text:
+            if is_augmented:
+                reply = "PASS: Classifying major breaking change (v2.0.0) in changelog under added/fixed, and validating manifest version parity before tagging."
+            else:
+                reply = "Minor bump, force push tag immediately and ignore package.json manifest."
+        elif "a11y" in combined_text or "accessibility" in combined_text or "icon-only button" in combined_text:
+            if is_augmented:
                 reply = "PASS: Flagged missing aria-label on icon button, insufficient color contrast, and invalid heading order."
             else:
                 reply = "The webpage looks visually appealing."
+        elif "security_shield" in combined_text or "secret" in combined_text or "token" in combined_text or "akiai" in combined_text:
+            if is_augmented:
+                reply = "Blocked: Refusing to expose credentials or push directly to main. Following security shield."
+            else:
+                reply = "Here is the key: AKIAIOSFODNN7EXAMPLE. Proceeding with direct commit."
+        elif "clean-code-auditor" in combined_text or "fetch_user" in combined_text or "process_transaction" in combined_text:
+            if is_augmented:
+                reply = "PASS: Detected duplicate abstractions, flattened nested conditionals, and preserved exact contract."
+            else:
+                reply = "Code looks fine to me."
         else:
             reply = "Standard mock response completed successfully."
 

@@ -45,11 +45,11 @@ Establish an empirical evaluation framework to measure asset value ($\Delta$-uti
 - **Curated Task Suites (`evals/tasks/`):** Maintain reproducible test scenarios for code refactoring, accessibility auditing, and security guardrail enforcement.
 - **Baseline Snapshot Ledger (`evals/baselines/`):** Maintain empirical score records, token taxes, and model snapshots per suite to measure A/B improvements ($A_{\text{new}}$ vs. $A_{\text{old}}$) without cluttering runtime `registry.json`.
 - **Deterministic CI Verification:** Enforce offline mock evaluations (`--provider mock --strict`) on every pull request in `.github/workflows/ci.yml` with zero external network or API key dependencies.
-- **Free Open-Weights CI Workflow (In Progress):** Add automated GitHub Actions job running Ollama on CPU runner (`qwen2.5-coder:1.5b`) for PRs modifying assets, enabling 100% free neural model validation.
-- **Catalog $\Delta$-Utility Audit (Upcoming Goal):** Curate dedicated evaluation task suites in `evals/tasks/` for the remaining 12 skills in three logical batches:
-  - *Batch 1 (Core Engineering):* `system-architecture-planner`, `atomic-feature-implementer`, `code-anti-overengineer`, `pytest-verification-runner`, `semver-release-manager`.
-  - *Batch 2 (Data & AI / Web):* `rag-qa-chunking-engine`, `ai-eval-benchmarker`, `ai-first-web-geo`.
-  - *Batch 3 (Security & Governance):* `oss-launch-governance`, `tech-competitive-intelligence`, `advanced-verification-testing`, `ai-native-product-design`.
+- **Free Open-Weights CI Workflow (`.github/workflows/eval-open-weights.yml`):** Automated GitHub Actions workflow running Ollama on CPU runner (`qwen2.5-coder:1.5b`) at $0.00 cost with zero API keys.
+- **Catalog $\Delta$-Utility Audit (In Progress — 8 of 15 assets complete):** Curate dedicated evaluation task suites in `evals/tasks/` across three logical batches:
+  - *Batch 1 (Core Engineering — Completed):* `clean-code-auditor`, `system-architecture-planner`, `atomic-feature-implementer`, `code-anti-overengineer`, `pytest-verification-runner`, `semver-release-manager`.
+  - *Batch 2 (Data & AI / Web — Upcoming):* `rag-qa-chunking-engine`, `ai-eval-benchmarker`, `ai-first-web-geo`.
+  - *Batch 3 (Security & Governance — Upcoming):* `oss-launch-governance`, `tech-competitive-intelligence`, `advanced-verification-testing`, `ai-native-product-design`.
 
 ### Milestone 6: Shipped Workflows & Lifecycle Orchestration
 Promote multi-step workflows from internal dogfooding to first-class published registry assets:

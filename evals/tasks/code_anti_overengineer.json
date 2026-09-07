@@ -1,0 +1,23 @@
+{
+  "suite_id": "code_anti_overengineer",
+  "domain": "engineering",
+  "phase": "phase-4-implementation",
+  "description": "Evaluates stripping speculative abstractions and flattening nested conditionals into guard clauses",
+  "target_asset": "registry/skills/engineering/code-anti-overengineer/SKILL.md",
+  "tasks": [
+    {
+      "id": "task-anti-01",
+      "name": "Simplify premature generic factory pattern",
+      "user_prompt": "A junior developer created IAbstractUserFactory and GenericUserInstantiationService for a script that just creates one User object from a dictionary. How should this be refactored?",
+      "expected_keywords": ["strip", "unnecessary abstraction", "preserve exact behavior"],
+      "fail_keywords": ["add more factories"]
+    },
+    {
+      "id": "task-anti-02",
+      "name": "Flatten nested conditionals into guard clauses",
+      "user_prompt": "Refactor this deeply nested block into clean guard clauses with early returns while keeping exact behavior: check if user, grant_access, or deny.",
+      "expected_keywords": ["guard clause", "early return", "flatten", "exact behavior"],
+      "fail_keywords": ["keep nested if", "leave as is"]
+    }
+  ]
+}
