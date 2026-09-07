@@ -139,7 +139,8 @@ omni-agent-skills/
 │   └── workflows/                   # Reference task workflow definitions
 │
 ├── evals/                           # Empirical evaluation task suites and benchmarks
-│   └── tasks/                       # Standardized tasks for code audit, security, and a11y
+│   ├── tasks/                       # Standardized tasks for code audit, security, and a11y
+│   └── baselines/                   # Empirical score ledgers and model baseline snapshots
 │
 ├── registry/                        # Published skill registry and asset catalog
 │   ├── registry.json                # Generated machine index of published skills
@@ -158,7 +159,7 @@ omni-agent-skills/
 │   ├── validate_registry.py         # Validates registry.json against schema and skills
 │   ├── manage_adr.py                # ADR and RFC lifecycle tooling
 │   ├── eval_asset.py                # Asset delta-utility and anti-junk CLI benchmark runner
-│   ├── eval_providers.py            # Pluggable model providers (Antigravity, Ollama, OpenAI, Mock)
+│   ├── eval_providers.py            # Pluggable model providers (Antigravity, Ollama, OpenAI, Anthropic, Mock)
 │   ├── bump.py                      # Multi-file version synchronizer
 │   ├── sanitize.py                  # Local regex-based secret/PII scanner
 │   └── run_workflow.py              # Safe simulation-first reference workflow runner
@@ -167,21 +168,41 @@ omni-agent-skills/
     ├── test_repo_integrity.py       # Validates file presence, registry parity, and claims
     ├── test_registry_validation.py  # Tests schema validation script behaviors
     ├── test_eval_providers.py       # Tests pluggable model providers and evaluation bench
+    ├── test_hooks_and_snippets.py   # Tests shell guard hooks and language snippet AST/syntax
     └── test_workflow_runner.py      # Tests reference workflow runner execution
 ```
 
 ---
 
-## 5. Verification Pipeline
+## 5. Multi-Tier Verification Pipeline
 
-The repository enforces hygiene and integrity via reproducible local commands:
+The repository enforces hygiene, integrity, and empirical capability via a 3-tier quality gate per [ADR 0004](docs/adr/0004-multi-provider-asset-evaluation-and-delta-utility-bench.md):
 
+### Tier 0: Static & Contract Hygiene
+Runs in milliseconds; blocks syntax errors, hardcoded credentials, and schema regressions:
 ```bash
 python3 scripts/sanitize.py
 python3 scripts/build_registry.py
 python3 scripts/validate_registry.py
 python3 scripts/manage_adr.py validate
+git diff --check
+```
+
+### Tier 1: Deterministic Test Bench
+Validates executable code, shell hooks, snippet compilation, and provider serialization:
+```bash
 python3 -m unittest discover -s tests -p 'test_*.py'
+```
+
+### Tier 2: Empirical $\Delta$-Utility Evaluation Bench
+Evaluates whether a skill or rule genuinely improves performance over baseline models without imposing an excessive token tax:
+```bash
+# Offline deterministic gate (enforced in CI)
+python3 scripts/eval_asset.py --asset registry/skills/engineering/clean-code-auditor/SKILL.md --provider mock --strict
+
+# Live empirical benchmarks across Standard Reference Tiers:
+# - Tier A (Local Open Weights): python3 scripts/eval_asset.py --asset <path> --provider ollama --model qwen2.5-coder:7b
+# - Tier B (Frontier Cloud):     python3 scripts/eval_asset.py --asset <path> --provider antigravity --model gemini-2.5-pro
 ```
 
 ---
@@ -193,7 +214,8 @@ Active and upcoming milestones are maintained in [`docs/roadmap/roadmap.md`](doc
 - **Milestone 2:** Registry contract, three-tier discovery usability, and documentation alignment.
 - **Milestone 3:** Reliable tooling, community health, and release automation.
 - **Milestone 4:** Curated catalog quality and schema enforcement.
-- **Milestone 5:** Shipped workflows & lifecycle orchestration.
-- **Milestone 6:** Greenfield scaffolding & deployment skills.
-- **Milestone 7:** Distribution, installation UX & consumer verification.
-- **Milestone 8:** Production release v0.1.0.
+- **Milestone 5:** Multi-provider asset evaluation bench & quality gates (`scripts/eval_providers.py`, `evals/`).
+- **Milestone 6:** Shipped workflows & lifecycle orchestration.
+- **Milestone 7:** Greenfield scaffolding & deployment skills.
+- **Milestone 8:** Distribution, installation UX & consumer verification.
+- **Milestone 9:** Production release v0.1.0.
