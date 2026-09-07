@@ -56,6 +56,8 @@ When an AI agent is tasked with implementing a feature, fix, documentation updat
      python3 scripts/validate_registry.py
      python3 scripts/manage_adr.py validate
      python3 -m unittest discover -s tests -p 'test_*.py'
+     # When adding or modifying registry assets with evaluation tasks:
+     python3 scripts/eval_asset.py --asset <asset_path> --provider mock --strict
      git diff --check
      ```
 5. **Stage & Commit:**

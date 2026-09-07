@@ -73,7 +73,32 @@ Before committing or submitting pull requests, run the repository hygiene checks
 python3 scripts/sanitize.py
 python3 scripts/build_registry.py
 python3 scripts/validate_registry.py
+python3 scripts/manage_adr.py validate
 python3 -m unittest discover -s tests -p 'test_*.py'
+git diff --check
+```
+
+---
+
+## Asset Evaluation & Benchmarking
+
+Every skill or prompt asset can be evaluated empirically using `scripts/eval_asset.py` to measure baseline vs. augmented $\Delta$-utility across pluggable providers:
+
+```bash
+# Offline / Deterministic test (used in CI)
+python3 scripts/eval_asset.py --asset registry/skills/engineering/clean-code-auditor/SKILL.md --provider mock --strict
+
+# Local open weights with Ollama (free, zero-token cost)
+python3 scripts/eval_asset.py --asset registry/skills/engineering/clean-code-auditor/SKILL.md --provider ollama --model qwen2.5-coder:7b
+
+# Google Antigravity / Gemini
+GEMINI_API_KEY="..." python3 scripts/eval_asset.py --asset registry/skills/engineering/clean-code-auditor/SKILL.md --provider antigravity --model gemini-2.5-pro
+
+# OpenAI / ChatGPT
+OPENAI_API_KEY="..." python3 scripts/eval_asset.py --asset registry/skills/engineering/clean-code-auditor/SKILL.md --provider openai --model gpt-4o
+
+# Anthropic / Claude
+ANTHROPIC_API_KEY="..." python3 scripts/eval_asset.py --asset registry/skills/engineering/clean-code-auditor/SKILL.md --provider anthropic --model claude-3-5-sonnet-20241022
 ```
 
 ---
