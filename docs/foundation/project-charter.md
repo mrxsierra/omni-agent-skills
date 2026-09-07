@@ -27,6 +27,15 @@ useful outside this repository.
 - Agent platforms that can discover and selectively load registry assets.
 - Open-source projects that want reusable engineering and governance patterns.
 
+## Empirical quality and anti-junk policy
+
+The registry does not admit assets based on subjective prompts or unverified claims.
+Every published asset must demonstrate measurable delta-utility ($\Delta$-utility) over
+baseline foundation models using our pluggable evaluation harness (supporting
+Google Antigravity, local Ollama, OpenAI/ChatGPT, Anthropic/Claude, and OpenRouter).
+Assets that add excessive prompt tokens without measurable performance improvements
+are treated as context bloat and rejected.
+
 ## Relationship to the future engineering control plane
 
 This project is a portable knowledge and capability library. A future,

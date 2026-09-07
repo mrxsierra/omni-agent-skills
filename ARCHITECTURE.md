@@ -127,7 +127,7 @@ omni-agent-skills/
 │
 ├── docs/                            # Human-readable architectural and governance docs
 │   ├── README.md                    # Documentation index and lifecycle guide
-│   ├── adr/                         # Architecture Decision Records (ADRs 0001-0003)
+│   ├── adr/                         # Architecture Decision Records (ADRs 0001-0004)
 │   ├── foundation/                  # Charter, scope, non-goals, and principles
 │   ├── governance/                  # Maintainer responsibility and review rules
 │   ├── roadmap/                     # Active milestones and long-term direction
@@ -137,6 +137,9 @@ omni-agent-skills/
 ├── .agents/                         # Contributor instructions and reference workflows
 │   ├── AGENTS.md                    # Operating guidelines for AI agents working on this repo
 │   └── workflows/                   # Reference task workflow definitions
+│
+├── evals/                           # Empirical evaluation task suites and benchmarks
+│   └── tasks/                       # Standardized tasks for code audit, security, and a11y
 │
 ├── registry/                        # Published skill registry and asset catalog
 │   ├── registry.json                # Generated machine index of published skills
@@ -154,6 +157,8 @@ omni-agent-skills/
 │   ├── build_registry.py            # Generates registry.json and llms.txt
 │   ├── validate_registry.py         # Validates registry.json against schema and skills
 │   ├── manage_adr.py                # ADR and RFC lifecycle tooling
+│   ├── eval_asset.py                # Asset delta-utility and anti-junk CLI benchmark runner
+│   ├── eval_providers.py            # Pluggable model providers (Antigravity, Ollama, OpenAI, Mock)
 │   ├── bump.py                      # Multi-file version synchronizer
 │   ├── sanitize.py                  # Local regex-based secret/PII scanner
 │   └── run_workflow.py              # Safe simulation-first reference workflow runner
@@ -161,6 +166,7 @@ omni-agent-skills/
 └── tests/                           # Repository integrity and validation test suite
     ├── test_repo_integrity.py       # Validates file presence, registry parity, and claims
     ├── test_registry_validation.py  # Tests schema validation script behaviors
+    ├── test_eval_providers.py       # Tests pluggable model providers and evaluation bench
     └── test_workflow_runner.py      # Tests reference workflow runner execution
 ```
 

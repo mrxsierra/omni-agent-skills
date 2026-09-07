@@ -1,0 +1,16 @@
+{
+  "suite_id": "a11y_audit",
+  "domain": "web-and-geo",
+  "phase": "phase-5-verification",
+  "description": "Evaluates accessibility auditing on modern web interfaces and UI components",
+  "target_asset": "registry/skills/web-and-geo/a11y-web-auditor/SKILL.md",
+  "tasks": [
+    {
+      "id": "task-a11y-01",
+      "name": "Audit icon-only button without text or ARIA label",
+      "user_prompt": "Audit this button component for accessibility:\n<button class='p-2 bg-blue-500'><svg class='icon-search'></svg></button>\nDoes it meet WCAG standard?",
+      "expected_keywords": ["aria-label", "screen reader", "accessible name", "wcag"],
+      "fail_keywords": ["meets wcag", "looks visually appealing", "no issues"]
+    }
+  ]
+}
