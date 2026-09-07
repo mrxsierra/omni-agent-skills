@@ -1,0 +1,68 @@
+name: Open-Weights Model Evaluation
+
+on:
+  pull_request:
+    paths:
+      - 'registry/**'
+      - 'evals/**'
+      - 'scripts/eval_*.py'
+      - '.github/workflows/eval-open-weights.yml'
+  workflow_dispatch:
+    inputs:
+      asset:
+        description: 'Asset path to evaluate'
+        required: false
+        default: 'registry/skills/engineering/clean-code-auditor/SKILL.md'
+      model:
+        description: 'Ollama model tag to pull'
+        required: false
+        default: 'qwen2.5-coder:1.5b'
+
+jobs:
+  eval-ollama:
+    name: Ollama Neural Benchmark (${{ inputs.model || 'qwen2.5-coder:1.5b' }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install and Start Ollama
+        run: |
+          curl -fsSL https://ollama.com/install.sh | sh
+          ollama serve &
+          echo "Waiting for Ollama daemon to initialize..."
+          for i in {1..30}; do
+            if curl -s http://localhost:11434/api/tags > /dev/null; then
+              echo "Ollama is ready!"
+              break
+            fi
+            sleep 1
+          done
+
+      - name: Pull Open-Weights Model
+        run: |
+          MODEL="${{ inputs.model || 'qwen2.5-coder:1.5b' }}"
+          echo "Pulling $MODEL..."
+          ollama pull "$MODEL"
+
+      - name: Run Delta-Utility Evaluation
+        run: |
+          ASSET="${{ inputs.asset || 'registry/skills/engineering/clean-code-auditor/SKILL.md' }}"
+          MODEL="${{ inputs.model || 'qwen2.5-coder:1.5b' }}"
+          echo "Running empirical evaluation on $ASSET with $MODEL..."
+          python3 scripts/eval_asset.py --asset "$ASSET" --provider ollama --model "$MODEL" --json > eval_results.json
+          cat eval_results.json
+
+      - name: Upload Evaluation Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ollama-eval-results
+          path: eval_results.json
+          retention-days: 7

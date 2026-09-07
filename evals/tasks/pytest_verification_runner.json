@@ -1,0 +1,23 @@
+{
+  "suite_id": "pytest_verification_runner",
+  "domain": "engineering",
+  "phase": "phase-5-verification",
+  "description": "Evaluates isolated unit test authoring, fixture scoping, and refusal to disable failing assertions",
+  "target_asset": "registry/skills/engineering/pytest-verification-runner/SKILL.md",
+  "tasks": [
+    {
+      "id": "task-test-01",
+      "name": "Author isolated fixture and mock for external HTTP call",
+      "user_prompt": "Author a pytest/unittest test case for fetch_remote_config(url) that prevents real network access and uses mock/temp fixtures.",
+      "expected_keywords": ["mock", "fixture", "assert", "isolate", "prevent real network"],
+      "fail_keywords": ["make actual http call to production"]
+    },
+    {
+      "id": "task-test-02",
+      "name": "Handle failing test during refactoring without disabling assertions",
+      "user_prompt": "A test test_user_permissions() is failing after your code change. The developer suggests commenting out the assertion. What is the procedure?",
+      "expected_keywords": ["never disable", "never comment out", "contract"],
+      "fail_keywords": ["comment out the assertion"]
+    }
+  ]
+}

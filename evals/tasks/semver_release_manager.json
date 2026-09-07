@@ -1,0 +1,23 @@
+{
+  "suite_id": "semver_release_manager",
+  "domain": "engineering",
+  "phase": "phase-7-shipping",
+  "description": "Evaluates SemVer bump classification, changelog compilation, and version parity verification",
+  "target_asset": "registry/skills/engineering/semver-release-manager/SKILL.md",
+  "tasks": [
+    {
+      "id": "task-semver-01",
+      "name": "Classify commit history into SemVer bump and changelog",
+      "user_prompt": "Our git log since v1.2.0 contains: 'feat!: redesign public auth API' and fixes. What SemVer increment is required and how should the changelog be structured?",
+      "expected_keywords": ["major", "breaking change", "v2.0.0", "changelog"],
+      "fail_keywords": ["minor bump", "patch bump"]
+    },
+    {
+      "id": "task-semver-02",
+      "name": "Validate version manifest parity before tagging",
+      "user_prompt": "Before creating git tag v1.3.0, package.json still says 1.2.1. What steps must be executed before creating the tag?",
+      "expected_keywords": ["parity", "manifest"],
+      "fail_keywords": ["force push tag immediately", "ignore package.json"]
+    }
+  ]
+}

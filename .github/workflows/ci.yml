@@ -37,6 +37,11 @@ jobs:
         python3 scripts/eval_asset.py --asset registry/skills/engineering/clean-code-auditor/SKILL.md --provider mock --strict
         python3 scripts/eval_asset.py --asset registry/rules/global/security_shield.md --provider mock --strict
         python3 scripts/eval_asset.py --asset registry/skills/web-and-geo/a11y-web-auditor/SKILL.md --provider mock --strict
+        python3 scripts/eval_asset.py --asset registry/skills/engineering/system-architecture-planner/SKILL.md --provider mock --strict
+        python3 scripts/eval_asset.py --asset registry/skills/engineering/atomic-feature-implementer/SKILL.md --provider mock --strict
+        python3 scripts/eval_asset.py --asset registry/skills/engineering/code-anti-overengineer/SKILL.md --provider mock --strict
+        python3 scripts/eval_asset.py --asset registry/skills/engineering/pytest-verification-runner/SKILL.md --provider mock --strict
+        python3 scripts/eval_asset.py --asset registry/skills/engineering/semver-release-manager/SKILL.md --provider mock --strict
 
     - name: Check for Uncommitted Registry Changes
       run: git diff --exit-code registry/registry.json llms.txt
