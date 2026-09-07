@@ -2,7 +2,8 @@
 
 1. **Process earns trust.** Agent claims are not proof; important work should
    be supported by independently reproducible evidence.
-2. **Focused assets over prompt bloat.** A registry item has one clear purpose
+2. **Focused assets over prompt bloat.** A registry item has one clear purpose,
+   must demonstrate positive empirical utility over baseline models before admission,
    and is loaded only when relevant.
 3. **Tool neutrality.** Prefer portable concepts and state platform-specific
    assumptions explicitly.

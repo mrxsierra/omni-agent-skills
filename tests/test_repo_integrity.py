@@ -59,6 +59,8 @@ class TestRepoIntegrity(unittest.TestCase):
             "llms.txt",
             "scripts/build_registry.py",
             "scripts/manage_adr.py",
+            "scripts/eval_asset.py",
+            "scripts/eval_providers.py",
             "docs/adr/template.md",
             "registry/registry.schema.json",
             "scripts/sanitize.py",

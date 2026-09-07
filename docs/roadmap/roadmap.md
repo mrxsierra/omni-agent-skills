@@ -38,7 +38,14 @@ Standardize all 15 skills in `registry/skills/` into the canonical 4-section run
 
 ## Upcoming Milestones
 
-### Milestone 5: Shipped Workflows & Lifecycle Orchestration
+### Milestone 5: Multi-Provider Asset Evaluation Bench & Quality Gates (v0.0.3)
+Establish an empirical evaluation framework to measure asset value ($\Delta$-utility) and eliminate prompt bloat/junk before inclusion:
+- **Pluggable Model Provider Engine (`scripts/eval_providers.py`):** Support Google Antigravity, local Ollama (open weights), OpenAI/ChatGPT, Anthropic/Claude, OpenRouter, and offline mock runners with zero mandatory external pip dependencies.
+- **$\Delta$-Utility CLI Runner (`scripts/eval_asset.py`):** Measure baseline vs. augmented task pass rates, context token taxes, and procedural precision against standardized task suites.
+- **Curated Task Suites (`evals/tasks/`):** Maintain reproducible test scenarios for code refactoring, accessibility auditing, and security guardrail enforcement.
+- **Deterministic CI Verification:** Replay checked-in mock responses in GitHub Actions so evaluation harness integrity is enforced continuously without network or API key dependencies.
+
+### Milestone 6: Shipped Workflows & Lifecycle Orchestration
 Promote multi-step workflows from internal dogfooding to first-class published registry assets:
 - **`registry/workflows/` Directory:** Formalize workflow definitions alongside skills.
 - **Registry Schema & Compiler Update:** Update `registry.schema.json` and `scripts/build_registry.py` to index workflows in `registry.json` and `llms.txt`.
@@ -48,18 +55,18 @@ Promote multi-step workflows from internal dogfooding to first-class published r
   - `workflow-feature-delivery`: Enforces branch isolation, atomic code changes, verification suites, and PR submission.
   - `workflow-container-deploy`: Orchestrates Docker containerization, CI pipelines, and healthcheck verification.
 
-### Milestone 6: Greenfield Scaffolding & Deployment Skills
+### Milestone 7: Greenfield Scaffolding & Deployment Skills
 Close the functional gaps in the catalog to support full idea-to-deployment lifecycles:
 - **Greenfield Scaffolding:** Add `project-scaffold-architect` to bootstrap project layouts, build manifests, and dev environments.
 - **Packaging & Deployment:** Add `docker-container-builder` (minimal, multi-stage, rootless containers) and `cicd-pipeline-generator` (GitHub Actions CI/CD templates).
 - **Executable Helper Scripts:** Bundle deterministic Python and shell verification utilities inside top skills to eliminate agent speculation.
 
-### Milestone 7: Distribution, Installation UX & Consumer Verification
+### Milestone 8: Distribution, Installation UX & Consumer Verification
 - **Enhanced Installation Experience:** Expand `install.sh` and `install.ps1` with selective asset installation (`--skill <name>`, `--workflow <name>`).
 - **Consumer Dogfood Verification:** Validate that an agent can consume the released registry to build, test, and containerize a new standalone application from scratch.
 
-### Milestone 8: Production Release v0.1.0
-- Execute complete regression and integrity verification across all published skills, workflows, and rules.
+### Milestone 9: Production Release v0.1.0
+- Execute complete regression and integrity verification across all published skills, workflows, rules, and evaluation benches.
 - Publish official `v0.1.0` release tag and distribution archives.
 
 ---
