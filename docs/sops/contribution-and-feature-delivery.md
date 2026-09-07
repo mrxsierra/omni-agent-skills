@@ -22,7 +22,9 @@ for the underlying documentation layering and autonomous delivery architecture.
 5. **Implement the smallest coherent change.** Keep unrelated cleanup out of
    the branch.
 6. **Regenerate and verify.** Run the sanitizer, registry build, ADR checks, test
-   suite, and any change-specific checks. Review the final diff.
+   suite, and any change-specific checks. If modifying or adding registry assets, run
+   `python3 scripts/eval_asset.py --asset <path> --provider mock --strict` to verify
+   positive delta-utility. Review the final diff.
 7. **Document the result.** Update public documentation, an ADR (via
    `python3 scripts/manage_adr.py build-index`), or a roadmap item when the change
    alters behavior, direction, or process.
@@ -41,10 +43,16 @@ python3 -m unittest discover -s tests -p 'test_*.py'
 git diff --check
 ```
 
+*For new or modified registry assets, also verify positive delta-utility:*
+```bash
+python3 scripts/eval_asset.py --asset <path> --provider mock --strict
+```
+
 ## Pull-request checklist
 
 - Scope and non-goals are clear.
 - Generated registry files are current when registry assets changed.
 - Relevant docs and ADRs are updated and `manage_adr.py validate` passes.
+- Empirical evaluation passes with positive delta-utility for added/modified assets.
 - Verification results are recorded.
 - No secrets, credentials, or unrelated changes are included.

@@ -44,6 +44,7 @@ Establish an empirical evaluation framework to measure asset value ($\Delta$-uti
 - **$\Delta$-Utility CLI Runner (`scripts/eval_asset.py`):** Measure baseline vs. augmented task pass rates, context token taxes, and procedural precision against standardized task suites.
 - **Curated Task Suites (`evals/tasks/`):** Maintain reproducible test scenarios for code refactoring, accessibility auditing, and security guardrail enforcement.
 - **Deterministic CI Verification:** Replay checked-in mock responses in GitHub Actions so evaluation harness integrity is enforced continuously without network or API key dependencies.
+- **Catalog $\Delta$-Utility Audit (Upcoming Goal):** Curate dedicated evaluation task suites in `evals/tasks/` for the remaining 12 skills (`plan-architect`, `tdd-atomic-implementation`, `anti-overengineering`, `pytest-testing-suite`, `semver-release-automation`, `rag-qa-chunking-engine`, `evaluation-benchmarking`, `oss-launch-governance`, `tech-competitive-intelligence`, `advanced-verification-testing`, `ai-native-product-design`, and `geo-optimizer`) to empirically quantify their instruction compliance, token efficiency, and error reduction across local (Ollama) and cloud (Antigravity/Gemini, Claude, GPT) engines.
 
 ### Milestone 6: Shipped Workflows & Lifecycle Orchestration
 Promote multi-step workflows from internal dogfooding to first-class published registry assets:
