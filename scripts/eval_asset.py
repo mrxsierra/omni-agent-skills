@@ -190,6 +190,7 @@ def evaluate_asset(
         "token_tax_per_turn": token_tax,
         "passed_gate": passed_gate,
         "verdict": verdict,
+        "harness_verification_only": provider.provider_name == "mock",
         "baseline_details": baseline_results,
         "augmented_details": augmented_results,
     }
@@ -210,6 +211,8 @@ def print_report(results: Dict[str, Any]) -> None:
     print(f"Delta Utility:         {delta_sign}{results['delta_utility']}%")
     print(f"Context Token Tax:     +{results['token_tax_per_turn']} tokens / turn")
     print("-" * 70)
+    if results['provider'] == 'mock':
+        print("Notice:           MOCK HARNESS RUN (Validates CLI & scoring plumbing only; not neural quality)")
     print(f"Final Verdict:         {results['verdict']}")
     print("=" * 70 + "\n")
 

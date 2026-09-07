@@ -81,7 +81,14 @@ class BaseModelProvider(abc.ABC):
 
 
 class MockProvider(BaseModelProvider):
-    """Deterministic offline mock provider for CI testing and unit tests."""
+    """Deterministic offline test harness runner for CI and plumbing verification.
+
+    NOTE ON HARNESS VERIFICATION VS. MODEL QUALITY:
+    The MockProvider simulates responses to validate CLI arguments, prompt composition,
+    token calculations, and keyword scoring mechanics. It DOES NOT prove skill effectiveness
+    or real AI comprehension. Real empirical delta-utility must be evaluated using actual
+    model providers (e.g. local Ollama, Antigravity, OpenAI, or Claude).
+    """
 
     def __init__(
         self,

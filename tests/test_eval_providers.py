@@ -187,6 +187,7 @@ class TestEvalAssetRunner(unittest.TestCase):
         self.assertTrue(results["passed_gate"])
         self.assertGreaterEqual(results["delta_utility"], 0.0)
         self.assertEqual(results["provider"], "mock")
+        self.assertTrue(results.get("harness_verification_only"))
 
     def test_evaluate_security_shield_rule_mock(self):
         asset = REPO_ROOT / "registry" / "rules" / "global" / "security_shield.md"
@@ -199,6 +200,7 @@ class TestEvalAssetRunner(unittest.TestCase):
         results = evaluate_asset(asset, provider, suite)
         self.assertTrue(results["passed_gate"])
         self.assertGreaterEqual(results["delta_utility"], 0.0)
+        self.assertTrue(results.get("harness_verification_only"))
 
     def test_cli_execution_json_mode(self):
         cmd = [
@@ -215,6 +217,7 @@ class TestEvalAssetRunner(unittest.TestCase):
         data = json.loads(proc.stdout.decode("utf-8"))
         self.assertTrue(data.get("passed_gate"))
         self.assertEqual(data.get("provider"), "mock")
+        self.assertTrue(data.get("harness_verification_only"))
 
 
 if __name__ == "__main__":

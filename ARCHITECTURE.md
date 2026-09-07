@@ -167,6 +167,7 @@ omni-agent-skills/
 └── tests/                           # Repository integrity and validation test suite
     ├── test_repo_integrity.py       # Validates file presence, registry parity, and claims
     ├── test_registry_validation.py  # Tests schema validation script behaviors
+    ├── test_registry_assets.py      # Tests subagents, MCP configs, prompts, and rules integrity
     ├── test_eval_providers.py       # Tests pluggable model providers and evaluation bench
     ├── test_hooks_and_snippets.py   # Tests shell guard hooks and language snippet AST/syntax
     └── test_workflow_runner.py      # Tests reference workflow runner execution
@@ -189,7 +190,7 @@ git diff --check
 ```
 
 ### Tier 1: Deterministic Test Bench
-Validates executable code, shell hooks, snippet compilation, and provider serialization:
+Validates executable code, shell hooks, snippet compilation, subagent schemas, and provider serialization:
 ```bash
 python3 -m unittest discover -s tests -p 'test_*.py'
 ```
@@ -197,11 +198,14 @@ python3 -m unittest discover -s tests -p 'test_*.py'
 ### Tier 2: Empirical $\Delta$-Utility Evaluation Bench
 Evaluates whether a skill or rule genuinely improves performance over baseline models without imposing an excessive token tax:
 ```bash
-# Offline deterministic gate (enforced in CI)
-python3 scripts/eval_asset.py --asset registry/skills/engineering/clean-code-auditor/SKILL.md --provider mock --strict
+# 1. Deterministic CI Harness Gate (Offline plumbing verification)
+# Validates CLI arguments, prompt composition, token calculation, and keyword scoring.
+# Note: Mock runs validate harness execution; they do not prove neural model efficacy.
+python3 scripts/eval_asset.py --asset <path> --provider mock --strict
 
-# Live empirical benchmarks across Standard Reference Tiers:
-# - Tier A (Local Open Weights): python3 scripts/eval_asset.py --asset <path> --provider ollama --model qwen2.5-coder:7b
+# 2. Live Neural Benchmarks across Standard Reference Tiers:
+# Validates real-world cognitive improvement (+Δ-Utility) on actual language models:
+# - Tier A (Local Open Weights): python3 scripts/eval_asset.py --asset <path> --provider ollama --model qwen2.5-coder:1.5b
 # - Tier B (Frontier Cloud):     python3 scripts/eval_asset.py --asset <path> --provider antigravity --model gemini-2.5-pro
 ```
 
