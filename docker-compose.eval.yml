@@ -1,0 +1,28 @@
+# ==============================================================================
+# omni-agent-skills Local Containerized Evaluation Stack (Podman / Docker)
+# Provides an isolated Ollama runtime for local open-weights model benchmarking.
+# Usage:
+#   podman compose -f docker-compose.eval.yml up -d
+#   podman exec -it omni-ollama-eval ollama pull qwen2.5-coder:1.5b
+#   podman compose -f docker-compose.eval.yml down
+# ==============================================================================
+
+services:
+  ollama:
+    image: docker.io/ollama/ollama:latest
+    container_name: omni-ollama-eval
+    restart: unless-stopped
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_models:/root/.ollama
+    healthcheck:
+      test: ["CMD-SHELL", "curl -s http://127.0.0.1:11434/api/tags || exit 1"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+      start_period: 5s
+
+volumes:
+  ollama_models:
+    name: omni_ollama_models

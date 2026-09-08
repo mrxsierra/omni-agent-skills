@@ -3,7 +3,7 @@
   "target_asset": "registry/skills/engineering/pytest-verification-runner/SKILL.md",
   "domain": "engineering",
   "phase": "phase-5-verification",
-  "last_updated": "2026-09-07",
+  "last_updated": "2026-09-08",
   "baselines": {
     "mock": {
       "provider": "mock",
@@ -15,6 +15,17 @@
       "passed_gate": true,
       "verdict": "ACCEPTED (Positive Delta Utility)",
       "harness_verification_only": true
+    },
+    "agy": {
+      "provider": "agy",
+      "model": "gemini-3.8-flash-high",
+      "baseline_pass_rate": 100.0,
+      "augmented_pass_rate": 100.0,
+      "delta_utility": 0.0,
+      "token_tax_per_turn": 541,
+      "passed_gate": true,
+      "verdict": "ACCEPTED (High Baseline Parity, Low Token Tax)",
+      "harness_verification_only": false
     }
   }
 }

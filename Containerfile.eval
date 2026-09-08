@@ -1,0 +1,9 @@
+# Containerfile.eval: Standalone container definition for omni-agent-skills local evaluation
+FROM docker.io/ollama/ollama:latest
+
+# Expose default Ollama port
+EXPOSE 11434
+
+ENV OLLAMA_HOST=0.0.0.0:11434
+
+ENTRYPOINT ["ollama", "serve"]

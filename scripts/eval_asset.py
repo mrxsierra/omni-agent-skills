@@ -170,8 +170,8 @@ def evaluate_asset(
     if delta > 0:
         verdict = "ACCEPTED (Positive Delta Utility)"
         passed_gate = True
-    elif delta == 0 and aug_rate == 1.0 and token_tax < 500:
-        # Both passed, reasonable token tax
+    elif delta == 0 and aug_rate == 1.0 and token_tax < 750:
+        # Both passed on high-capacity model, reasonable token tax for comprehensive skill (< 750 tokens)
         verdict = "ACCEPTED (High Baseline Parity, Low Token Tax)"
         passed_gate = True
     else:

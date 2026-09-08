@@ -105,6 +105,22 @@ Per [ADR 0005](docs/adr/0005-two-track-branching-and-dual-engine-evaluation.md),
 - **`dev` (Active Integration Trunk):** All contributor and AI agent pull requests (`feat/*`, `fix/*`, `docs/*`, `chore/*`) branch from and target `dev`. Runs the fast Tier 0 hygiene checks, Tier 1 deterministic mock gate (< 2s), and lightweight Tier 2 neural smoke tests.
 - **`main` (Production Release Trunk):** Protected release branch containing stable, release-ready catalog assets. Promoted from `dev` on release promotion gates after passing the full cloud-powered catalog evaluation matrix. Version tags (`v0.0.3`, `v0.1.0`) are published exclusively from `main`.
 
+### Release Promotion & Versioning Protocol
+
+Releases adhere to strict Semantic Versioning (`vMAJOR.MINOR.PATCH`) decoupled across branches:
+
+1. **Pre-Release Stage (`dev` branch):**
+   - Active development, features, and fixes accumulate on `dev`.
+   - Milestone stabilization or release testing creates release candidate tags: `vX.Y.Z-rc.N` (or `vX.Y.Z-alpha.N`).
+   - GitHub Releases are published with the `pre-release: true` flag.
+   - `CHANGELOG.md` tracks ongoing changes under `## [Unreleased]`.
+
+2. **General Availability Release Stage (`main` branch):**
+   - When all quality gates pass (including the full cloud neural matrix benchmark across 100% of catalog assets), a promotion pull request is opened: `dev` ──► `main`.
+   - Once merged, the version is formally tagged: `vX.Y.Z`.
+   - GitHub Actions automates artifact packaging, checksum generation, and publishes the official release as `latest: true`.
+   - The `## [Unreleased]` section in `CHANGELOG.md` is converted into a locked entry `## [X.Y.Z] - YYYY-MM-DD`.
+
 ### Core Operating Principles
 1. **Single-Responsibility Principle (SRP):** Each skill, rule, and asset is strictly scoped to a single expert capability to prevent context bleed and maintain high precision.
 2. **Verification Over Claiming:** This repository does not publish benchmark performance claims unless backed by reproducible CI runs with explicit golden data and reviewable artifacts.
@@ -128,6 +144,8 @@ omni-agent-skills/
 ├── package.json                     # Node/npm package metadata
 ├── pyproject.toml                   # Python/uv package metadata (PEP 621)
 ├── VERSION                          # Single source of truth for versioning
+├── docker-compose.eval.yml          # Isolated Ollama evaluation container stack
+├── Containerfile.eval               # Container definition for local evaluation
 ├── .gitignore                       # Git exclusion rules
 ├── install.sh                       # Safe-by-default POSIX installer helper
 ├── install.ps1                      # Windows PowerShell installer helper
@@ -168,6 +186,7 @@ omni-agent-skills/
 │   ├── manage_adr.py                # ADR and RFC lifecycle tooling
 │   ├── eval_asset.py                # Asset delta-utility and anti-junk CLI benchmark runner
 │   ├── eval_providers.py            # Pluggable model providers (Antigravity, Ollama, OpenAI, Anthropic, Mock)
+│   ├── eval_catalog_matrix.py       # Full catalog matrix runner across frontier models
 │   ├── build_eval_report.py         # Compiles evals/baselines/*.json into evals/README.md scorecard
 │   ├── run_local_eval.sh            # Frictionless local runner (Mock, Podman Ollama, Antigravity CLI)
 │   ├── bump.py                      # Multi-file version synchronizer

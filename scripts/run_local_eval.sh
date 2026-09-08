@@ -95,15 +95,23 @@ case "$cmd" in
             exit 1
         fi
 
+        COMPOSE_FILE="docker-compose.eval.yml"
         case "$subcmd" in
             start)
                 model="${3:-$DEFAULT_OLLAMA_MODEL}"
                 echo "==> Starting $engine container: $CONTAINER_NAME..."
-                $engine rm -f "$CONTAINER_NAME" >/dev/null 2>&1 || true
-                $engine run -d \
-                    --name "$CONTAINER_NAME" \
-                    -p "${OLLAMA_PORT}:11434" \
-                    docker.io/ollama/ollama:latest
+                if command -v "${engine}-compose" >/dev/null 2>&1 || (command -v docker-compose >/dev/null 2>&1 && [[ "$engine" == "docker" ]]); then
+                    compose_cmd="${engine}-compose"
+                    if ! command -v "$compose_cmd" >/dev/null 2>&1; then compose_cmd="docker-compose"; fi
+                    $compose_cmd -f "$COMPOSE_FILE" up -d
+                else
+                    $engine rm -f "$CONTAINER_NAME" >/dev/null 2>&1 || true
+                    $engine run -d \
+                        --name "$CONTAINER_NAME" \
+                        -p "${OLLAMA_PORT}:11434" \
+                        -v "omni_ollama_models:/root/.ollama" \
+                        docker.io/ollama/ollama:latest
+                fi
 
                 echo "==> Waiting for Ollama service to become healthy..."
                 for i in {1..30}; do

@@ -541,7 +541,9 @@ class AntigravityCliProvider(BaseModelProvider):
         max_tokens: int = 2048,
     ) -> ModelResponse:
         start_time = time.time()
-        prompt_parts = []
+        prompt_parts = [
+            "IMPORTANT: This is an automated benchmark evaluation. Do NOT invoke any tools, execute bash commands, or modify files. Output only your direct text answer.\n"
+        ]
         if system_prompt:
             prompt_parts.append(f"System Instructions:\n{system_prompt}\n")
         for m in messages:
@@ -558,6 +560,7 @@ class AntigravityCliProvider(BaseModelProvider):
             self.model_name,
             "--output-format",
             "text",
+            "--dangerously-skip-permissions",
         ]
 
         try:
@@ -580,6 +583,8 @@ class AntigravityCliProvider(BaseModelProvider):
             raise RuntimeError(f"Antigravity CLI failed (exit {proc.returncode}): {proc.stderr.strip()}")
 
         reply = proc.stdout.strip()
+        if not reply and proc.stderr.strip():
+            raise RuntimeError(f"Antigravity CLI produced no output (stderr: {proc.stderr.strip()})")
         latency = (time.time() - start_time) * 1000
 
         prompt_tokens = max(len(full_prompt) // 4, 10)

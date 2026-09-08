@@ -57,3 +57,29 @@ python3 scripts/eval_asset.py --asset <path> --provider mock --strict
 - Existing asset updates prove zero regressions and update snapshots in `evals/baselines/`.
 - Verification results are recorded.
 - No secrets, credentials, or unrelated changes are included.
+
+---
+
+## Release Promotion Gate (`dev` to `main`)
+
+When promoting an accumulation of verified features from `dev` into a stable release on `main`:
+
+1. **Tag Release Candidate on `dev`:**
+   Tag the stabilized `dev` commit with `vX.Y.Z-rc.N` (e.g. `git tag v0.0.3-rc.1 && git push origin v0.0.3-rc.1`).
+2. **Execute Full Matrix Verification:**
+   Run the full catalog matrix evaluation across all assets:
+   ```bash
+   python3 scripts/eval_catalog_matrix.py --provider agy --model gemini-3.8-flash-high
+   python3 scripts/build_eval_report.py --check
+   ```
+3. **Open Promotion PR Targeting `main`:**
+   ```bash
+   gh pr create --base main --head dev --title "release: promote dev to vX.Y.Z"
+   ```
+4. **Merge and Tag GA Release on `main`:**
+   Once PR checks pass, merge into `main` and tag the official release:
+   ```bash
+   git checkout main && git pull origin main
+   git tag vX.Y.Z && git push origin vX.Y.Z
+   ```
+   This triggers the automated release workflow (`.github/workflows/release.yml`) to publish release tarballs and release notes.
