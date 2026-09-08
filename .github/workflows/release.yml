@@ -23,14 +23,21 @@ jobs:
           echo "TAG=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
 
       - name: Verify Tag Matches VERSION
+        id: verify
         run: |
           VERSION=$(cat VERSION)
           TAG="${{ steps.tag.outputs.TAG }}"
-          if [ "$TAG" != "v$VERSION" ]; then
-            echo "❌ Release tag '$TAG' does not match repository VERSION 'v$VERSION'!"
+          BASE_TAG="${TAG%%-*}"
+          if [ "$BASE_TAG" != "v$VERSION" ]; then
+            echo "❌ Release tag '$TAG' (base: '$BASE_TAG') does not match repository VERSION 'v$VERSION'!"
             exit 1
           fi
           echo "✅ Release tag '$TAG' matches VERSION 'v$VERSION'."
+          if [[ "$TAG" == *"-rc"* || "$TAG" == *"-beta"* || "$TAG" == *"-alpha"* ]]; then
+            echo "is_prerelease=true" >> $GITHUB_OUTPUT
+          else
+            echo "is_prerelease=false" >> $GITHUB_OUTPUT
+          fi
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -64,6 +71,6 @@ jobs:
             sha256sums.txt
           generate_release_notes: true
           draft: false
-          prerelease: false
+          prerelease: ${{ steps.verify.outputs.is_prerelease == 'true' }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

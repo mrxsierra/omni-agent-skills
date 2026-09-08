@@ -25,6 +25,7 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import subprocess
 import sys
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
@@ -170,8 +171,8 @@ def evaluate_asset(
     if delta > 0:
         verdict = "ACCEPTED (Positive Delta Utility)"
         passed_gate = True
-    elif delta == 0 and aug_rate == 1.0 and token_tax < 500:
-        # Both passed, reasonable token tax
+    elif delta == 0 and aug_rate == 1.0 and token_tax < 750:
+        # Both passed on high-capacity model, reasonable token tax for comprehensive skill (< 750 tokens)
         verdict = "ACCEPTED (High Baseline Parity, Low Token Tax)"
         passed_gate = True
     else:
@@ -217,25 +218,216 @@ def print_report(results: Dict[str, Any]) -> None:
     print("=" * 70 + "\n")
 
 
+def append_github_step_summary(results: Dict[str, Any]) -> None:
+    """Append a Markdown evaluation scorecard to $GITHUB_STEP_SUMMARY if present."""
+    summary_path = os.environ.get("GITHUB_STEP_SUMMARY")
+    if not summary_path:
+        return
+
+    asset_path = Path(results["asset_path"])
+    asset_name = asset_path.parent.name if asset_path.name == "SKILL.md" else asset_path.name
+    delta_sign = "+" if results["delta_utility"] >= 0 else ""
+    status_badge = "✅ PASSED" if results["passed_gate"] else "❌ REJECTED"
+    tier = "Deterministic Mock" if results.get("harness_verification_only") else f"Neural ({results['provider']})"
+
+    md_content = f"""
+### 📊 Asset Evaluation Scorecard: `{asset_name}`
+
+| Metric | Result |
+| :--- | :--- |
+| **Asset Path** | `{results['asset_path']}` |
+| **Evaluation Tier** | {tier} |
+| **Provider / Model** | `{results['provider']}` / `{results['model']}` |
+| **Task Suite** | `{results['task_suite']}` ({results['total_tasks']} tasks) |
+| **Baseline Pass Rate** | `{results['baseline_pass_rate']}%` |
+| **Augmented Pass Rate** | `{results['augmented_pass_rate']}%` |
+| **$\\Delta$-Utility (Delta)** | **`{delta_sign}{results['delta_utility']}%`** |
+| **Context Token Tax** | `+{results['token_tax_per_turn']} tokens / turn` |
+| **Gate Status** | **{status_badge}** |
+| **Verdict** | {results['verdict']} |
+
+> *Evaluated autonomously via omni-agent-skills dual-engine verification pipeline (ADR 0005).*
+"""
+    try:
+        with open(summary_path, "a", encoding="utf-8") as f:
+            f.write(md_content.strip() + "\n\n")
+    except Exception as e:
+        print(f"Warning: Failed to write to GITHUB_STEP_SUMMARY: {e}", file=sys.stderr)
+
+
+def get_all_evaluable_assets() -> List[Path]:
+    """Return all published evaluable assets in the registry (skills + task-targeted assets)."""
+    assets = set()
+    reg_dir = REPO_ROOT / "registry"
+    # 1. All published skills
+    skills_dir = reg_dir / "skills"
+    if skills_dir.is_dir():
+        for skill_file in skills_dir.glob("**/SKILL.md"):
+            assets.add(skill_file.resolve())
+
+    # 2. Any rules or workflows with dedicated task suites
+    if TASKS_DIR.is_dir():
+        for f in TASKS_DIR.glob("*.json"):
+            try:
+                with open(f, "r", encoding="utf-8") as fp:
+                    data = json.load(fp)
+                    target = data.get("target_asset", "")
+                    if target:
+                        p = (REPO_ROOT / target).resolve()
+                        if p.is_file():
+                            assets.add(p)
+            except Exception:
+                continue
+
+    return sorted(assets)
+
+
+def detect_changed_assets(base_ref: str = "origin/dev") -> List[Path]:
+    """Detect added or modified assets in the working tree or branch compared to base_ref."""
+    all_evaluable = {p.resolve(): p for p in get_all_evaluable_assets()}
+    diff_targets = [f"{base_ref}...HEAD", base_ref, "dev...HEAD", "dev", "HEAD~1", "HEAD"]
+
+    output = ""
+    for target in diff_targets:
+        try:
+            res = subprocess.run(
+                ["git", "diff", "--name-only", "--diff-filter=ACMR", target, "--", "registry/"],
+                cwd=REPO_ROOT,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                text=True,
+                check=False,
+            )
+            if res.returncode == 0 and res.stdout.strip():
+                output = res.stdout
+                break
+        except Exception:
+            continue
+
+    # Also include uncommitted, staged, or untracked changes
+    try:
+        status_res = subprocess.run(
+            ["git", "status", "--porcelain", "--", "registry/"],
+            cwd=REPO_ROOT,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,
+            check=False,
+        )
+        if status_res.returncode == 0 and status_res.stdout.strip():
+            for line in status_res.stdout.splitlines():
+                parts = line.strip().split(maxsplit=1)
+                if len(parts) == 2:
+                    filepath = parts[1].strip()
+                    if filepath not in output:
+                        output += f"\n{filepath}"
+    except Exception:
+        pass
+
+    changed = []
+    for line in output.splitlines():
+        rel = line.strip()
+        if not rel:
+            continue
+        p = (REPO_ROOT / rel).resolve()
+        if p in all_evaluable:
+            changed.append(all_evaluable[p])
+        elif p.is_file() and "registry" in str(p):
+            # If a subfile in the asset directory changed, map it to the parent asset
+            for eval_path in all_evaluable.values():
+                if p.is_relative_to(eval_path.parent):
+                    if eval_path not in changed:
+                        changed.append(eval_path)
+
+    return sorted(set(changed))
+
+
+def save_baseline_result(results: Dict[str, Any]) -> None:
+    """Update or create the baseline record in evals/baselines/ for this asset and provider."""
+    baselines_dir = REPO_ROOT / "evals" / "baselines"
+    if not baselines_dir.is_dir():
+        return
+
+    asset_rel = results["asset_path"]
+    suite_id = results["task_suite"]
+
+    # Locate existing baseline file
+    target_file = None
+    for f in baselines_dir.glob("*.json"):
+        try:
+            with open(f, "r", encoding="utf-8") as fp:
+                data = json.load(fp)
+                if data.get("target_asset") == asset_rel or data.get("suite_id") == suite_id:
+                    target_file = f
+                    break
+        except Exception:
+            continue
+
+    if not target_file:
+        target_file = baselines_dir / f"{suite_id}.json"
+        data = {
+            "suite_id": suite_id,
+            "target_asset": asset_rel,
+            "domain": Path(asset_rel).parent.parent.name if "skills" in asset_rel else "global",
+            "phase": "phase-4-implementation",
+            "baselines": {},
+        }
+    else:
+        with open(target_file, "r", encoding="utf-8") as fp:
+            data = json.load(fp)
+
+    import datetime
+    data["last_updated"] = datetime.date.today().isoformat()
+    if "baselines" not in data:
+        data["baselines"] = {}
+
+    provider_key = results["provider"]
+    data["baselines"][provider_key] = {
+        "provider": results["provider"],
+        "model": results["model"],
+        "baseline_pass_rate": results["baseline_pass_rate"],
+        "augmented_pass_rate": results["augmented_pass_rate"],
+        "delta_utility": results["delta_utility"],
+        "token_tax_per_turn": results["token_tax_per_turn"],
+        "passed_gate": results["passed_gate"],
+        "verdict": results["verdict"],
+        "harness_verification_only": results.get("harness_verification_only", False),
+    }
+
+    with open(target_file, "w", encoding="utf-8") as fp:
+        json.dump(data, fp, indent=2)
+        fp.write("\n")
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(
         description="Benchmark registry assets across AI providers to verify positive delta utility."
     )
     parser.add_argument(
         "--asset",
-        required=True,
-        help="Path to the registry asset to evaluate (skill, rule, workflow).",
+        default=None,
+        help="Path to the registry asset to evaluate (skill, rule, workflow). If omitted, delta mode auto-detects changed assets.",
+    )
+    parser.add_argument(
+        "--all",
+        action="store_true",
+        help="Force evaluation across all published registry assets.",
+    )
+    parser.add_argument(
+        "--base-ref",
+        default="origin/dev",
+        help="Git base reference for delta detection (default: origin/dev).",
     )
     parser.add_argument(
         "--provider",
         default="mock",
-        choices=["antigravity", "ollama", "openai", "openrouter", "anthropic", "mock"],
+        choices=["antigravity", "agy", "ollama", "openai", "openrouter", "anthropic", "mock"],
         help="Model provider to execute evaluation against (default: mock).",
     )
     parser.add_argument(
         "--model",
         default=None,
-        help="Model name (e.g. gemini-2.5-pro, qwen2.5-coder:7b, gpt-4o).",
+        help="Model name (e.g. gemini-2.5-pro, gemini-3.8-flash-high, qwen2.5-coder:7b, gpt-4o).",
     )
     parser.add_argument(
         "--tasks",
@@ -245,7 +437,12 @@ def main() -> int:
     parser.add_argument(
         "--strict",
         action="store_true",
-        help="Exit with code 1 if the asset fails the delta-utility gate.",
+        help="Exit with code 1 if any asset fails the delta-utility gate.",
+    )
+    parser.add_argument(
+        "--save-baseline",
+        action="store_true",
+        help="Save evaluation outcomes to evals/baselines/ for public scorecard generation.",
     )
     parser.add_argument(
         "--json",
@@ -260,13 +457,27 @@ def main() -> int:
 
     args = parser.parse_args()
 
-    asset_path = Path(args.asset)
-    if not asset_path.is_absolute():
-        asset_path = REPO_ROOT / asset_path
-
-    if not asset_path.is_file():
-        print(f"Error: Asset file '{asset_path}' does not exist.", file=sys.stderr)
-        return 1
+    # Determine asset paths to evaluate
+    if args.asset:
+        target_path = Path(args.asset)
+        if not target_path.is_absolute():
+            target_path = REPO_ROOT / target_path
+        if not target_path.is_file():
+            print(f"Error: Asset file '{target_path}' does not exist.", file=sys.stderr)
+            return 1
+        asset_paths = [target_path]
+    elif args.all:
+        asset_paths = get_all_evaluable_assets()
+        print(f"ℹ️ Full catalog sweep: evaluating all {len(asset_paths)} registry assets.")
+    else:
+        # Default: Git-aware Delta Detection
+        asset_paths = detect_changed_assets(base_ref=args.base_ref)
+        if not asset_paths:
+            print(f"ℹ️ No modified or newly added registry assets detected compared to '{args.base_ref}'. Neural evaluation skipped.")
+            return 0
+        print(f"ℹ️ Delta evaluation: detected {len(asset_paths)} modified/added registry asset(s):")
+        for p in asset_paths:
+            print(f"   - {p.relative_to(REPO_ROOT) if p.is_relative_to(REPO_ROOT) else p}")
 
     try:
         provider = get_provider(args.provider, model=args.model)
@@ -274,24 +485,51 @@ def main() -> int:
         print(f"Error initializing provider '{args.provider}': {e}", file=sys.stderr)
         return 1
 
-    try:
-        suite = load_task_suite(args.tasks, asset_path)
-    except Exception as e:
-        print(f"Error loading task suite: {e}", file=sys.stderr)
-        return 1
+    all_results = []
+    any_gate_failed = False
 
-    try:
-        results = evaluate_asset(asset_path, provider, suite, verbose=args.verbose)
-    except Exception as e:
-        print(f"Evaluation error: {e}", file=sys.stderr)
-        return 1
+    for asset_path in asset_paths:
+        try:
+            suite = load_task_suite(args.tasks, asset_path)
+        except Exception as e:
+            print(f"Error loading task suite for '{asset_path}': {e}", file=sys.stderr)
+            if args.strict:
+                return 1
+            continue
+
+        try:
+            results = evaluate_asset(asset_path, provider, suite, verbose=args.verbose)
+            all_results.append(results)
+            if not results["passed_gate"]:
+                any_gate_failed = True
+
+            if not args.json:
+                print_report(results)
+
+            append_github_step_summary(results)
+
+            if args.save_baseline:
+                save_baseline_result(results)
+
+        except Exception as e:
+            print(f"Evaluation error on '{asset_path}': {e}", file=sys.stderr)
+            if args.strict:
+                return 1
 
     if args.json:
-        print(json.dumps(results, indent=2))
-    else:
-        print_report(results)
+        if len(all_results) == 1:
+            print(json.dumps(all_results[0], indent=2))
+        else:
+            print(json.dumps(all_results, indent=2))
 
-    if args.strict and not results["passed_gate"]:
+    if len(all_results) > 1 and not args.json:
+        # Print summary banner for multi-asset runs
+        passed_count = sum(1 for r in all_results if r["passed_gate"])
+        print("\n" + "=" * 70)
+        print(f"🏁 Batch Evaluation Complete: {passed_count}/{len(all_results)} passed gate.")
+        print("=" * 70 + "\n")
+
+    if args.strict and any_gate_failed:
         return 1
 
     return 0

@@ -7,6 +7,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.0.3] - 2026-09-08
+
+### Added
+- **Multi-Tier Model Evaluation Framework (ADR 0004 & ADR 0005):**
+  - Evaluation harnesses (`scripts/eval_asset.py`, `scripts/eval_providers.py`, and `scripts/eval_catalog_matrix.py`) for automated delta-utility and context token tax benchmarking.
+  - Multi-provider support: `mock` (deterministic harness verification), `ollama` (local open-weights CPU evaluation), `openai`, `openrouter`, and `agy` (zero-API-key local Antigravity CLI access to frontier models like `gemini-3.8-flash-high`).
+  - Container manifests for reproducible local neural evaluation: root-level `docker-compose.eval.yml` and `Containerfile.eval` with named volume caching for Ollama models.
+  - Automated local evaluation runner (`scripts/run_local_eval.sh`) with auto-detection of Docker / Podman Compose.
+  - Full suite of 16 evaluation task definitions under `evals/tasks/*.json` covering all catalog skills and rules.
+  - Architecture Decision Record [ADR 0005](docs/adr/0005-multi-tier-model-evaluation-and-open-weights-benchmark.md) defining the three-tier evaluation architecture and zero-hype anti-bloat admission gate.
+  - Empirical baseline repository (`evals/baselines/*.json`) recording verified pass rates, delta-utility, and token taxes across all 16 catalog assets.
+  - Public quality scorecard generator (`scripts/build_eval_report.py`) compiling `evals/README.md` (100% benchmark pass rate, 32/32 tests passed across `mock` and `agy`).
+  - Scheduled and manual GitHub Actions workflow (`.github/workflows/eval-cloud-matrix.yml`) for frontier model evaluation.
+  - Open-weights neural model smoke testing workflow (`.github/workflows/ci.yml`) using `qwen2.5-coder:1.5b`.
+- **Release Promotion Protocol:**
+  - Formal dual-branch promotion lifecycle (`dev` to `main`) in `ARCHITECTURE.md` and `docs/sops/contribution-and-feature-delivery.md`.
+
+### Changed
+- Rebuilt `registry/registry.json` and `llms.txt` with version `0.0.3`.
+- Hardened `scripts/eval_providers.py` to prevent headless tool-call timeouts during benchmark execution.
+- Calibrated brittle keyword checks in `evals/tasks/` to eliminate false negatives against high-capability reasoning models.
+- Expanded `tests/test_repo_integrity.py` to assert presence and valid structure of all container and evaluation assets.
+
 ## [0.0.2] - 2026-09-06
 
 ### Added

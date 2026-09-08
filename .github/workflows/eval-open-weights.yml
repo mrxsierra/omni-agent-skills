@@ -2,6 +2,7 @@ name: Open-Weights Model Evaluation
 
 on:
   pull_request:
+    branches: [ main, dev ]
     paths:
       - 'registry/**'
       - 'evals/**'
@@ -10,13 +11,18 @@ on:
   workflow_dispatch:
     inputs:
       asset:
-        description: 'Asset path to evaluate'
+        description: 'Asset path to evaluate (leave empty for delta mode)'
         required: false
-        default: 'registry/skills/engineering/clean-code-auditor/SKILL.md'
+        default: ''
       model:
         description: 'Ollama model tag to pull'
         required: false
         default: 'qwen2.5-coder:1.5b'
+      force_all:
+        description: 'Force evaluation across all catalog assets'
+        type: boolean
+        required: false
+        default: false
 
 jobs:
   eval-ollama:
@@ -27,13 +33,44 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Set up Python 3.11
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
 
+      - name: Detect Evaluated Assets (Delta Guard)
+        id: delta-check
+        run: |
+          FORCE_ALL="${{ inputs.force_all || 'false' }}"
+          ASSET_INPUT="${{ inputs.asset || '' }}"
+
+          if [ "$FORCE_ALL" = "true" ]; then
+            echo "mode=all" >> $GITHUB_OUTPUT
+            echo "run_eval=true" >> $GITHUB_OUTPUT
+            echo "Mode: Force all catalog assets (--all)."
+          elif [ -n "$ASSET_INPUT" ]; then
+            echo "mode=asset" >> $GITHUB_OUTPUT
+            echo "run_eval=true" >> $GITHUB_OUTPUT
+            echo "Mode: Specific asset ($ASSET_INPUT)."
+          else
+            CHANGED=$(git diff --name-only origin/dev...HEAD -- 'registry/' || true)
+            if [ -z "$CHANGED" ]; then
+              echo "mode=delta" >> $GITHUB_OUTPUT
+              echo "run_eval=false" >> $GITHUB_OUTPUT
+              echo "No registry assets modified in this PR. Skipping neural evaluation."
+            else
+              echo "mode=delta" >> $GITHUB_OUTPUT
+              echo "run_eval=true" >> $GITHUB_OUTPUT
+              echo "Mode: Delta evaluation for modified assets:"
+              echo "$CHANGED"
+            fi
+          fi
+
       - name: Install and Start Ollama
+        if: steps.delta-check.outputs.run_eval == 'true'
         run: |
           curl -fsSL https://ollama.com/install.sh | sh
           ollama serve &
@@ -47,20 +84,30 @@ jobs:
           done
 
       - name: Pull Open-Weights Model
+        if: steps.delta-check.outputs.run_eval == 'true'
         run: |
           MODEL="${{ inputs.model || 'qwen2.5-coder:1.5b' }}"
           echo "Pulling $MODEL..."
           ollama pull "$MODEL"
 
       - name: Run Delta-Utility Evaluation
+        if: steps.delta-check.outputs.run_eval == 'true'
         run: |
-          ASSET="${{ inputs.asset || 'registry/skills/engineering/clean-code-auditor/SKILL.md' }}"
           MODEL="${{ inputs.model || 'qwen2.5-coder:1.5b' }}"
-          echo "Running empirical evaluation on $ASSET with $MODEL..."
-          python3 scripts/eval_asset.py --asset "$ASSET" --provider ollama --model "$MODEL" --json > eval_results.json
+          MODE="${{ steps.delta-check.outputs.mode }}"
+          ASSET_INPUT="${{ inputs.asset || '' }}"
+
+          if [ "$MODE" = "all" ]; then
+            python3 scripts/eval_asset.py --all --provider ollama --model "$MODEL" --json > eval_results.json
+          elif [ "$MODE" = "asset" ]; then
+            python3 scripts/eval_asset.py --asset "$ASSET_INPUT" --provider ollama --model "$MODEL" --json > eval_results.json
+          else
+            python3 scripts/eval_asset.py --provider ollama --model "$MODEL" --base-ref origin/dev --json > eval_results.json
+          fi
           cat eval_results.json
 
       - name: Upload Evaluation Artifact
+        if: steps.delta-check.outputs.run_eval == 'true'
         uses: actions/upload-artifact@v4
         with:
           name: ollama-eval-results

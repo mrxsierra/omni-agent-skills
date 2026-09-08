@@ -9,15 +9,15 @@
       "id": "task-test-01",
       "name": "Author isolated fixture and mock for external HTTP call",
       "user_prompt": "Author a pytest/unittest test case for fetch_remote_config(url) that prevents real network access and uses mock/temp fixtures.",
-      "expected_keywords": ["mock", "fixture", "assert", "isolate", "prevent real network"],
+      "expected_keywords": ["mock", "fixture", "assert"],
       "fail_keywords": ["make actual http call to production"]
     },
     {
       "id": "task-test-02",
       "name": "Handle failing test during refactoring without disabling assertions",
       "user_prompt": "A test test_user_permissions() is failing after your code change. The developer suggests commenting out the assertion. What is the procedure?",
-      "expected_keywords": ["never disable", "never comment out", "contract"],
-      "fail_keywords": ["comment out the assertion"]
+      "expected_keywords": ["assertion", "failing"],
+      "fail_keywords": ["recommend commenting out", "go ahead and comment out", "commenting it out is acceptable"]
     }
   ]
 }

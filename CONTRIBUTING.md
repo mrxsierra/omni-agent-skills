@@ -70,14 +70,30 @@ To ensure these run, configure your Git hooks:
 git config core.hooksPath .githooks
 ```
 
-## Submitting Changes
+## Submitting Changes: Two-Track Branching (`dev` vs. `main`)
 
+Per [ADR 0005](docs/adr/0005-two-track-branching-and-dual-engine-evaluation.md), all contributions target the **`dev`** staging trunk:
+
+1. **Always branch off `dev`:**
+   ```bash
+   git checkout dev
+   git pull origin dev
+   git checkout -b feat/your-feature-name
+   ```
+2. **Submit PR targeting `dev`:**
+   ```bash
+   gh pr create --base dev --title "feat: your feature" ...
+   ```
+3. **Release Isolation:**
+   `main` is protected and strictly reserved for stable, tagged releases. `dev` is promoted to `main` on release gates after full catalog evaluation. Never open feature PRs directly against `main`.
+
+### Quality Rules
 1. Keep changes small and focused (one feature or fix per commit).
 2. Follow the existing code style and directory structure.
 3. Do not claim performance or benchmark wins without reproducible CI-backed evidence.
 4. Update documentation if you add or modify skills.
 5. Run tests and verify no regressions.
-6. Write clear commit messages following the repo's existing convention.
+6. Write clear commit messages following conventional commits (`feat:`, `fix:`, `docs:`, `chore:`).
 
 ## Published Asset Types & Architecture
 
@@ -140,28 +156,23 @@ Per [ADR 0004](docs/adr/0004-multi-provider-asset-evaluation-and-delta-utility-b
 
 ### 2. Running Local Asset Evaluations
 
-You can test assets locally using whatever AI provider you prefer—including **Google Antigravity**, **free local Ollama**, **OpenAI/ChatGPT**, **Anthropic/Claude**, **OpenRouter**, or **offline Mock**:
+Contributors can evaluate assets using the unified helper [`scripts/run_local_eval.sh`](scripts/run_local_eval.sh) across whichever AI provider best fits their setup:
 
 ```bash
-# A. Google Antigravity / Gemini (via GEMINI_API_KEY):
-python3 scripts/eval_asset.py --asset registry/skills/web-and-geo/a11y-web-auditor/SKILL.md \
-                             --provider antigravity --model gemini-2.5-pro
+# A. Instant Deterministic Mock Gate (< 2s, zero API keys, offline):
+scripts/run_local_eval.sh mock registry/skills/engineering/clean-code-auditor/SKILL.md
 
-# B. Local Ollama (100% free, private, offline):
-python3 scripts/eval_asset.py --asset registry/skills/engineering/clean-code-auditor/SKILL.md \
-                             --provider ollama --model qwen2.5-coder:7b
+# B. Native Antigravity CLI / Frontier Cloud (Gemini 3.8 Flash, Claude Sonnet 4.6):
+scripts/run_local_eval.sh agy registry/skills/engineering/clean-code-auditor/SKILL.md gemini-3.8-flash-high
 
-# C. OpenAI / ChatGPT (via OPENAI_API_KEY):
-python3 scripts/eval_asset.py --asset registry/rules/global/security_shield.md \
-                             --provider openai --model gpt-4o
+# C. Rootless Containerized Open-Weights (Podman / Docker Compose):
+podman compose -f docker-compose.eval.yml up -d
+scripts/run_local_eval.sh podman eval registry/skills/engineering/clean-code-auditor/SKILL.md qwen2.5-coder:1.5b
+podman compose -f docker-compose.eval.yml down
 
-# D. OpenRouter (multi-vendor comparison):
+# D. OpenRouter / Multi-Vendor Cloud API (via OPENROUTER_API_KEY):
 python3 scripts/eval_asset.py --asset registry/skills/data-and-ai/rag-qa-chunking-engine/SKILL.md \
                              --provider openrouter --model anthropic/claude-3.5-sonnet
-
-# E. Offline CI Mock Gate (zero API keys):
-python3 scripts/eval_asset.py --asset registry/skills/engineering/clean-code-auditor/SKILL.md \
-                             --provider mock --strict
 ```
 
 ### 3. Adding an Evaluation Task Suite
@@ -202,7 +213,11 @@ When modifying or refactoring an existing published asset ($A_{\text{old}} \to A
 
 ## Step-by-Step Asset Contribution Flow
 
-1. Create a scoped branch: `git checkout -b feat/<asset-name>`.
+1. Create a scoped branch from `dev`:
+   ```bash
+   git checkout dev && git pull origin dev
+   git checkout -b feat/<asset-name>
+   ```
 2. Author the asset file adhering to its contract (e.g. 4-section runbook in `registry/skills/<domain>/<id>/SKILL.md`).
 3. Add a matching evaluation task suite in `evals/tasks/`.
 4. Rebuild the catalog and compile index files:
@@ -210,10 +225,16 @@ When modifying or refactoring an existing published asset ($A_{\text{old}} \to A
    python3 scripts/build_registry.py
    python3 scripts/validate_registry.py
    ```
-5. Run the evaluation benchmark:
+5. Run the evaluation benchmark using your preferred frictionless method:
    ```bash
-   # Test using your preferred provider (or mock for offline verification):
+   # Option A: Fast offline mock (validates harness plumbing in < 0.1s):
    python3 scripts/eval_asset.py --asset registry/skills/<domain>/<id>/SKILL.md --provider mock --strict
+
+   # Option B: Rootless Podman container (local open-weights via Ollama):
+   ./scripts/run_local_eval.sh podman eval registry/skills/<domain>/<id>/SKILL.md qwen2.5-coder:1.5b
+
+   # Option C: Native Cloud CLI (Antigravity / Gemini 3.8 Flash, instant reasoning):
+   python3 scripts/eval_asset.py --asset registry/skills/<domain>/<id>/SKILL.md --provider agy --model gemini-3.8-flash-high
    ```
 6. Run the complete local test suite:
    ```bash
@@ -222,7 +243,7 @@ When modifying or refactoring an existing published asset ($A_{\text{old}} \to A
    python3 -m unittest discover -s tests -p 'test_*.py'
    git diff --check
    ```
-7. Commit, push, and submit a Pull Request with the benchmark output recorded in your PR description.
+7. Commit, push, and submit a Pull Request targeting `dev` (`gh pr create --base dev`) with the benchmark output recorded in your PR description.
 
 ---
 

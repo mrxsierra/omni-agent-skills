@@ -20,6 +20,7 @@ from __future__ import annotations
 import abc
 import json
 import os
+import subprocess
 import sys
 import time
 import urllib.error
@@ -517,6 +518,88 @@ class AnthropicProvider(BaseModelProvider):
         )
 
 
+class AntigravityCliProvider(BaseModelProvider):
+    """Local Antigravity CLI provider invoking the `agy` binary in print mode.
+
+    Enables zero-install, zero-API-key cloud evaluation against frontier models
+    (e.g. gemini-3.8-flash-high, claude-sonnet-4-6) on any Antigravity-equipped machine.
+    """
+
+    def __init__(
+        self,
+        model_name: str = "gemini-3.8-flash-high",
+        cli_path: Optional[str] = None,
+    ) -> None:
+        super().__init__(model_name=model_name, provider_name="agy")
+        self.cli_path = cli_path or os.environ.get("AGY_CLI_PATH") or "agy"
+
+    def invoke(
+        self,
+        messages: List[Dict[str, str]],
+        system_prompt: str = "",
+        temperature: float = 0.0,
+        max_tokens: int = 2048,
+    ) -> ModelResponse:
+        start_time = time.time()
+        prompt_parts = [
+            "IMPORTANT: This is an automated benchmark evaluation. Do NOT invoke any tools, execute bash commands, or modify files. Output only your direct text answer.\n"
+        ]
+        if system_prompt:
+            prompt_parts.append(f"System Instructions:\n{system_prompt}\n")
+        for m in messages:
+            role = m.get("role", "user").capitalize()
+            content = m.get("content", "")
+            prompt_parts.append(f"{role}:\n{content}\n")
+        full_prompt = "\n".join(prompt_parts)
+
+        cmd = [
+            self.cli_path,
+            "-p",
+            full_prompt,
+            "--model",
+            self.model_name,
+            "--output-format",
+            "text",
+            "--dangerously-skip-permissions",
+        ]
+
+        try:
+            proc = subprocess.run(
+                cmd,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                text=True,
+                timeout=120,
+            )
+        except FileNotFoundError as e:
+            raise RuntimeError(
+                f"Antigravity CLI '{self.cli_path}' not found on PATH. "
+                "Ensure `agy` is installed or set AGY_CLI_PATH."
+            ) from e
+        except subprocess.TimeoutExpired as e:
+            raise RuntimeError(f"Antigravity CLI timed out after 120s: {e}") from e
+
+        if proc.returncode != 0:
+            raise RuntimeError(f"Antigravity CLI failed (exit {proc.returncode}): {proc.stderr.strip()}")
+
+        reply = proc.stdout.strip()
+        if not reply and proc.stderr.strip():
+            raise RuntimeError(f"Antigravity CLI produced no output (stderr: {proc.stderr.strip()})")
+        latency = (time.time() - start_time) * 1000
+
+        prompt_tokens = max(len(full_prompt) // 4, 10)
+        completion_tokens = max(len(reply) // 4, 5)
+
+        return ModelResponse(
+            text=reply,
+            prompt_tokens=prompt_tokens,
+            completion_tokens=completion_tokens,
+            model_name=self.model_name,
+            provider_name="agy",
+            latency_ms=latency,
+        )
+
+
 def get_provider(
     provider_name: str,
     model: Optional[str] = None,
@@ -530,6 +613,8 @@ def get_provider(
         return MockProvider(model_name=model or "mock-deterministic-v1")
     elif p_norm == "ollama":
         return OllamaProvider(model_name=model or "qwen2.5-coder:7b", base_url=base_url)
+    elif p_norm in ("agy", "antigravity-cli", "cli"):
+        return AntigravityCliProvider(model_name=model or "gemini-3.8-flash-high")
     elif p_norm in ("openai", "chatgpt"):
         return OpenAICompatibleProvider(
             model_name=model or "gpt-4o",
@@ -555,5 +640,5 @@ def get_provider(
             api_key=api_key,
         )
     else:
-        supported = ["antigravity", "ollama", "openai", "openrouter", "anthropic", "mock"]
+        supported = ["agy", "antigravity", "ollama", "openai", "openrouter", "anthropic", "mock"]
         raise ValueError(f"Unknown provider '{provider_name}'. Supported providers: {', '.join(supported)}")
