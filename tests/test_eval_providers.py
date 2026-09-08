@@ -29,7 +29,14 @@ from eval_providers import (
     OpenAICompatibleProvider,
     get_provider,
 )
-from eval_asset import append_github_step_summary, evaluate_asset, load_task_suite, score_task
+from eval_asset import (
+    append_github_step_summary,
+    detect_changed_assets,
+    evaluate_asset,
+    get_all_evaluable_assets,
+    load_task_suite,
+    score_task,
+)
 from build_eval_report import load_all_baselines, generate_markdown
 
 
@@ -285,6 +292,21 @@ class TestEvalAssetRunner(unittest.TestCase):
         self.assertIn("Multi-Tier Evaluation Architecture (ADR 0005)", md)
         self.assertIn("`clean-code-auditor`", md)
         self.assertIn("`security_shield.md`", md)
+
+    def test_get_all_evaluable_assets(self):
+        assets = get_all_evaluable_assets()
+        self.assertEqual(len(assets), 16)
+        paths = [str(p) for p in assets]
+        self.assertTrue(any("clean-code-auditor" in p for p in paths))
+        self.assertTrue(any("security_shield.md" in p for p in paths))
+
+    def test_detect_changed_assets(self):
+        mock_output = "registry/skills/engineering/clean-code-auditor/SKILL.md\nREADME.md\n"
+        with patch("subprocess.run") as mock_run:
+            mock_run.return_value = MagicMock(returncode=0, stdout=mock_output)
+            changed = detect_changed_assets("origin/dev")
+            self.assertEqual(len(changed), 1)
+            self.assertTrue(str(changed[0]).endswith("clean-code-auditor/SKILL.md"))
 
 
 if __name__ == "__main__":
