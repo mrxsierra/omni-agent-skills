@@ -1,0 +1,92 @@
+name: Cloud Frontier Model Evaluation
+
+on:
+  schedule:
+    # Run full catalog sweep weekly on Sunday at 03:00 UTC
+    - cron: '0 3 * * 0'
+  workflow_dispatch:
+    inputs:
+      provider:
+        description: 'Cloud AI Provider to evaluate with'
+        type: choice
+        options:
+          - openrouter
+          - openai
+          - anthropic
+          - antigravity
+        default: 'openrouter'
+      model:
+        description: 'Model identifier (e.g. gpt-4o-mini, gemini-2.5-pro, claude-3-5-sonnet-20241022)'
+        required: false
+        default: 'anthropic/claude-3.5-sonnet'
+      asset:
+        description: 'Specific asset path (leave empty for git-delta or full sweep)'
+        required: false
+        default: ''
+      force_all:
+        description: 'Force full catalog sweep across all assets'
+        type: boolean
+        required: false
+        default: false
+
+jobs:
+  eval-cloud:
+    name: Cloud Evaluation (${{ inputs.provider || 'weekly-cron' }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Determine Evaluation Scope
+        id: scope
+        run: |
+          IS_SCHEDULE="${{ github.event_name == 'schedule' }}"
+          FORCE_ALL="${{ inputs.force_all || 'false' }}"
+          ASSET_INPUT="${{ inputs.asset || '' }}"
+
+          if [ "$IS_SCHEDULE" = "true" ] || [ "$FORCE_ALL" = "true" ]; then
+            echo "mode=all" >> $GITHUB_OUTPUT
+            echo "Running full catalog evaluation sweep across all assets."
+          elif [ -n "$ASSET_INPUT" ]; then
+            echo "mode=asset" >> $GITHUB_OUTPUT
+            echo "Running evaluation for specific asset: $ASSET_INPUT"
+          else
+            echo "mode=delta" >> $GITHUB_OUTPUT
+            echo "Running delta evaluation on modified assets against origin/dev."
+          fi
+
+      - name: Run Cloud Frontier Evaluation
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+        run: |
+          PROVIDER="${{ inputs.provider || 'openrouter' }}"
+          MODEL="${{ inputs.model || 'anthropic/claude-3.5-sonnet' }}"
+          MODE="${{ steps.scope.outputs.mode }}"
+          ASSET_INPUT="${{ inputs.asset || '' }}"
+
+          if [ "$MODE" = "all" ]; then
+            python3 scripts/eval_asset.py --all --provider "$PROVIDER" --model "$MODEL" --save-baseline --json > cloud_eval_results.json
+          elif [ "$MODE" = "asset" ]; then
+            python3 scripts/eval_asset.py --asset "$ASSET_INPUT" --provider "$PROVIDER" --model "$MODEL" --save-baseline --json > cloud_eval_results.json
+          else
+            python3 scripts/eval_asset.py --provider "$PROVIDER" --model "$MODEL" --base-ref origin/dev --save-baseline --json > cloud_eval_results.json
+          fi
+
+      - name: Upload Evaluation Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: cloud-eval-results
+          path: cloud_eval_results.json
+          retention-days: 14

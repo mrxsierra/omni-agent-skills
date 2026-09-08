@@ -225,20 +225,20 @@ python3 -m unittest discover -s tests -p 'test_*.py'
 ```
 
 ### Tier 2: Dual-Engine Empirical $\Delta$-Utility Evaluation
-Evaluates whether an asset genuinely improves performance over baseline models without imposing an excessive token tax:
+Evaluates whether an asset genuinely improves performance over baseline models without imposing an excessive token tax. Operates in **Git-aware Delta mode by default** (only evaluating modified/added assets vs. `dev`), with an `--all` flag for full catalog sweeps:
 
 ```bash
-# 1. Deterministic CI Harness Gate (Offline plumbing verification)
-# Validates CLI arguments, prompt composition, token calculation, and keyword scoring across all assets (< 2s).
-python3 scripts/eval_asset.py --asset <path> --provider mock --strict
+# 1. Delta evaluation (default: auto-detects changed assets in working tree or PR vs. origin/dev)
+python3 scripts/eval_asset.py --provider mock
+python3 scripts/eval_asset.py --provider ollama --model qwen2.5-coder:1.5b
+python3 scripts/eval_asset.py --provider agy --model gemini-3.8-flash-high
 
-# 2. Lightweight Open-Weights Neural Smoke (CPU / Local Podman)
-# Fast verification of simple reasoning and format adherence on small models without cloud cost:
-python3 scripts/eval_asset.py --asset <path> --provider ollama --model qwen2.5-coder:1.5b
+# 2. Full catalog sweep (--all: evaluates all 16 assets across the registry)
+python3 scripts/eval_asset.py --all --provider mock --strict
+python3 scripts/eval_asset.py --all --provider ollama --model qwen2.5-coder:1.5b
 
-# 3. Cloud-Powered Heavy-Lifting Matrix (Antigravity / Gemini / Claude)
-# Tests complex multi-step reasoning, architectural planning, and deep refactoring in seconds:
-python3 scripts/eval_asset.py --asset <path> --provider agy --model gemini-3.8-flash-high
+# 3. Single specific asset evaluation
+python3 scripts/eval_asset.py --asset registry/skills/engineering/clean-code-auditor/SKILL.md --provider agy
 ```
 
 ---

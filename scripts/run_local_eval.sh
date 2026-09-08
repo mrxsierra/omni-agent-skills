@@ -19,29 +19,32 @@ show_usage() {
 omni-agent-skills Local Evaluation Helper (ADR 0005)
 
 Usage:
-  scripts/run_local_eval.sh mock <asset-path>
+  scripts/run_local_eval.sh mock [asset-path | --all]
       Run fast deterministic mock evaluation (< 2s, offline).
+      Omit asset-path to evaluate modified/added assets (delta mode).
 
-  scripts/run_local_eval.sh agy <asset-path> [model]
+  scripts/run_local_eval.sh agy [asset-path | --all] [model]
       Run cloud evaluation via local Antigravity CLI (`agy`).
       Default model: gemini-3.8-flash-high (supports claude-sonnet-4-6, etc.)
+      Omit asset-path to evaluate modified/added assets (delta mode).
 
   scripts/run_local_eval.sh podman start [model]
       Start a rootless Podman Ollama container and pull the model.
       Default model: qwen2.5-coder:1.5b (or qwen2.5-coder:7b)
 
-  scripts/run_local_eval.sh podman eval <asset-path> [model]
+  scripts/run_local_eval.sh podman eval [asset-path | --all] [model]
       Run evaluation against the local Podman Ollama container.
+      Omit asset-path to evaluate modified/added assets (delta mode).
 
   scripts/run_local_eval.sh podman stop
       Stop and remove the local Podman Ollama container.
 
 Examples:
+  scripts/run_local_eval.sh mock                                                # Delta mode (changed assets)
+  scripts/run_local_eval.sh mock --all                                          # Full catalog sweep
   scripts/run_local_eval.sh mock registry/skills/engineering/clean-code-auditor/SKILL.md
-  scripts/run_local_eval.sh agy registry/skills/engineering/clean-code-auditor/SKILL.md
-  scripts/run_local_eval.sh podman start qwen2.5-coder:1.5b
-  scripts/run_local_eval.sh podman eval registry/skills/engineering/clean-code-auditor/SKILL.md
-  scripts/run_local_eval.sh podman stop
+  scripts/run_local_eval.sh agy                                                 # Cloud eval on changed assets
+  scripts/run_local_eval.sh podman eval --all                                   # Containerized eval on all
 EOF
 }
 
@@ -64,27 +67,46 @@ fi
 
 case "$cmd" in
     mock)
-        if [[ $# -lt 2 ]]; then
-            echo "Error: Missing asset path." >&2
-            echo "Usage: scripts/run_local_eval.sh mock <asset-path>" >&2
-            exit 1
+        shift 1
+        arg="${1:-}"
+        if [[ "$arg" == "--all" ]]; then
+            shift 1
+            python3 scripts/eval_asset.py --all --provider mock "$@"
+        elif [[ -n "$arg" && "$arg" != -* && -f "$arg" ]]; then
+            asset="$arg"
+            shift 1
+            python3 scripts/eval_asset.py --asset "$asset" --provider mock "$@"
+        else
+            python3 scripts/eval_asset.py --provider mock "$@"
         fi
-        asset="$2"
-        shift 2
-        python3 scripts/eval_asset.py --asset "$asset" --provider mock "$@"
         ;;
 
     agy)
-        if [[ $# -lt 2 ]]; then
-            echo "Error: Missing asset path." >&2
-            echo "Usage: scripts/run_local_eval.sh agy <asset-path> [model]" >&2
-            exit 1
+        shift 1
+        arg="${1:-}"
+        model="$DEFAULT_AGY_MODEL"
+        if [[ "$arg" == "--all" ]]; then
+            shift 1
+            if [[ $# -gt 0 && "${1:-}" != -* ]]; then
+                model="$1"
+                shift 1
+            fi
+            python3 scripts/eval_asset.py --all --provider agy --model "$model" "$@"
+        elif [[ -n "$arg" && "$arg" != -* && -f "$arg" ]]; then
+            asset="$arg"
+            shift 1
+            if [[ $# -gt 0 && "${1:-}" != -* ]]; then
+                model="$1"
+                shift 1
+            fi
+            python3 scripts/eval_asset.py --asset "$asset" --provider agy --model "$model" "$@"
+        else
+            if [[ -n "$arg" && "$arg" != -* ]]; then
+                model="$arg"
+                shift 1
+            fi
+            python3 scripts/eval_asset.py --provider agy --model "$model" "$@"
         fi
-        asset="$2"
-        model="${3:-$DEFAULT_AGY_MODEL}"
-        shift 2
-        if [[ $# -gt 0 ]]; then shift; fi
-        python3 scripts/eval_asset.py --asset "$asset" --provider agy --model "$model" "$@"
         ;;
 
     podman|docker)
@@ -127,15 +149,34 @@ case "$cmd" in
                 ;;
 
             eval)
-                if [[ $# -lt 3 ]]; then
-                    echo "Error: Missing asset path." >&2
-                    echo "Usage: scripts/run_local_eval.sh podman eval <asset-path> [model]" >&2
-                    exit 1
+                shift 2
+                arg="${1:-}"
+                model="$DEFAULT_OLLAMA_MODEL"
+                if [[ "$arg" == "--all" ]]; then
+                    shift 1
+                    if [[ $# -gt 0 && "${1:-}" != -* ]]; then
+                        model="$1"
+                        shift 1
+                    fi
+                    echo "==> Running full catalog evaluation against containerized Ollama ($model)..."
+                    python3 scripts/eval_asset.py --all --provider ollama --model "$model" "$@"
+                elif [[ -n "$arg" && "$arg" != -* && -f "$arg" ]]; then
+                    asset="$arg"
+                    shift 1
+                    if [[ $# -gt 0 && "${1:-}" != -* ]]; then
+                        model="$1"
+                        shift 1
+                    fi
+                    echo "==> Running evaluation against containerized Ollama ($model)..."
+                    python3 scripts/eval_asset.py --asset "$asset" --provider ollama --model "$model" "$@"
+                else
+                    if [[ -n "$arg" && "$arg" != -* ]]; then
+                        model="$arg"
+                        shift 1
+                    fi
+                    echo "==> Running delta evaluation against containerized Ollama ($model)..."
+                    python3 scripts/eval_asset.py --provider ollama --model "$model" "$@"
                 fi
-                asset="$3"
-                model="${4:-$DEFAULT_OLLAMA_MODEL}"
-                echo "==> Running evaluation against containerized Ollama ($model)..."
-                python3 scripts/eval_asset.py --asset "$asset" --provider ollama --model "$model"
                 ;;
 
             stop)

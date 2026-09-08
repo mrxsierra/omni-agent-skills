@@ -43,9 +43,10 @@ python3 -m unittest discover -s tests -p 'test_*.py'
 git diff --check
 ```
 
-*For new or modified registry assets, also verify positive delta-utility:*
+*For new or modified registry assets, verify positive delta-utility (delta auto-detected by default):*
 ```bash
-python3 scripts/eval_asset.py --asset <path> --provider mock --strict
+python3 scripts/eval_asset.py --provider mock --strict
+# Or evaluate a specific asset: python3 scripts/eval_asset.py --asset <path> --provider mock --strict
 ```
 
 ## Pull-request checklist
