@@ -12,9 +12,9 @@ and reproducible results for the assets published in the `omni-agent-skills` reg
 ## Summary Metrics
 
 - **Total Catalog Assets Benchmarked:** 16
-- **Benchmark Pass Rate:** 100.0% (16/16 evaluations passed)
+- **Benchmark Pass Rate:** 100.0% (32/32 evaluations passed)
 - **Average Context Token Tax:** +548 tokens / turn
-- **Evaluated Provider Engines:** mock
+- **Evaluated Provider Engines:** agy, mock
 
 ---
 
@@ -35,21 +35,37 @@ Evaluation is decoupled into three operational tiers:
 | Asset / Skill | Domain | Suite ID | Provider (Model) | Base % | Aug % | $\Delta$-Utility | Token Tax | Gate Status |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
 | `ai-eval-benchmarker` | data-and-ai | `ai_eval_benchmarker` | `mock` (`mock-deterministic-v1`) | 0.0% | 100.0% | **+100.0%** | +539 tok | ✅ PASS |
+| `ai-eval-benchmarker` | data-and-ai | `ai_eval_benchmarker` | `agy` (`gemini-3.8-flash-high`) | 100.0% | 100.0% | **+0.0%** | +539 tok | ✅ PASS |
 | `rag-qa-chunking-engine` | data-and-ai | `rag_qa_chunking_engine` | `mock` (`mock-deterministic-v1`) | 0.0% | 100.0% | **+100.0%** | +624 tok | ✅ PASS |
+| `rag-qa-chunking-engine` | data-and-ai | `rag_qa_chunking_engine` | `agy` (`gemini-3.8-flash-high`) | 50.0% | 100.0% | **+50.0%** | +624 tok | ✅ PASS |
 | `atomic-feature-implementer` | engineering | `atomic_feature_implementer` | `mock` (`mock-deterministic-v1`) | 0.0% | 100.0% | **+100.0%** | +528 tok | ✅ PASS |
+| `atomic-feature-implementer` | engineering | `atomic_feature_implementer` | `agy` (`gemini-3.8-flash-high`) | 50.0% | 100.0% | **+50.0%** | +527 tok | ✅ PASS |
 | `clean-code-auditor` | engineering | `clean_code_audit` | `mock` (`mock-deterministic-v1`) | 0.0% | 100.0% | **+100.0%** | +522 tok | ✅ PASS |
+| `clean-code-auditor` | engineering | `clean_code_audit` | `agy` (`gemini-3.8-flash-high`) | 100.0% | 100.0% | **+0.0%** | +523 tok | ✅ PASS |
 | `code-anti-overengineer` | engineering | `code_anti_overengineer` | `mock` (`mock-deterministic-v1`) | 0.0% | 100.0% | **+100.0%** | +537 tok | ✅ PASS |
+| `code-anti-overengineer` | engineering | `code_anti_overengineer` | `agy` (`gemini-3.8-flash-high`) | 100.0% | 100.0% | **+0.0%** | +537 tok | ✅ PASS |
 | `pytest-verification-runner` | engineering | `pytest_verification_runner` | `mock` (`mock-deterministic-v1`) | 0.0% | 100.0% | **+100.0%** | +542 tok | ✅ PASS |
+| `pytest-verification-runner` | engineering | `pytest_verification_runner` | `agy` (`gemini-3.8-flash-high`) | 100.0% | 100.0% | **+0.0%** | +541 tok | ✅ PASS |
 | `semver-release-manager` | engineering | `semver_release_manager` | `mock` (`mock-deterministic-v1`) | 0.0% | 100.0% | **+100.0%** | +553 tok | ✅ PASS |
+| `semver-release-manager` | engineering | `semver_release_manager` | `agy` (`gemini-3.8-flash-high`) | 50.0% | 100.0% | **+50.0%** | +553 tok | ✅ PASS |
 | `system-architecture-planner` | engineering | `system_architecture_planner` | `mock` (`mock-deterministic-v1`) | 0.0% | 100.0% | **+100.0%** | +565 tok | ✅ PASS |
+| `system-architecture-planner` | engineering | `system_architecture_planner` | `agy` (`gemini-3.8-flash-high`) | 100.0% | 100.0% | **+0.0%** | +566 tok | ✅ PASS |
 | `advanced-verification-testing` | security-and-governance | `advanced_verification_testing` | `mock` (`mock-deterministic-v1`) | 0.0% | 100.0% | **+100.0%** | +575 tok | ✅ PASS |
+| `advanced-verification-testing` | security-and-governance | `advanced_verification_testing` | `agy` (`gemini-3.8-flash-high`) | 100.0% | 100.0% | **+0.0%** | +575 tok | ✅ PASS |
 | `ai-native-product-design` | security-and-governance | `ai_native_product_design` | `mock` (`mock-deterministic-v1`) | 0.0% | 100.0% | **+100.0%** | +541 tok | ✅ PASS |
+| `ai-native-product-design` | security-and-governance | `ai_native_product_design` | `agy` (`gemini-3.8-flash-high`) | 100.0% | 100.0% | **+0.0%** | +540 tok | ✅ PASS |
 | `oss-launch-governance` | security-and-governance | `oss_launch_governance` | `mock` (`mock-deterministic-v1`) | 0.0% | 100.0% | **+100.0%** | +538 tok | ✅ PASS |
+| `oss-launch-governance` | security-and-governance | `oss_launch_governance` | `agy` (`gemini-3.8-flash-high`) | 100.0% | 100.0% | **+0.0%** | +539 tok | ✅ PASS |
 | `secret-leak-shield` | security-and-governance | `secret_leak_shield` | `mock` (`mock-deterministic-v1`) | 0.0% | 100.0% | **+100.0%** | +567 tok | ✅ PASS |
+| `secret-leak-shield` | security-and-governance | `secret_leak_shield` | `agy` (`gemini-3.8-flash-high`) | 100.0% | 100.0% | **+0.0%** | +567 tok | ✅ PASS |
 | `security_shield.md` | security-and-governance | `security_shield` | `mock` (`mock-deterministic-v1`) | 0.0% | 100.0% | **+100.0%** | +406 tok | ✅ PASS |
+| `security_shield.md` | security-and-governance | `security_shield` | `agy` (`gemini-3.8-flash-high`) | 50.0% | 100.0% | **+50.0%** | +407 tok | ✅ PASS |
 | `tech-competitive-intelligence` | security-and-governance | `tech_competitive_intelligence` | `mock` (`mock-deterministic-v1`) | 0.0% | 100.0% | **+100.0%** | +566 tok | ✅ PASS |
+| `tech-competitive-intelligence` | security-and-governance | `tech_competitive_intelligence` | `agy` (`gemini-3.8-flash-high`) | 100.0% | 100.0% | **+0.0%** | +567 tok | ✅ PASS |
 | `a11y-web-auditor` | web-and-geo | `a11y_audit` | `mock` (`mock-deterministic-v1`) | 0.0% | 100.0% | **+100.0%** | +574 tok | ✅ PASS |
+| `a11y-web-auditor` | web-and-geo | `a11y_audit` | `agy` (`gemini-3.8-flash-high`) | 100.0% | 100.0% | **+0.0%** | +574 tok | ✅ PASS |
 | `ai-first-web-geo` | web-and-geo | `ai_first_web_geo` | `mock` (`mock-deterministic-v1`) | 0.0% | 100.0% | **+100.0%** | +590 tok | ✅ PASS |
+| `ai-first-web-geo` | web-and-geo | `ai_first_web_geo` | `agy` (`gemini-3.8-flash-high`) | 100.0% | 100.0% | **+0.0%** | +591 tok | ✅ PASS |
 
 ---
 

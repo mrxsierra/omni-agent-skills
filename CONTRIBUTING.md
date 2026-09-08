@@ -156,28 +156,23 @@ Per [ADR 0004](docs/adr/0004-multi-provider-asset-evaluation-and-delta-utility-b
 
 ### 2. Running Local Asset Evaluations
 
-You can test assets locally using whatever AI provider you prefer—including **Google Antigravity**, **free local Ollama**, **OpenAI/ChatGPT**, **Anthropic/Claude**, **OpenRouter**, or **offline Mock**:
+Contributors can evaluate assets using the unified helper [`scripts/run_local_eval.sh`](scripts/run_local_eval.sh) across whichever AI provider best fits their setup:
 
 ```bash
-# A. Google Antigravity / Gemini (via GEMINI_API_KEY):
-python3 scripts/eval_asset.py --asset registry/skills/web-and-geo/a11y-web-auditor/SKILL.md \
-                             --provider antigravity --model gemini-2.5-pro
+# A. Instant Deterministic Mock Gate (< 2s, zero API keys, offline):
+scripts/run_local_eval.sh mock registry/skills/engineering/clean-code-auditor/SKILL.md
 
-# B. Local Ollama (100% free, private, offline):
-python3 scripts/eval_asset.py --asset registry/skills/engineering/clean-code-auditor/SKILL.md \
-                             --provider ollama --model qwen2.5-coder:7b
+# B. Native Antigravity CLI / Frontier Cloud (Gemini 3.8 Flash, Claude Sonnet 4.6):
+scripts/run_local_eval.sh agy registry/skills/engineering/clean-code-auditor/SKILL.md gemini-3.8-flash-high
 
-# C. OpenAI / ChatGPT (via OPENAI_API_KEY):
-python3 scripts/eval_asset.py --asset registry/rules/global/security_shield.md \
-                             --provider openai --model gpt-4o
+# C. Rootless Containerized Open-Weights (Podman / Docker Compose):
+podman compose -f docker-compose.eval.yml up -d
+scripts/run_local_eval.sh podman eval registry/skills/engineering/clean-code-auditor/SKILL.md qwen2.5-coder:1.5b
+podman compose -f docker-compose.eval.yml down
 
-# D. OpenRouter (multi-vendor comparison):
+# D. OpenRouter / Multi-Vendor Cloud API (via OPENROUTER_API_KEY):
 python3 scripts/eval_asset.py --asset registry/skills/data-and-ai/rag-qa-chunking-engine/SKILL.md \
                              --provider openrouter --model anthropic/claude-3.5-sonnet
-
-# E. Offline CI Mock Gate (zero API keys):
-python3 scripts/eval_asset.py --asset registry/skills/engineering/clean-code-auditor/SKILL.md \
-                             --provider mock --strict
 ```
 
 ### 3. Adding an Evaluation Task Suite
