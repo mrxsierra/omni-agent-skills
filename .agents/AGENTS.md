@@ -15,7 +15,7 @@ This repository is a small, practical AI-native skill registry and repo hygiene 
 3. Do not claim performance without reproducible evidence.
 4. Treat local checks as hygiene checks, not as proof of product quality.
 5. Keep docs and implementation aligned with the actual repo state.
-6. Make material changes on a scoped feature branch, never directly on `main`.
+6. Make material changes on a scoped feature branch from `dev`, never directly on `dev` or `main`.
 7. Follow the contribution and feature delivery SOP before committing a change.
 8. Treat `docs/` and root `.md` files as the single source of truth; do not duplicate documentation in `.agents/`.
 
@@ -42,7 +42,7 @@ When an AI agent is tasked with implementing a feature, fix, documentation updat
 
 1. **Pre-flight Branch Guard (Mandatory):**
    - Check current git branch (`git status` / `git branch --show-current`).
-   - If on `main` or `master`, automatically create and switch to a scoped branch (`feat/<name>`, `fix/<name>`, `docs/<name>`, `chore/<name>`) *before* modifying any files.
+   - If on `main`, `master`, or `dev`, ensure `dev` is up to date (`git checkout dev && git pull origin dev`) and automatically create and switch to a scoped branch (`feat/<name>`, `fix/<name>`, `docs/<name>`, `chore/<name>`) branching from `dev` *before* modifying any files.
 2. **Context & Document Routing:**
    - Inspect relevant canonical documentation in `docs/` or root files to gather context without hallucinating requirements.
    - If significant architectural changes or schema modifications are introduced, scaffold an ADR (`python3 scripts/manage_adr.py new "<Title>"`).
@@ -62,9 +62,9 @@ When an AI agent is tasked with implementing a feature, fix, documentation updat
      ```
 5. **Stage & Commit:**
    - Stage affected files and create a conventional commit (`feat:`, `fix:`, `docs:`, `chore:`).
-6. **Push & Open Pull Request:**
+6. **Push & Open Pull Request targeting `dev`:**
    - Push branch to origin (`git push -u origin <branch-name>`).
-   - Create a Pull Request via GitHub CLI (`gh pr create`) using the structured template with clear scope, verification results, and checklists.
+   - Create a Pull Request targeting `dev` via GitHub CLI (`gh pr create --base dev`) using the structured template with clear scope, verification results, and checklists.
 7. **Monitor CI to Completion:**
    - Monitor remote GitHub Actions CI status (`gh pr checks <PR_NUM> --watch`) until checks pass.
    - Report the PR link, CI status, and summary back to the user.

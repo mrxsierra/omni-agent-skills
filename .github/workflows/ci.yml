@@ -4,6 +4,7 @@ on:
   push:
     branches: [ main, dev ]
   pull_request:
+    branches: [ main, dev ]
 
 jobs:
   verify:
@@ -29,6 +30,9 @@ jobs:
     - name: Validate ADR and RFC integrity
       run: python3 scripts/manage_adr.py validate
 
+    - name: Verify Evaluation Scorecard is Up to Date
+      run: python3 scripts/build_eval_report.py --check
+
     - name: Run project smoke tests
       run: python3 -m unittest discover -s tests -p 'test_*.py'
 
@@ -45,5 +49,5 @@ jobs:
         print("All assets passed deterministic quality gate.")
         '
 
-    - name: Check for Uncommitted Registry Changes
-      run: git diff --exit-code registry/registry.json llms.txt
+    - name: Check for Uncommitted Generated Artifacts
+      run: git diff --exit-code registry/registry.json llms.txt evals/README.md docs/adr/README.md

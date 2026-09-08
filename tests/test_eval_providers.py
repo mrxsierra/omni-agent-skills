@@ -5,8 +5,10 @@ Comprehensive Unit tests for the Pluggable Model Provider Engine and Evaluation 
 
 import io
 import json
+import os
 import subprocess
 import sys
+import tempfile
 import unittest
 from pathlib import Path
 from unittest.mock import MagicMock, patch
@@ -18,6 +20,7 @@ sys.path.insert(0, str(SCRIPTS_DIR))
 
 from eval_providers import (
     AnthropicProvider,
+    AntigravityCliProvider,
     AntigravityProvider,
     BaseModelProvider,
     MockProvider,
@@ -26,7 +29,8 @@ from eval_providers import (
     OpenAICompatibleProvider,
     get_provider,
 )
-from eval_asset import evaluate_asset, load_task_suite, score_task
+from eval_asset import append_github_step_summary, evaluate_asset, load_task_suite, score_task
+from build_eval_report import load_all_baselines, generate_markdown
 
 
 class TestEvalProviders(unittest.TestCase):
@@ -66,6 +70,10 @@ class TestEvalProviders(unittest.TestCase):
 
         anthropic_p = get_provider("anthropic", api_key="dummy-key")
         self.assertIsInstance(anthropic_p, AnthropicProvider)
+
+        agy_p = get_provider("agy")
+        self.assertIsInstance(agy_p, AntigravityCliProvider)
+        self.assertEqual(agy_p.model_name, "gemini-3.8-flash-high")
 
     def test_unknown_provider_raises(self):
         with self.assertRaises(ValueError):
@@ -154,6 +162,22 @@ class TestEvalProviders(unittest.TestCase):
         self.assertEqual(resp.prompt_tokens, 35)
         self.assertEqual(resp.completion_tokens, 15)
 
+    @patch("subprocess.run")
+    def test_agy_provider_invoke_mocked(self, mock_subproc):
+        mock_proc = MagicMock()
+        mock_proc.returncode = 0
+        mock_proc.stdout = "Antigravity CLI simulated response"
+        mock_proc.stderr = ""
+        mock_subproc.return_value = mock_proc
+
+        agy_p = AntigravityCliProvider(model_name="gemini-3.8-flash-high")
+        resp = agy_p.invoke([{"role": "user", "content": "Refactor this code"}], system_prompt="Sys")
+
+        self.assertEqual(resp.text, "Antigravity CLI simulated response")
+        self.assertEqual(resp.provider_name, "agy")
+        self.assertEqual(resp.model_name, "gemini-3.8-flash-high")
+        self.assertGreater(resp.total_tokens, 0)
+
     def test_score_task_pass(self):
         passed, reason = score_task(
             response_text="We must avoid DRY violations and flatten logic.",
@@ -218,6 +242,49 @@ class TestEvalAssetRunner(unittest.TestCase):
         self.assertTrue(data.get("passed_gate"))
         self.assertEqual(data.get("provider"), "mock")
         self.assertTrue(data.get("harness_verification_only"))
+
+    def test_append_github_step_summary(self):
+        with tempfile.NamedTemporaryFile(mode="w+", delete=False) as tf:
+            summary_file = tf.name
+
+        try:
+            with patch.dict(os.environ, {"GITHUB_STEP_SUMMARY": summary_file}):
+                results = {
+                    "asset_path": "registry/skills/engineering/clean-code-auditor/SKILL.md",
+                    "provider": "mock",
+                    "model": "mock-deterministic-v1",
+                    "task_suite": "clean_code_audit",
+                    "total_tasks": 2,
+                    "baseline_pass_rate": 0.0,
+                    "augmented_pass_rate": 100.0,
+                    "delta_utility": 100.0,
+                    "token_tax_per_turn": 522,
+                    "passed_gate": True,
+                    "verdict": "ACCEPTED (Positive Delta Utility)",
+                    "harness_verification_only": True,
+                }
+                append_github_step_summary(results)
+
+            with open(summary_file, "r", encoding="utf-8") as f:
+                content = f.read()
+
+            self.assertIn("### 📊 Asset Evaluation Scorecard: `clean-code-auditor`", content)
+            self.assertIn("Deterministic Mock", content)
+            self.assertIn("+100.0%", content)
+            self.assertIn("✅ PASSED", content)
+        finally:
+            if os.path.exists(summary_file):
+                os.remove(summary_file)
+
+    def test_build_eval_report_generator(self):
+        records = load_all_baselines()
+        self.assertEqual(len(records), 16)
+
+        md = generate_markdown(records)
+        self.assertIn("# 📊 Empirical Evaluation & Quality Scorecard", md)
+        self.assertIn("Multi-Tier Evaluation Architecture (ADR 0005)", md)
+        self.assertIn("`clean-code-auditor`", md)
+        self.assertIn("`security_shield.md`", md)
 
 
 if __name__ == "__main__":

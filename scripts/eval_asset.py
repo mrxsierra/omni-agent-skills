@@ -217,6 +217,43 @@ def print_report(results: Dict[str, Any]) -> None:
     print("=" * 70 + "\n")
 
 
+def append_github_step_summary(results: Dict[str, Any]) -> None:
+    """Append a Markdown evaluation scorecard to $GITHUB_STEP_SUMMARY if present."""
+    summary_path = os.environ.get("GITHUB_STEP_SUMMARY")
+    if not summary_path:
+        return
+
+    asset_path = Path(results["asset_path"])
+    asset_name = asset_path.parent.name if asset_path.name == "SKILL.md" else asset_path.name
+    delta_sign = "+" if results["delta_utility"] >= 0 else ""
+    status_badge = "✅ PASSED" if results["passed_gate"] else "❌ REJECTED"
+    tier = "Deterministic Mock" if results.get("harness_verification_only") else f"Neural ({results['provider']})"
+
+    md_content = f"""
+### 📊 Asset Evaluation Scorecard: `{asset_name}`
+
+| Metric | Result |
+| :--- | :--- |
+| **Asset Path** | `{results['asset_path']}` |
+| **Evaluation Tier** | {tier} |
+| **Provider / Model** | `{results['provider']}` / `{results['model']}` |
+| **Task Suite** | `{results['task_suite']}` ({results['total_tasks']} tasks) |
+| **Baseline Pass Rate** | `{results['baseline_pass_rate']}%` |
+| **Augmented Pass Rate** | `{results['augmented_pass_rate']}%` |
+| **$\\Delta$-Utility (Delta)** | **`{delta_sign}{results['delta_utility']}%`** |
+| **Context Token Tax** | `+{results['token_tax_per_turn']} tokens / turn` |
+| **Gate Status** | **{status_badge}** |
+| **Verdict** | {results['verdict']} |
+
+> *Evaluated autonomously via omni-agent-skills dual-engine verification pipeline (ADR 0005).*
+"""
+    try:
+        with open(summary_path, "a", encoding="utf-8") as f:
+            f.write(md_content.strip() + "\n\n")
+    except Exception as e:
+        print(f"Warning: Failed to write to GITHUB_STEP_SUMMARY: {e}", file=sys.stderr)
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(
         description="Benchmark registry assets across AI providers to verify positive delta utility."
@@ -229,13 +266,13 @@ def main() -> int:
     parser.add_argument(
         "--provider",
         default="mock",
-        choices=["antigravity", "ollama", "openai", "openrouter", "anthropic", "mock"],
+        choices=["antigravity", "agy", "ollama", "openai", "openrouter", "anthropic", "mock"],
         help="Model provider to execute evaluation against (default: mock).",
     )
     parser.add_argument(
         "--model",
         default=None,
-        help="Model name (e.g. gemini-2.5-pro, qwen2.5-coder:7b, gpt-4o).",
+        help="Model name (e.g. gemini-2.5-pro, gemini-3.8-flash-high, qwen2.5-coder:7b, gpt-4o).",
     )
     parser.add_argument(
         "--tasks",
@@ -290,6 +327,8 @@ def main() -> int:
         print(json.dumps(results, indent=2))
     else:
         print_report(results)
+
+    append_github_step_summary(results)
 
     if args.strict and not results["passed_gate"]:
         return 1

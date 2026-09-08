@@ -13,9 +13,9 @@ for the underlying documentation layering and autonomous delivery architecture.
    non-goals in an issue, task description, or pull-request draft.
 2. **Check the baseline.** Inspect the relevant documentation and code; confirm
    the working tree is clean and identify affected generated files.
-3. **Create a branch from `main`.** Use one of `feat/`, `fix/`, `docs/`, or
-   `chore/` followed by a concise name. Do not make material changes directly
-   on `main`.
+3. **Create a branch from `dev`.** Ensure `dev` is up to date (`git checkout dev && git pull origin dev`).
+   Use one of `feat/`, `fix/`, `docs/`, or `chore/` followed by a concise name. Do not make material
+   changes directly on `dev` or `main`.
 4. **Plan proportionately.** For significant changes, identify affected assets,
    compatibility risks, verification, and whether an ADR is required. If required,
    scaffold an ADR using `python3 scripts/manage_adr.py new "<Title>"`.
@@ -28,9 +28,9 @@ for the underlying documentation layering and autonomous delivery architecture.
 7. **Document the result.** Update public documentation, an ADR (via
    `python3 scripts/manage_adr.py build-index`), or a roadmap item when the change
    alters behavior, direction, or process.
-8. **Commit and prepare review.** Use a focused conventional-style commit.
-   The pull request states intent, scope, verification performed, risks, and
-   follow-up work.
+8. **Commit and prepare review targeting `dev`.** Use a focused conventional-style commit.
+   The pull request targets `dev` (`gh pr create --base dev`) stating intent, scope,
+   verification performed, risks, and follow-up work.
 
 ## Required local checks
 
