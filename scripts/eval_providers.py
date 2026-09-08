@@ -26,6 +26,33 @@ import time
 import urllib.error
 import urllib.request
 from typing import Any, Dict, List, Optional
+from pathlib import Path
+
+REPO_ROOT = Path(__file__).resolve().parent.parent
+
+
+def load_dotenv_if_exists(dotenv_path: Optional[Path] = None) -> None:
+    """Load key-value pairs from .env into os.environ if present (zero third-party dependencies)."""
+    p = dotenv_path or (REPO_ROOT / ".env")
+    if not p.is_file():
+        return
+    try:
+        with open(p, "r", encoding="utf-8") as f:
+            for line in f:
+                line = line.strip()
+                if not line or line.startswith("#") or "=" not in line:
+                    continue
+                k, v = line.split("=", 1)
+                k = k.strip()
+                v = v.strip().strip("'\"")
+                if k and k not in os.environ:
+                    os.environ[k] = v
+    except Exception:
+        pass
+
+
+# Auto-load .env when eval_providers is imported
+load_dotenv_if_exists()
 
 
 class ModelResponse:

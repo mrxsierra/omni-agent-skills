@@ -2,6 +2,7 @@
 .sanitize-local.json
 .env
 .env.*
+!.env.example
 
 # Python & Build artifacts
 __pycache__/

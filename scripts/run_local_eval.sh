@@ -12,7 +12,15 @@ set -euo pipefail
 CONTAINER_NAME="omni-ollama-eval"
 DEFAULT_OLLAMA_MODEL="qwen2.5-coder:1.5b"
 DEFAULT_AGY_MODEL="gemini-3.8-flash-high"
-OLLAMA_PORT="11434"
+REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+
+# Auto-source .env if present (untracked local environment variables)
+if [[ -f "$REPO_ROOT/.env" ]]; then
+    set -a
+    # shellcheck disable=SC1091
+    source "$REPO_ROOT/.env"
+    set +a
+fi
 
 show_usage() {
     cat << 'EOF'

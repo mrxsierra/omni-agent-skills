@@ -28,6 +28,7 @@ from eval_providers import (
     OllamaProvider,
     OpenAICompatibleProvider,
     get_provider,
+    load_dotenv_if_exists,
 )
 from eval_asset import (
     append_github_step_summary,
@@ -307,6 +308,24 @@ class TestEvalAssetRunner(unittest.TestCase):
             changed = detect_changed_assets("origin/dev")
             self.assertEqual(len(changed), 1)
             self.assertTrue(str(changed[0]).endswith("clean-code-auditor/SKILL.md"))
+
+    def test_load_dotenv_if_exists(self):
+        import tempfile
+        with tempfile.NamedTemporaryFile("w", delete=False, encoding="utf-8") as tf:
+            tf.write("# Comment\nTEST_OMNI_VAR=hello_world\nANOTHER_VAR='quoted'\n")
+            temp_name = tf.name
+
+        try:
+            load_dotenv_if_exists(Path(temp_name))
+            self.assertEqual(os.environ.get("TEST_OMNI_VAR"), "hello_world")
+            self.assertEqual(os.environ.get("ANOTHER_VAR"), "quoted")
+        finally:
+            if "TEST_OMNI_VAR" in os.environ:
+                del os.environ["TEST_OMNI_VAR"]
+            if "ANOTHER_VAR" in os.environ:
+                del os.environ["ANOTHER_VAR"]
+            if os.path.exists(temp_name):
+                os.remove(temp_name)
 
 
 if __name__ == "__main__":
