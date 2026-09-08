@@ -50,6 +50,7 @@ Establish an empirical evaluation framework to measure asset value ($\Delta$-uti
   - *Batch 1 (Core Engineering — Completed):* `clean-code-auditor`, `system-architecture-planner`, `atomic-feature-implementer`, `code-anti-overengineer`, `pytest-verification-runner`, `semver-release-manager`.
   - *Batch 2 (Data & AI / Web — Completed):* `rag-qa-chunking-engine`, `ai-eval-benchmarker`, `a11y-web-auditor`, `ai-first-web-geo`.
   - *Batch 3 (Security & Governance — Completed):* `secret-leak-shield`, `security_shield.md` (rule), `oss-launch-governance`, `tech-competitive-intelligence`, `advanced-verification-testing`, `ai-native-product-design`.
+- **Two-Track Branching & Dual-Engine Evaluation (ADR 0005):** Established `dev` as active staging/integration trunk and `main` as protected release trunk. Decoupled fast PR gates (mock + lightweight open-weights CPU smoke) from heavy-lifting complex skill evaluation (cloud `agy` / Gemini Flash / Claude). Automated public transparency via GitHub Step Summaries (`$GITHUB_STEP_SUMMARY`) and `evals/README.md` scorecard.
 
 ### Milestone 6: Shipped Workflows & Lifecycle Orchestration
 Promote multi-step workflows from internal dogfooding to first-class published registry assets:

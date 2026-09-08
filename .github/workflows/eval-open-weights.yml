@@ -2,6 +2,7 @@ name: Open-Weights Model Evaluation
 
 on:
   pull_request:
+    branches: [ main, dev ]
     paths:
       - 'registry/**'
       - 'evals/**'

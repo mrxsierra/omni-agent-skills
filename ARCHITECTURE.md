@@ -99,6 +99,12 @@ To empower AI agents to choose the right assets and understand how various asset
 | **Python Backend / CLI** | Python service, testing, and clean code | `workflow-feature-delivery`, `code-anti-overengineer.json` | `atomic-feature-implementer`, `clean-code-auditor`, `pytest-verification-runner` | `python_rules.md` | `auto-formatter.sh`, `async_http_client.py` | — |
 | **Data & AI Systems** | RAG pipelines, model eval, dataset chunks | `workflow-feature-delivery`, `system-architecture-planner.json` | `rag-qa-chunking-engine`, `ai-eval-benchmarker` | `security_shield.md` | `async_http_client.py` | — |
 
+### Two-Track Git Flow (`dev` vs. `main`)
+
+Per [ADR 0005](docs/adr/0005-two-track-branching-and-dual-engine-evaluation.md), development integration and production releases are strictly decoupled into two parallel trunks:
+- **`dev` (Active Integration Trunk):** All contributor and AI agent pull requests (`feat/*`, `fix/*`, `docs/*`, `chore/*`) branch from and target `dev`. Runs the fast Tier 0 hygiene checks, Tier 1 deterministic mock gate (< 2s), and lightweight Tier 2 neural smoke tests.
+- **`main` (Production Release Trunk):** Protected release branch containing stable, release-ready catalog assets. Promoted from `dev` on release promotion gates after passing the full cloud-powered catalog evaluation matrix. Version tags (`v0.0.3`, `v0.1.0`) are published exclusively from `main`.
+
 ### Core Operating Principles
 1. **Single-Responsibility Principle (SRP):** Each skill, rule, and asset is strictly scoped to a single expert capability to prevent context bleed and maintain high precision.
 2. **Verification Over Claiming:** This repository does not publish benchmark performance claims unless backed by reproducible CI runs with explicit golden data and reviewable artifacts.
@@ -106,6 +112,7 @@ To empower AI agents to choose the right assets and understand how various asset
 4. **Tool Neutrality:** Published assets declare clear constraints, inputs, and expected outputs without assuming vendor-specific runtime privileges.
 5. **Secret Hygiene:** Scans for obvious secret and credential patterns using `scripts/sanitize.py` and protects private local overrides via `.gitignore`.
 6. **5-Gate Inclusion Filter:** Every addition must satisfy Orthogonality, Tool Neutrality, Deterministic Verification Invariants, Contract Conformance, and Zero-Secret/Zero-Hype criteria.
+7. **Two-Track Branch Discipline:** Changes never bypass `dev` to land directly on `main`.
 
 ---
 
@@ -127,7 +134,7 @@ omni-agent-skills/
 │
 ├── docs/                            # Human-readable architectural and governance docs
 │   ├── README.md                    # Documentation index and lifecycle guide
-│   ├── adr/                         # Architecture Decision Records (ADRs 0001-0004)
+│   ├── adr/                         # Architecture Decision Records (ADRs 0001-0005)
 │   ├── foundation/                  # Charter, scope, non-goals, and principles
 │   ├── governance/                  # Maintainer responsibility and review rules
 │   ├── roadmap/                     # Active milestones and long-term direction
@@ -140,13 +147,14 @@ omni-agent-skills/
 │
 ├── evals/                           # Empirical evaluation task suites and benchmarks
 │   ├── tasks/                       # Standardized tasks for code audit, security, and a11y
-│   └── baselines/                   # Empirical score ledgers and model baseline snapshots
+│   ├── baselines/                   # Empirical score ledgers and model baseline snapshots
+│   └── README.md                    # Public evaluation scorecard and transparency catalog
 │
 ├── registry/                        # Published skill registry and asset catalog
 │   ├── registry.json                # Generated machine index of published skills
 │   ├── registry.schema.json         # JSON Schema validating registry.json
-│   ├── skills/                      # Tier-1: Scoped skill runbooks (engineering, web-and-geo, etc.)
-│   ├── workflows/                   # Tier-1: Shipped lifecycle workflows with stage gates
+│   ├── skills/                      # Tier-1: Atomic runbooks (engineering, web, data-and-ai, security)
+│   ├── workflows/                   # Tier-1: Multi-step lifecycle workflows
 │   ├── rules/                       # Tier-1: Behavioral and security rules
 │   ├── subagents/                   # Tier-1: Focused persona and tool isolation configurations
 │   ├── hooks/                       # Tier-2: Pre-tool and post-tool guard hooks
@@ -160,6 +168,8 @@ omni-agent-skills/
 │   ├── manage_adr.py                # ADR and RFC lifecycle tooling
 │   ├── eval_asset.py                # Asset delta-utility and anti-junk CLI benchmark runner
 │   ├── eval_providers.py            # Pluggable model providers (Antigravity, Ollama, OpenAI, Anthropic, Mock)
+│   ├── build_eval_report.py         # Compiles evals/baselines/*.json into evals/README.md scorecard
+│   ├── run_local_eval.sh            # Frictionless local runner (Mock, Podman Ollama, Antigravity CLI)
 │   ├── bump.py                      # Multi-file version synchronizer
 │   ├── sanitize.py                  # Local regex-based secret/PII scanner
 │   └── run_workflow.py              # Safe simulation-first reference workflow runner
@@ -177,7 +187,7 @@ omni-agent-skills/
 
 ## 5. Multi-Tier Verification Pipeline
 
-The repository enforces hygiene, integrity, and empirical capability via a 3-tier quality gate per [ADR 0004](docs/adr/0004-multi-provider-asset-evaluation-and-delta-utility-bench.md):
+The repository enforces hygiene, integrity, and empirical capability via a tiered quality gate per [ADR 0004](docs/adr/0004-multi-provider-asset-evaluation-and-delta-utility-bench.md) and [ADR 0005](docs/adr/0005-two-track-branching-and-dual-engine-evaluation.md):
 
 ### Tier 0: Static & Contract Hygiene
 Runs in milliseconds; blocks syntax errors, hardcoded credentials, and schema regressions:
@@ -195,18 +205,21 @@ Validates executable code, shell hooks, snippet compilation, subagent schemas, a
 python3 -m unittest discover -s tests -p 'test_*.py'
 ```
 
-### Tier 2: Empirical $\Delta$-Utility Evaluation Bench
-Evaluates whether a skill or rule genuinely improves performance over baseline models without imposing an excessive token tax:
+### Tier 2: Dual-Engine Empirical $\Delta$-Utility Evaluation
+Evaluates whether an asset genuinely improves performance over baseline models without imposing an excessive token tax:
+
 ```bash
 # 1. Deterministic CI Harness Gate (Offline plumbing verification)
-# Validates CLI arguments, prompt composition, token calculation, and keyword scoring.
-# Note: Mock runs validate harness execution; they do not prove neural model efficacy.
+# Validates CLI arguments, prompt composition, token calculation, and keyword scoring across all assets (< 2s).
 python3 scripts/eval_asset.py --asset <path> --provider mock --strict
 
-# 2. Live Neural Benchmarks across Standard Reference Tiers:
-# Validates real-world cognitive improvement (+Δ-Utility) on actual language models:
-# - Tier A (Local Open Weights): python3 scripts/eval_asset.py --asset <path> --provider ollama --model qwen2.5-coder:1.5b
-# - Tier B (Frontier Cloud):     python3 scripts/eval_asset.py --asset <path> --provider antigravity --model gemini-2.5-pro
+# 2. Lightweight Open-Weights Neural Smoke (CPU / Local Podman)
+# Fast verification of simple reasoning and format adherence on small models without cloud cost:
+python3 scripts/eval_asset.py --asset <path> --provider ollama --model qwen2.5-coder:1.5b
+
+# 3. Cloud-Powered Heavy-Lifting Matrix (Antigravity / Gemini / Claude)
+# Tests complex multi-step reasoning, architectural planning, and deep refactoring in seconds:
+python3 scripts/eval_asset.py --asset <path> --provider agy --model gemini-3.8-flash-high
 ```
 
 ---
