@@ -56,7 +56,8 @@ When an AI agent is tasked with implementing a feature, fix, documentation updat
      python3 scripts/validate_registry.py
      python3 scripts/manage_adr.py validate
      python3 -m unittest discover -s tests -p 'test_*.py'
-     # When adding or modifying registry assets with evaluation tasks:
+     # When adding or modifying registry assets with evaluation tasks (ADR 0005 & ADR 0006):
+     ./scripts/run_local_eval.sh check-keys
      python3 scripts/eval_asset.py --asset <asset_path> --provider mock --strict
      git diff --check
      ```

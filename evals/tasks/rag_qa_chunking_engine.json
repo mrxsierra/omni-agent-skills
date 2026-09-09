@@ -9,15 +9,32 @@
       "id": "task-rag-01",
       "name": "Chunk architecture markdown doc into self-contained Q&A pairs",
       "user_prompt": "We have a 50-page architecture guide. How should we chunk it for our agent vector search to maximize retrieval accuracy and eliminate conversational ambiguity?",
-      "expected_keywords": ["self-contained", "qa-", "category", "tags", "factual"],
-      "fail_keywords": ["dump entire raw document", "no metadata"]
+      "expected_keywords": [
+        "self-contained",
+        "qa-",
+        "category",
+        "tags",
+        "factual"
+      ],
+      "fail_keywords": [
+        "dump entire raw document",
+        "no metadata"
+      ]
     },
     {
       "id": "task-rag-02",
       "name": "Validate llms-qa.json schema and avoid conversational cross-turn dependencies",
       "user_prompt": "A contributor proposed a Q&A pair: Q: 'What about the next step?' A: 'It runs the validator.' How should this entry be corrected to adhere to the llms-qa.json specification?",
-      "expected_keywords": ["schema", "independent", "deduplication", "llms-qa.json"],
-      "fail_keywords": ["depends on prior question"]
+      "expected_keywords": [
+        "schema",
+        "independent",
+        "deduplication",
+        "llms-qa.json"
+      ],
+      "fail_keywords": [
+        "depends on prior question"
+      ]
     }
-  ]
+  ],
+  "eval_tier": "M"
 }

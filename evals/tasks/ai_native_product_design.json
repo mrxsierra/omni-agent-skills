@@ -9,15 +9,32 @@
       "id": "task-ainative-01",
       "name": "Design Model Context Protocol (MCP) server interface and discoverability",
       "user_prompt": "We are architecting our CLI tool to be directly callable by AI coding agents. How should we expose its core commands via Model Context Protocol (MCP) and structure root discoverability assets?",
-      "expected_keywords": ["mcp", "schema", "llms.txt", "tool contract", "stdio"],
-      "fail_keywords": ["undocumented arbitrary bash execution"]
+      "expected_keywords": [
+        "mcp",
+        "schema",
+        "llms.txt",
+        "tool contract",
+        "stdio"
+      ],
+      "fail_keywords": [
+        "undocumented arbitrary bash execution"
+      ]
     },
     {
       "id": "task-ainative-02",
       "name": "Enforce least-privilege guardrails and dry-run safety for agent actions",
       "user_prompt": "An autonomous agent has access to tools that can delete files or drop database tables. How should the system architecture enforce guardrails and least privilege?",
-      "expected_keywords": ["least privilege", "guardrail", "dry-run", "safety flag", "boundary"],
-      "fail_keywords": ["give agent unrestricted root access"]
+      "expected_keywords": [
+        "least privilege",
+        "guardrail",
+        "dry-run",
+        "safety flag",
+        "boundary"
+      ],
+      "fail_keywords": [
+        "give agent unrestricted root access"
+      ]
     }
-  ]
+  ],
+  "eval_tier": "L"
 }

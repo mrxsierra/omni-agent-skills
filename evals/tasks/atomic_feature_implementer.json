@@ -9,15 +9,30 @@
       "id": "task-atomic-01",
       "name": "Propagate function signature change across callsites",
       "user_prompt": "We are modifying calculate_tax(amount: float) to add a country code. How should this atomic change be implemented across target files and callsites?",
-      "expected_keywords": ["callsite", "minimal edit", "backward compat", "verify"],
-      "fail_keywords": ["rewrite the whole module", "ignore other files"]
+      "expected_keywords": [
+        "callsite",
+        "minimal edit",
+        "backward compat",
+        "verify"
+      ],
+      "fail_keywords": [
+        "rewrite the whole module",
+        "ignore other files"
+      ]
     },
     {
       "id": "task-atomic-02",
       "name": "Execute focused bug fix without unrelated refactoring",
       "user_prompt": "Fix an off-by-one error in pagination slice. There are other poorly formatted functions in this file. How should you proceed?",
-      "expected_keywords": ["surgical", "focused", "scope boundary"],
-      "fail_keywords": ["rewrite the whole module"]
+      "expected_keywords": [
+        "surgical",
+        "focused",
+        "scope boundary"
+      ],
+      "fail_keywords": [
+        "rewrite the whole module"
+      ]
     }
-  ]
+  ],
+  "eval_tier": "M"
 }

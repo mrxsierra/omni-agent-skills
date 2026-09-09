@@ -60,4 +60,5 @@ Create an ADR for decisions involving:
 | `0003` | [Registry Asset Taxonomy Shipped Capabilities and Inclusion Criteria](0003-registry-asset-taxonomy-shipped-capabilities-and-inclusion-criteria.md) | `Accepted` | 2026-09-06 | Chosen option: **"Option 3: Unified Eight-Asset-Type Taxonomy across Two Tiers with 3D ... |
 | `0004` | [Multi-Provider Asset Evaluation and Delta-Utility Bench](0004-multi-provider-asset-evaluation-and-delta-utility-bench.md) | `Accepted` | 2026-09-07 | Chosen option: **"Option 3: Pluggable Multi-Provider Delta-Utility Evaluation Bench wit... |
 | `0005` | [Two-Track Branching and Dual-Engine Evaluation](0005-two-track-branching-and-dual-engine-evaluation.md) | `Accepted` | 2026-09-08 | Chosen option: **Option 3: Two-Track Branching + Dual-Engine Tiered Evaluation**. |
+| `0006` | [Neural Model Capacity Routing Task Rigor and Preflight Key Verification](0006-neural-model-capacity-routing-task-rigor-and-preflight-key-verification.md) | `Accepted` | 2026-09-09 | Chosen option: **"Option 3: Dynamic 3-Tier Capacity Hierarchy (S/M/L) with Taxonomy Rou... |
 <!-- ADR_CATALOG_END -->

@@ -9,15 +9,30 @@
       "id": "task-oss-01",
       "name": "Execute pre-launch namespace availability and governance check",
       "user_prompt": "We are preparing to open-source our internal toolkit under the name 'agent-mesh'. Outline the required namespace clearance checks and essential community health files before public launch.",
-      "expected_keywords": ["namespace", "license", "conduct"],
-      "fail_keywords": ["skip licensing", "launch without checking namespace"]
+      "expected_keywords": [
+        "namespace",
+        "license",
+        "conduct"
+      ],
+      "fail_keywords": [
+        "skip licensing",
+        "launch without checking namespace"
+      ]
     },
     {
       "id": "task-oss-02",
       "name": "Scaffold GitHub community health templates and CODEOWNERS",
       "user_prompt": "What repository governance templates and ownership files are required to ensure structured contribution on GitHub?",
-      "expected_keywords": ["codeowners", "issue", "pull request", "contributing"],
-      "fail_keywords": ["no templates needed"]
+      "expected_keywords": [
+        "codeowners",
+        "issue",
+        "pull request",
+        "contributing"
+      ],
+      "fail_keywords": [
+        "no templates needed"
+      ]
     }
-  ]
+  ],
+  "eval_tier": "L"
 }

@@ -39,6 +39,7 @@ from eval_asset import (
     evaluate_asset,
     get_all_evaluable_assets,
     load_task_suite,
+    resolve_eval_tier,
     score_task,
 )
 from build_eval_report import load_all_baselines, generate_markdown
@@ -387,7 +388,7 @@ class TestEvalAssetRunner(unittest.TestCase):
 
         md = generate_markdown(records)
         self.assertIn("# 📊 Empirical Evaluation & Quality Scorecard", md)
-        self.assertIn("Multi-Tier Evaluation Architecture (ADR 0005)", md)
+        self.assertIn("Multi-Tier Evaluation Architecture (ADR 0005 & ADR 0006)", md)
         self.assertIn("`clean-code-auditor`", md)
         self.assertIn("`security_shield.md`", md)
 
@@ -406,23 +407,60 @@ class TestEvalAssetRunner(unittest.TestCase):
             self.assertEqual(len(changed), 1)
             self.assertTrue(str(changed[0]).endswith("clean-code-auditor/SKILL.md"))
 
-    def test_load_dotenv_if_exists(self):
-        import tempfile
-        with tempfile.NamedTemporaryFile("w", delete=False, encoding="utf-8") as tf:
-            tf.write("# Comment\nTEST_OMNI_VAR=hello_world\nANOTHER_VAR='quoted'\n")
-            temp_name = tf.name
+    def test_resolve_eval_tier(self):
+        """Verify dynamic evaluation tier resolution (ADR 0006)."""
+        # Explicit suite override
+        tier, label = resolve_eval_tier(Path("registry/skills/engineering/custom/SKILL.md"), {"eval_tier": "S"})
+        self.assertEqual(tier, "S")
+        self.assertIn("Tier S", label)
 
-        try:
-            load_dotenv_if_exists(Path(temp_name))
-            self.assertEqual(os.environ.get("TEST_OMNI_VAR"), "hello_world")
-            self.assertEqual(os.environ.get("ANOTHER_VAR"), "quoted")
-        finally:
-            if "TEST_OMNI_VAR" in os.environ:
-                del os.environ["TEST_OMNI_VAR"]
-            if "ANOTHER_VAR" in os.environ:
-                del os.environ["ANOTHER_VAR"]
-            if os.path.exists(temp_name):
-                os.remove(temp_name)
+        tier, label = resolve_eval_tier(Path("registry/skills/engineering/custom/SKILL.md"), {"eval_tier": "L"})
+        self.assertEqual(tier, "L")
+        self.assertIn("Tier L", label)
+
+        # Taxonomy fallbacks
+        tier, label = resolve_eval_tier(Path("registry/rules/global/security_shield.md"))
+        self.assertEqual(tier, "S")
+        self.assertIn("Taxonomy Default", label)
+
+        tier, label = resolve_eval_tier(Path("registry/skills/security-and-governance/secret-leak-shield/SKILL.md"))
+        self.assertEqual(tier, "S")
+
+        tier, label = resolve_eval_tier(Path("registry/skills/architecture/system-planner/SKILL.md"))
+        self.assertEqual(tier, "L")
+
+        tier, label = resolve_eval_tier(Path("registry/skills/engineering/clean-code-auditor/SKILL.md"))
+        self.assertEqual(tier, "M")
+
+    def test_score_task_rigor_modes(self):
+        """Verify task rigor scoring with match_mode and min_matches (ADR 0006)."""
+        text = "We added mock fixtures to assert contracts and guard clauses."
+
+        # Any mode (legacy default, min_matches=1)
+        passed, reason = score_task(text, ["mock", "forbidden"], ["fail_keyword"])
+        self.assertTrue(passed)
+
+        # Fail keywords take absolute priority
+        bad_text = "We will make actual http call to production."
+        passed, reason = score_task(bad_text, ["mock"], ["make actual http call to production"])
+        self.assertFalse(passed)
+        self.assertIn("forbidden keyword", reason)
+
+        # All mode: requires every keyword
+        passed, reason = score_task(text, ["mock", "fixtures", "assert"], [], match_mode="all")
+        self.assertTrue(passed)
+
+        passed, reason = score_task(text, ["mock", "fixtures", "missing_word"], [], match_mode="all")
+        self.assertFalse(passed)
+        self.assertIn("Missing required keywords", reason)
+
+        # Configurable min_matches threshold
+        passed, reason = score_task(text, ["mock", "fixtures", "missing_1", "missing_2"], [], min_matches=2)
+        self.assertTrue(passed)
+
+        passed, reason = score_task(text, ["mock", "fixtures", "missing_1", "missing_2"], [], min_matches=3)
+        self.assertFalse(passed)
+        self.assertIn("Matched only 2/3", reason)
 
 
 if __name__ == "__main__":

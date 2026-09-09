@@ -9,15 +9,34 @@
       "id": "task-eval-01",
       "name": "Design deterministic evaluation harness for agent tool invocation",
       "user_prompt": "We are updating an agent system prompt. How should we set up a benchmark to empirically test whether the agent calls our new tools with valid JSON arguments without subjective manual grading?",
-      "expected_keywords": ["test case", "harness", "schema validity", "assertion", "regression"],
-      "fail_keywords": ["evaluate subjectively based on vibe", "no assertions"]
+      "expected_keywords": [
+        "test case",
+        "harness",
+        "schema validity",
+        "assertion",
+        "regression"
+      ],
+      "fail_keywords": [
+        "evaluate subjectively based on vibe",
+        "no assertions"
+      ]
     },
     {
       "id": "task-eval-02",
       "name": "Detect prompt regression against recorded baseline runs",
       "user_prompt": "An engineer shortened a prompt to save tokens. When testing against our evaluation suite, 2 edge cases failed that passed previously. How should the benchmarker report and handle this?",
-      "expected_keywords": ["baseline", "regression", "pass/fail", "reproducible", "report"],
-      "fail_keywords": ["ignore previous results", "no baseline"]
+      "expected_keywords": [
+        "baseline",
+        "regression",
+        "pass/fail",
+        "reproducible",
+        "report"
+      ],
+      "fail_keywords": [
+        "ignore previous results",
+        "no baseline"
+      ]
     }
-  ]
+  ],
+  "eval_tier": "M"
 }

@@ -73,8 +73,40 @@ def load_task_suite(task_suite_arg: Optional[str], asset_path: Path) -> Dict[str
     raise FileNotFoundError("No matching evaluation task suite found in evals/tasks/.")
 
 
-def score_task(response_text: str, expected_keywords: List[str], fail_keywords: List[str]) -> Tuple[bool, str]:
-    """Deterministically score a response against keyword invariants."""
+def resolve_eval_tier(asset_path: Path, task_suite: Optional[Dict[str, Any]] = None) -> Tuple[str, str]:
+    """Dynamically resolve the required evaluation capacity tier (ADR 0006).
+
+    Tier S: Small / Compact (1B–7B)
+    Tier M: Medium (8B–32B)
+    Tier L: Large / Frontier (70B+)
+    """
+    suite = task_suite or {}
+    explicit_tier = str(suite.get("eval_tier", "")).upper().strip()
+    if explicit_tier in ("S", "M", "L"):
+        labels = {
+            "S": "Tier S: Small / Compact (1B–7B)",
+            "M": "Tier M: Medium (8B–32B)",
+            "L": "Tier L: Large / Frontier (70B+)",
+        }
+        return explicit_tier, labels[explicit_tier]
+
+    path_str = str(asset_path).lower()
+    if "rules" in path_str or "security-and-governance" in path_str:
+        return "S", "Tier S: Small / Compact (1B–7B) [Taxonomy Default]"
+    elif "architecture" in path_str or "protocols" in path_str:
+        return "L", "Tier L: Large / Frontier (70B+) [Taxonomy Default]"
+    else:
+        return "M", "Tier M: Medium (8B–32B) [Taxonomy Default]"
+
+
+def score_task(
+    response_text: str,
+    expected_keywords: List[str],
+    fail_keywords: List[str],
+    match_mode: str = "any",
+    min_matches: int = 1,
+) -> Tuple[bool, str]:
+    """Deterministically score a response against keyword invariants and negative criteria (ADR 0006)."""
     text_lower = response_text.lower()
 
     # Check for forbidden failure keywords
@@ -82,10 +114,21 @@ def score_task(response_text: str, expected_keywords: List[str], fail_keywords: 
         if bad.lower() in text_lower:
             return False, f"Failed on forbidden keyword: '{bad}'"
 
-    # Check for expected success keywords (at least one match)
+    if not expected_keywords:
+        return True, "Passed (no required keywords specified)"
+
+    mode = match_mode.lower().strip()
+    if mode == "all":
+        missing = [good for good in expected_keywords if good.lower() not in text_lower]
+        if missing:
+            return False, f"Missing required keywords (match_mode=all): {missing}"
+        return True, f"Passed (all {len(expected_keywords)} criteria met)"
+
+    # Default 'any' mode with configurable min_matches threshold
     matches = [good for good in expected_keywords if good.lower() in text_lower]
-    if not matches and expected_keywords:
-        return False, f"Missing required keywords from: {expected_keywords}"
+    threshold = max(min_matches, 1)
+    if len(matches) < threshold:
+        return False, f"Matched only {len(matches)}/{threshold} required keywords from: {expected_keywords}"
 
     return True, f"Passed ({len(matches)} matching criteria)"
 
@@ -104,6 +147,8 @@ def evaluate_asset(
     if not tasks:
         raise ValueError("Task suite contains no tasks.")
 
+    eval_tier_code, eval_tier_label = resolve_eval_tier(asset_path, task_suite)
+
     baseline_system = "You are a software engineering assistant. Answer user queries accurately."
     augmented_system = (
         "You are an expert software engineer adhering strictly to the following instructions:\n\n"
@@ -121,13 +166,17 @@ def evaluate_asset(
         prompt = task["user_prompt"]
         expected = task.get("expected_keywords", [])
         fail_kw = task.get("fail_keywords", [])
+        match_mode = task.get("match_mode", "any")
+        min_matches = task.get("min_matches", 1)
 
         # 1. Baseline Run (Without Asset)
         base_resp: ModelResponse = provider.invoke(
             messages=[{"role": "user", "content": prompt}],
             system_prompt=baseline_system,
         )
-        base_passed, base_reason = score_task(base_resp.text, expected, fail_kw)
+        base_passed, base_reason = score_task(
+            base_resp.text, expected, fail_kw, match_mode=match_mode, min_matches=min_matches
+        )
         total_baseline_tokens += base_resp.prompt_tokens
         baseline_results.append({
             "task_id": task["id"],
@@ -142,7 +191,9 @@ def evaluate_asset(
             messages=[{"role": "user", "content": prompt}],
             system_prompt=augmented_system,
         )
-        aug_passed, aug_reason = score_task(aug_resp.text, expected, fail_kw)
+        aug_passed, aug_reason = score_task(
+            aug_resp.text, expected, fail_kw, match_mode=match_mode, min_matches=min_matches
+        )
         total_augmented_tokens += aug_resp.prompt_tokens
         augmented_results.append({
             "task_id": task["id"],
@@ -181,6 +232,8 @@ def evaluate_asset(
 
     return {
         "asset_path": str(asset_path),
+        "eval_tier": eval_tier_code,
+        "eval_tier_label": eval_tier_label,
         "provider": provider.provider_name,
         "model": provider.model_name,
         "task_suite": task_suite.get("suite_id", "custom"),
@@ -203,6 +256,7 @@ def print_report(results: Dict[str, Any]) -> None:
     print("📊 omni-agent-skills Asset Evaluation & Delta-Utility Benchmark")
     print("=" * 70)
     print(f"Target Asset:     {results['asset_path']}")
+    print(f"Capacity Tier:    {results.get('eval_tier_label', results.get('eval_tier', 'Tier M'))}")
     print(f"Provider:         {results['provider']} ({results['model']})")
     print(f"Task Suite:       {results['task_suite']} ({results['total_tasks']} tasks)")
     print("-" * 70)
@@ -236,6 +290,7 @@ def append_github_step_summary(results: Dict[str, Any]) -> None:
 | Metric | Result |
 | :--- | :--- |
 | **Asset Path** | `{results['asset_path']}` |
+| **Capacity Tier** | `{results.get('eval_tier_label', 'Tier M')}` |
 | **Evaluation Tier** | {tier} |
 | **Provider / Model** | `{results['provider']}` / `{results['model']}` |
 | **Task Suite** | `{results['task_suite']}` ({results['total_tasks']} tasks) |
