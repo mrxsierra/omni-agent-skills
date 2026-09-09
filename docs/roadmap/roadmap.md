@@ -34,23 +34,34 @@ Harden registry generation (`scripts/build_registry.py`) and schema validation (
 ### Milestone 4: Curated Catalog Quality (v0.0.2)
 Standardize all 15 skills in `registry/skills/` into the canonical 4-section runbook contract (Inputs, Procedure, Expected Outputs, Constraints). Eliminate unverified benchmark marketing claims and ensure tool neutrality across all assets.
 
+### Milestone 5: Multi-Provider Asset Evaluation Bench & Quality Gates (v0.0.3)
+Establish an empirical evaluation framework to measure asset value ($\Delta$-utility) and eliminate prompt bloat/junk before inclusion:
+- **Pluggable Model Provider Engine (`scripts/eval_providers.py`):** Native standard-library support for Google Gemini (`gemini-2.5-flash`), Mistral AI (`codestral-latest`), OpenRouter (free-tier `:free` models), local Ollama (open weights), Antigravity CLI (`agy`), OpenAI, Anthropic, and offline mock runners with zero mandatory external pip dependencies.
+- **$\Delta$-Utility CLI Runner (`scripts/eval_asset.py`):** Measure baseline vs. augmented task pass rates, context token taxes, and procedural precision against standardized task suites.
+- **Curated Task Suites (`evals/tasks/`):** Maintained reproducible test scenarios across all 15 skills and security rule (16 benchmark suites).
+- **Baseline Snapshot Ledger (`evals/baselines/`):** Maintained empirical score records, token taxes, and model snapshots per suite to measure A/B improvements ($A_{\text{new}}$ vs. $A_{\text{old}}$) without cluttering runtime `registry.json`.
+- **HTTP 429 Resilience & Exponential Backoff (PR #31):** Built `http_request_with_retry` handling HTTP 429 rate limits, reading `Retry-After` headers with 3-step exponential backoff, and providing diagnostic guidance for OpenRouter 402, Gemini 404, and Mistral 429 errors.
+- **Rootless Containerized Evaluation (`scripts/run_local_eval.sh`):** Added containerized Podman/Docker runner for local Ollama execution, alongside first-class CLI shortcuts for Gemini, Mistral, OpenRouter, and Antigravity.
+- **Zero-Secret Credential Hygiene & Sanitizer (`scripts/sanitize.py` - PR #28, #30):** Protected untracked local `.env` files while preventing secret and PII leakage across git commits.
+- **Deterministic CI Verification & Dual-Engine Evaluation (ADR 0005 & ADR 0006):** Enforced offline mock evaluations (`--provider mock --strict`) on every pull request and automated weekly cloud/open-weights sweeps. Decoupled fast PR gates from heavy frontier evaluations.
+- **Official Release v0.0.3 (PR #27):** Merged to `main` and tagged official release `v0.0.3` with distribution archives (`omni-agent-skills-v0.0.3.tar.gz`, `sha256sums.txt`, `registry.json`, `llms-qa.json`).
+
 ---
 
 ## Upcoming Milestones
 
-### Milestone 5: Multi-Provider Asset Evaluation Bench & Quality Gates (v0.0.3)
-Establish an empirical evaluation framework to measure asset value ($\Delta$-utility) and eliminate prompt bloat/junk before inclusion:
-- **Pluggable Model Provider Engine (`scripts/eval_providers.py`):** Support Google Antigravity, local Ollama (open weights), OpenAI/ChatGPT, Anthropic/Claude, OpenRouter, and offline mock runners with zero mandatory external pip dependencies.
-- **$\Delta$-Utility CLI Runner (`scripts/eval_asset.py`):** Measure baseline vs. augmented task pass rates, context token taxes, and procedural precision against standardized task suites.
-- **Curated Task Suites (`evals/tasks/`):** Maintain reproducible test scenarios for code refactoring, accessibility auditing, and security guardrail enforcement.
-- **Baseline Snapshot Ledger (`evals/baselines/`):** Maintain empirical score records, token taxes, and model snapshots per suite to measure A/B improvements ($A_{\text{new}}$ vs. $A_{\text{old}}$) without cluttering runtime `registry.json`.
-- **Deterministic CI Verification:** Enforce offline mock evaluations (`--provider mock --strict`) on every pull request in `.github/workflows/ci.yml` with zero external network or API key dependencies.
-- **Free Open-Weights CI Workflow (`.github/workflows/eval-open-weights.yml`):** Automated GitHub Actions workflow running Ollama on CPU runner (`qwen2.5-coder:1.5b`) at $0.00 cost with zero API keys.
-- **Catalog $\Delta$-Utility Audit (Completed — 100% Coverage: 15 of 15 skills + security rule):** Curated dedicated evaluation task suites in `evals/tasks/` and empirical baseline ledgers in `evals/baselines/` across all catalog categories:
-  - *Batch 1 (Core Engineering — Completed):* `clean-code-auditor`, `system-architecture-planner`, `atomic-feature-implementer`, `code-anti-overengineer`, `pytest-verification-runner`, `semver-release-manager`.
-  - *Batch 2 (Data & AI / Web — Completed):* `rag-qa-chunking-engine`, `ai-eval-benchmarker`, `a11y-web-auditor`, `ai-first-web-geo`.
-  - *Batch 3 (Security & Governance — Completed):* `secret-leak-shield`, `security_shield.md` (rule), `oss-launch-governance`, `tech-competitive-intelligence`, `advanced-verification-testing`, `ai-native-product-design`.
-- **Two-Track Branching & Dual-Engine Evaluation (ADR 0005):** Established `dev` as active staging/integration trunk and `main` as protected release trunk. Decoupled fast PR gates (mock + lightweight open-weights CPU smoke) from heavy-lifting complex skill evaluation (cloud `agy` / Gemini Flash / Claude). Automated public transparency via GitHub Step Summaries (`$GITHUB_STEP_SUMMARY`) and `evals/README.md` scorecard.
+### Immediate Track: Evaluation Debt & Baseline Matrix Backlog
+Prior to and alongside Milestone 6 workflow authoring, address remaining evaluation debt to achieve 100% test coverage across all non-skill assets:
+- **Rule Evaluation Coverage Expansion (100% Rule Coverage):**
+  - Author task suites for remaining rules in `registry/rules/`:
+    - `evals/tasks/self_healing_diagnostics.json` for `self_healing_diagnostics.md`
+    - `evals/tasks/python_rules.json` for `python_rules.md`
+    - `evals/tasks/nextjs_rules.json` for `nextjs_rules.md`
+- **Subagent & Prompt Evaluation Suites:**
+  - Author task suites for `registry/prompts/system/architect-persona.md` and `registry/subagents/*.json`.
+- **Comprehensive Baseline Matrix Sweep:**
+  - Execute automated evaluation sweep (`scripts/eval_catalog_matrix.py`) across all assets using containerized Ollama (`qwen2.5-coder:1.5b`), Google Gemini (`gemini-2.5-flash`), and Mistral AI (`codestral-latest`).
+  - Commit live neural baseline ledgers into `evals/baselines/` and update public scorecards.
 
 ### Milestone 6: Shipped Workflows & Lifecycle Orchestration
 Promote multi-step workflows from internal dogfooding to first-class published registry assets:

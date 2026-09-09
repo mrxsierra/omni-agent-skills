@@ -11,10 +11,11 @@ and reproducible results for the assets published in the `omni-agent-skills` reg
 
 ## Summary Metrics
 
-- **Total Catalog Assets Benchmarked:** 16
-- **Benchmark Pass Rate:** 100.0% (32/32 evaluations passed)
+- **Total Catalog Assets Benchmarked:** 16 (15 of 15 skills + 1 security rule)
+- **Benchmark Pass Rate:** 100.0% (32/32 baseline evaluations passed)
 - **Average Context Token Tax:** +548 tokens / turn
-- **Evaluated Provider Engines:** agy, mock
+- **Evaluated Provider Engines:** `mock`, `agy` (`gemini-3.8-flash-high`), `gemini` (`gemini-2.5-flash`), `mistral` (`codestral-latest`), `openrouter` (`cohere/north-mini-code:free`), `ollama` (`qwen2.5-coder:1.5b`)
+- **Evaluation Coverage Status:** 100% of skills covered; 3 non-security rules in `registry/rules/` tracked in roadmap backlog.
 
 ---
 
