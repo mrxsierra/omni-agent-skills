@@ -10,6 +10,8 @@ import subprocess
 import sys
 import tempfile
 import unittest
+import urllib.error
+import urllib.request
 from pathlib import Path
 from unittest.mock import MagicMock, patch
 
@@ -28,6 +30,7 @@ from eval_providers import (
     OllamaProvider,
     OpenAICompatibleProvider,
     get_provider,
+    http_request_with_retry,
     load_dotenv_if_exists,
 )
 from eval_asset import (
@@ -83,18 +86,33 @@ class TestEvalProviders(unittest.TestCase):
         self.assertIsInstance(agy_p, AntigravityCliProvider)
         self.assertEqual(agy_p.model_name, "gemini-3.8-flash-high")
 
-        mistral_p = get_provider("mistral")
+        mistral_p = get_provider("mistral", api_key="dummy-key")
         self.assertIsInstance(mistral_p, OpenAICompatibleProvider)
         self.assertEqual(mistral_p.base_url, "https://api.mistral.ai/v1")
+        self.assertEqual(mistral_p.model_name, "codestral-latest")
+
+        mistralai_p = get_provider("mistralai", api_key="dummy-key")
+        self.assertIsInstance(mistralai_p, OpenAICompatibleProvider)
+
+        gemini_p = get_provider("gemini", api_key="dummy-key")
+        self.assertIsInstance(gemini_p, AntigravityProvider)
+        self.assertEqual(gemini_p.model_name, "gemini-2.5-flash")
+
+        google_p = get_provider("google", api_key="dummy-key")
+        self.assertIsInstance(google_p, AntigravityProvider)
 
     def test_unknown_provider_raises(self):
         with self.assertRaises(ValueError):
             get_provider("nonexistent-vendor-xyz")
 
     def test_provider_missing_key_raises(self):
-        openai_p = OpenAICompatibleProvider(api_key="")
+        openai_p = OpenAICompatibleProvider(api_key="", provider_name="openai")
         with self.assertRaises(ValueError):
             openai_p.invoke([{"role": "user", "content": "test"}])
+
+        mistral_p = OpenAICompatibleProvider(api_key="", provider_name="mistral")
+        with self.assertRaises(ValueError):
+            mistral_p.invoke([{"role": "user", "content": "test"}])
 
         antigravity_p = AntigravityProvider(api_key="")
         with self.assertRaises(ValueError):
@@ -189,6 +207,81 @@ class TestEvalProviders(unittest.TestCase):
         self.assertEqual(resp.provider_name, "agy")
         self.assertEqual(resp.model_name, "gemini-3.8-flash-high")
         self.assertGreater(resp.total_tokens, 0)
+
+    @patch("time.sleep")
+    @patch("urllib.request.urlopen")
+    def test_http_request_with_retry_on_429(self, mock_urlopen, mock_sleep):
+        req = urllib.request.Request("https://api.example.com", data=b"{}")
+
+        # Mock first call returns 429 HTTPError, second call succeeds
+        err_429 = urllib.error.HTTPError(
+            url="https://api.example.com",
+            code=429,
+            msg="Too Many Requests",
+            hdrs=None,
+            fp=io.BytesIO(b'{"error": "rate limit"}'),
+        )
+        mock_resp = MagicMock()
+        mock_resp.read.return_value = b'{"success": true}'
+        mock_context = MagicMock()
+        mock_context.__enter__.return_value = mock_resp
+
+        mock_urlopen.side_effect = [err_429, mock_context]
+
+        data = http_request_with_retry(
+            req=req,
+            provider_name="test-prov",
+            model_name="test-model",
+            max_retries=2,
+            base_delay=0.01,
+        )
+        self.assertTrue(data.get("success"))
+        self.assertEqual(mock_urlopen.call_count, 2)
+        mock_sleep.assert_called_once()
+
+    @patch("urllib.request.urlopen")
+    def test_http_request_openrouter_402_guidance(self, mock_urlopen):
+        req = urllib.request.Request("https://openrouter.ai/api/v1/chat/completions", data=b"{}")
+        err_402 = urllib.error.HTTPError(
+            url="https://openrouter.ai/api/v1/chat/completions",
+            code=402,
+            msg="Payment Required",
+            hdrs=None,
+            fp=io.BytesIO(b'{"error": {"message": "insufficient credits"}}'),
+        )
+        mock_urlopen.side_effect = err_402
+
+        with self.assertRaises(RuntimeError) as ctx:
+            http_request_with_retry(
+                req=req,
+                provider_name="openrouter",
+                model_name="anthropic/claude-3.5-sonnet",
+                max_retries=1,
+            )
+        self.assertIn("OpenRouter 402 Payment Required", str(ctx.exception))
+        self.assertIn(":free", str(ctx.exception))
+
+    @patch("urllib.request.urlopen")
+    def test_http_request_gemini_404_guidance(self, mock_urlopen):
+        req = urllib.request.Request("https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-pro:generateContent", data=b"{}")
+        err_404 = urllib.error.HTTPError(
+            url="https://generativelanguage.googleapis.com",
+            code=404,
+            msg="Not Found",
+            hdrs=None,
+            fp=io.BytesIO(b'{"error": {"message": "models/gemini-2.5-pro is no longer available"}}'),
+        )
+        mock_urlopen.side_effect = err_404
+
+        with self.assertRaises(RuntimeError) as ctx:
+            http_request_with_retry(
+                req=req,
+                provider_name="gemini",
+                model_name="gemini-2.5-pro",
+                max_retries=1,
+            )
+        self.assertIn("Google Gemini 404 Not Found", str(ctx.exception))
+        self.assertIn("gemini-2.5-flash", str(ctx.exception))
 
     def test_score_task_pass(self):
         passed, reason = score_task(

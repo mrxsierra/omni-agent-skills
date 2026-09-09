@@ -12,6 +12,9 @@ set -euo pipefail
 CONTAINER_NAME="omni-ollama-eval"
 DEFAULT_OLLAMA_MODEL="qwen2.5-coder:1.5b"
 DEFAULT_AGY_MODEL="gemini-3.8-flash-high"
+DEFAULT_GEMINI_MODEL="gemini-2.5-flash"
+DEFAULT_MISTRAL_MODEL="codestral-latest"
+DEFAULT_OPENROUTER_MODEL="cohere/north-mini-code:free"
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 
 # Auto-source .env if present (untracked local environment variables)
@@ -29,6 +32,21 @@ omni-agent-skills Local Evaluation Helper (ADR 0005)
 Usage:
   scripts/run_local_eval.sh mock [asset-path | --all]
       Run fast deterministic mock evaluation (< 2s, offline).
+      Omit asset-path to evaluate modified/added assets (delta mode).
+
+  scripts/run_local_eval.sh gemini [asset-path | --all] [model]
+      Run evaluation via Google Gemini (key from .env / GEMINI_API_KEY).
+      Default model: gemini-2.5-flash
+      Omit asset-path to evaluate modified/added assets (delta mode).
+
+  scripts/run_local_eval.sh mistral [asset-path | --all] [model]
+      Run evaluation via Mistral AI (key from .env / MISTRAL_API_KEY).
+      Default model: codestral-latest
+      Omit asset-path to evaluate modified/added assets (delta mode).
+
+  scripts/run_local_eval.sh openrouter [asset-path | --all] [model]
+      Run evaluation via OpenRouter (key from .env / OPENROUTER_API_KEY).
+      Default model: cohere/north-mini-code:free
       Omit asset-path to evaluate modified/added assets (delta mode).
 
   scripts/run_local_eval.sh agy [asset-path | --all] [model]
@@ -50,7 +68,9 @@ Usage:
 Examples:
   scripts/run_local_eval.sh mock                                                # Delta mode (changed assets)
   scripts/run_local_eval.sh mock --all                                          # Full catalog sweep
-  scripts/run_local_eval.sh mock registry/skills/engineering/clean-code-auditor/SKILL.md
+  scripts/run_local_eval.sh gemini                                              # Delta eval with Gemini Flash
+  scripts/run_local_eval.sh mistral                                             # Delta eval with Codestral
+  scripts/run_local_eval.sh openrouter                                          # Delta eval with free OpenRouter model
   scripts/run_local_eval.sh agy                                                 # Cloud eval on changed assets
   scripts/run_local_eval.sh podman eval --all                                   # Containerized eval on all
 EOF
@@ -114,6 +134,90 @@ case "$cmd" in
                 shift 1
             fi
             python3 scripts/eval_asset.py --provider agy --model "$model" "$@"
+        fi
+        ;;
+
+    gemini|antigravity)
+        shift 1
+        arg="${1:-}"
+        model="$DEFAULT_GEMINI_MODEL"
+        if [[ "$arg" == "--all" ]]; then
+            shift 1
+            if [[ $# -gt 0 && "${1:-}" != -* ]]; then
+                model="$1"
+                shift 1
+            fi
+            python3 scripts/eval_asset.py --all --provider gemini --model "$model" "$@"
+        elif [[ -n "$arg" && "$arg" != -* && -f "$arg" ]]; then
+            asset="$arg"
+            shift 1
+            if [[ $# -gt 0 && "${1:-}" != -* ]]; then
+                model="$1"
+                shift 1
+            fi
+            python3 scripts/eval_asset.py --asset "$asset" --provider gemini --model "$model" "$@"
+        else
+            if [[ -n "$arg" && "$arg" != -* ]]; then
+                model="$arg"
+                shift 1
+            fi
+            python3 scripts/eval_asset.py --provider gemini --model "$model" "$@"
+        fi
+        ;;
+
+    mistral)
+        shift 1
+        arg="${1:-}"
+        model="$DEFAULT_MISTRAL_MODEL"
+        if [[ "$arg" == "--all" ]]; then
+            shift 1
+            if [[ $# -gt 0 && "${1:-}" != -* ]]; then
+                model="$1"
+                shift 1
+            fi
+            python3 scripts/eval_asset.py --all --provider mistral --model "$model" "$@"
+        elif [[ -n "$arg" && "$arg" != -* && -f "$arg" ]]; then
+            asset="$arg"
+            shift 1
+            if [[ $# -gt 0 && "${1:-}" != -* ]]; then
+                model="$1"
+                shift 1
+            fi
+            python3 scripts/eval_asset.py --asset "$asset" --provider mistral --model "$model" "$@"
+        else
+            if [[ -n "$arg" && "$arg" != -* ]]; then
+                model="$arg"
+                shift 1
+            fi
+            python3 scripts/eval_asset.py --provider mistral --model "$model" "$@"
+        fi
+        ;;
+
+    openrouter)
+        shift 1
+        arg="${1:-}"
+        model="$DEFAULT_OPENROUTER_MODEL"
+        if [[ "$arg" == "--all" ]]; then
+            shift 1
+            if [[ $# -gt 0 && "${1:-}" != -* ]]; then
+                model="$1"
+                shift 1
+            fi
+            python3 scripts/eval_asset.py --all --provider openrouter --model "$model" "$@"
+        elif [[ -n "$arg" && "$arg" != -* && -f "$arg" ]]; then
+            asset="$arg"
+            shift 1
+            if [[ $# -gt 0 && "${1:-}" != -* ]]; then
+                model="$1"
+                shift 1
+            fi
+            python3 scripts/eval_asset.py --asset "$asset" --provider openrouter --model "$model" "$@"
+        else
+            if [[ -n "$arg" && "$arg" != -* ]]; then
+                model="$arg"
+                shift 1
+            fi
+            python3 scripts/eval_asset.py --provider openrouter --model "$model" "$@"
         fi
         ;;
 

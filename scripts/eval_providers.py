@@ -55,6 +55,75 @@ def load_dotenv_if_exists(dotenv_path: Optional[Path] = None) -> None:
 load_dotenv_if_exists()
 
 
+def http_request_with_retry(
+    req: urllib.request.Request,
+    provider_name: str,
+    model_name: str,
+    max_retries: int = 3,
+    base_delay: float = 2.0,
+    timeout: int = 90,
+) -> Dict[str, Any]:
+    """Execute an HTTP JSON request with automatic retry and exponential backoff on HTTP 429 rate limits."""
+    delay = base_delay
+    last_err: Optional[Exception] = None
+    for attempt in range(1, max_retries + 1):
+        try:
+            with urllib.request.urlopen(req, timeout=timeout) as resp:
+                raw_bytes = resp.read()
+                return json.loads(raw_bytes.decode("utf-8"))
+        except urllib.error.HTTPError as e:
+            last_err = e
+            err_body = e.read().decode("utf-8") if e.fp else ""
+
+            # Rate limit (429) retry handling
+            if e.code == 429 and attempt < max_retries:
+                retry_header = e.headers.get("Retry-After") if e.headers else None
+                sleep_time = float(retry_header) if (retry_header and retry_header.isdigit()) else delay
+                if "retry in " in err_body:
+                    try:
+                        part = err_body.split("retry in ")[1].split("s")[0].strip()
+                        sleep_time = max(sleep_time, float(part) + 0.5)
+                    except Exception:
+                        pass
+                print(
+                    f"⚠️  [{provider_name}] Rate limit (429) on model '{model_name}'. "
+                    f"Retrying in {sleep_time:.1f}s... (attempt {attempt}/{max_retries})",
+                    file=sys.stderr,
+                )
+                time.sleep(sleep_time)
+                delay *= 2
+                continue
+
+            # Diagnostic guidance for common API errors
+            if e.code == 402 and provider_name == "openrouter":
+                raise RuntimeError(
+                    f"OpenRouter 402 Payment Required: Model '{model_name}' requires paid credits. "
+                    f"If you are using a free-tier key, you must select a model ending in ':free' "
+                    f"(e.g. '--model cohere/north-mini-code:free' or '--model google/gemma-4-26b-a4b-it:free'). "
+                    f"Details: {err_body}"
+                ) from e
+            elif e.code == 404 and provider_name in ("antigravity", "gemini", "google"):
+                raise RuntimeError(
+                    f"Google Gemini 404 Not Found: Model '{model_name}' is deprecated or unavailable to new users. "
+                    f"Please switch to an active free-tier model such as '--model gemini-2.5-flash'. "
+                    f"Details: {err_body}"
+                ) from e
+            elif e.code == 429 and provider_name in ("mistral", "mistralai") and "mistral-small" in model_name:
+                raise RuntimeError(
+                    f"Mistral AI 429 Rate Limit: Model '{model_name}' has strict limits on the free tier. "
+                    f"Use '--model codestral-latest' or '--model open-mistral-7b' for evaluation. "
+                    f"Details: {err_body}"
+                ) from e
+
+            raise RuntimeError(f"{provider_name.capitalize()} API Error {e.code}: {e.reason} - {err_body}") from e
+        except urllib.error.URLError as e:
+            raise RuntimeError(f"Network error connecting to {req.full_url} ({provider_name}): {e}") from e
+
+    raise RuntimeError(
+        f"Exceeded max retries ({max_retries}) on {provider_name} due to repeated rate limits (429): {last_err}"
+    )
+
+
 class ModelResponse:
     """Standardized model response object returned across all providers."""
 
@@ -371,15 +440,13 @@ class OpenAICompatibleProvider(BaseModelProvider):
         )
 
         start_time = time.time()
-        try:
-            with urllib.request.urlopen(req, timeout=90) as resp:
-                data = json.loads(resp.read().decode("utf-8"))
-        except urllib.error.HTTPError as e:
-            err_body = e.read().decode("utf-8") if e.fp else ""
-            raise RuntimeError(f"OpenAI API Error {e.code}: {e.reason} - {err_body}") from e
-        except urllib.error.URLError as e:
-            raise RuntimeError(f"Network error connecting to {url}: {e}") from e
-
+        data = http_request_with_retry(
+            req=req,
+            provider_name=self.provider_name,
+            model_name=self.model_name,
+            max_retries=3,
+            timeout=90,
+        )
         latency = (time.time() - start_time) * 1000
         choice = data.get("choices", [{}])[0]
         reply = choice.get("message", {}).get("content", "")
@@ -401,7 +468,7 @@ class AntigravityProvider(BaseModelProvider):
 
     def __init__(
         self,
-        model_name: str = "gemini-2.5-pro",
+        model_name: str = "gemini-2.5-flash",
         api_key: Optional[str] = None,
     ) -> None:
         super().__init__(model_name=model_name, provider_name="antigravity")
@@ -460,15 +527,13 @@ class AntigravityProvider(BaseModelProvider):
         )
 
         start_time = time.time()
-        try:
-            with urllib.request.urlopen(req, timeout=90) as resp:
-                data = json.loads(resp.read().decode("utf-8"))
-        except urllib.error.HTTPError as e:
-            err_body = e.read().decode("utf-8") if e.fp else ""
-            raise RuntimeError(f"Google Gemini / Antigravity API Error {e.code}: {e.reason} - {err_body}") from e
-        except urllib.error.URLError as e:
-            raise RuntimeError(f"Network error connecting to Google GenAI API: {e}") from e
-
+        data = http_request_with_retry(
+            req=req,
+            provider_name=self.provider_name,
+            model_name=self.model_name,
+            max_retries=3,
+            timeout=90,
+        )
         latency = (time.time() - start_time) * 1000
 
         candidates = data.get("candidates", [{}])
@@ -537,15 +602,13 @@ class AnthropicProvider(BaseModelProvider):
         )
 
         start_time = time.time()
-        try:
-            with urllib.request.urlopen(req, timeout=90) as resp:
-                data = json.loads(resp.read().decode("utf-8"))
-        except urllib.error.HTTPError as e:
-            err_body = e.read().decode("utf-8") if e.fp else ""
-            raise RuntimeError(f"Anthropic API Error {e.code}: {e.reason} - {err_body}") from e
-        except urllib.error.URLError as e:
-            raise RuntimeError(f"Network error connecting to Anthropic API: {e}") from e
-
+        data = http_request_with_retry(
+            req=req,
+            provider_name=self.provider_name,
+            model_name=self.model_name,
+            max_retries=3,
+            timeout=90,
+        )
         latency = (time.time() - start_time) * 1000
         content_list = data.get("content", [{}])
         reply = content_list[0].get("text", "")
@@ -675,7 +738,7 @@ def get_provider(
         )
     elif p_norm in ("antigravity", "gemini", "google"):
         return AntigravityProvider(
-            model_name=model or "gemini-2.5-pro",
+            model_name=model or "gemini-2.5-flash",
             api_key=api_key,
         )
     elif p_norm in ("anthropic", "claude"):
@@ -685,8 +748,8 @@ def get_provider(
         )
     elif p_norm in ("mistral", "mistralai"):
         return OpenAICompatibleProvider(
-            model_name=model or "mistral-small-latest",
-            api_key=api_key or os.environ.get("MISTRAL_API_KEY"),
+            model_name=model or "codestral-latest",
+            api_key=api_key,
             base_url=base_url or "https://api.mistral.ai/v1",
             provider_name="mistral",
         )
