@@ -125,7 +125,24 @@ def run_matrix(provider_name: str, model_name: str, verbose: bool = False) -> in
 
 def main() -> int:
     parser = argparse.ArgumentParser(description="Run full catalog evaluation matrix across models.")
-    parser.add_argument("--provider", default="agy", choices=["agy", "mock", "ollama", "openai", "openrouter"], help="Provider name")
+    parser.add_argument(
+        "--provider",
+        default="agy",
+        choices=[
+            "agy",
+            "antigravity",
+            "gemini",
+            "google",
+            "mistral",
+            "mistralai",
+            "anthropic",
+            "mock",
+            "ollama",
+            "openai",
+            "openrouter",
+        ],
+        help="Provider name",
+    )
     parser.add_argument("--model", default="gemini-3.8-flash-high", help="Model name")
     parser.add_argument("--verbose", action="store_true", help="Print verbose reasoning")
     args = parser.parse_args()

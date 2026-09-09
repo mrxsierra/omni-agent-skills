@@ -91,8 +91,14 @@ python3 scripts/eval_asset.py --asset registry/skills/engineering/clean-code-aud
 # Local open weights with Ollama (free, zero-token cost)
 python3 scripts/eval_asset.py --asset registry/skills/engineering/clean-code-auditor/SKILL.md --provider ollama --model qwen2.5-coder:7b
 
-# Google Antigravity / Gemini
-GEMINI_API_KEY="..." python3 scripts/eval_asset.py --asset registry/skills/engineering/clean-code-auditor/SKILL.md --provider antigravity --model gemini-2.5-pro
+# Google Gemini
+GEMINI_API_KEY="..." python3 scripts/eval_asset.py --asset registry/skills/engineering/clean-code-auditor/SKILL.md --provider gemini --model gemini-2.5-flash
+
+# Mistral AI
+MISTRAL_API_KEY="..." python3 scripts/eval_asset.py --asset registry/skills/engineering/clean-code-auditor/SKILL.md --provider mistral --model codestral-latest
+
+# OpenRouter (Unified multi-model hub)
+OPENROUTER_API_KEY="..." python3 scripts/eval_asset.py --asset registry/skills/engineering/clean-code-auditor/SKILL.md --provider openrouter --model cohere/north-mini-code:free
 
 # OpenAI / ChatGPT
 OPENAI_API_KEY="..." python3 scripts/eval_asset.py --asset registry/skills/engineering/clean-code-auditor/SKILL.md --provider openai --model gpt-4o

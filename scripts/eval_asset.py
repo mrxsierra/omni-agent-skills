@@ -17,7 +17,7 @@ Supports pluggable providers:
 Usage:
   python3 scripts/eval_asset.py --asset registry/skills/engineering/clean-code-auditor/SKILL.md --provider mock
   python3 scripts/eval_asset.py --asset registry/skills/web-and-geo/a11y-web-auditor/SKILL.md --provider ollama --model qwen2.5-coder:7b
-  python3 scripts/eval_asset.py --asset registry/rules/global/security_shield.md --provider antigravity --model gemini-2.5-pro
+  python3 scripts/eval_asset.py --asset registry/rules/global/security_shield.md --provider gemini --model gemini-2.5-flash
 """
 
 from __future__ import annotations
@@ -421,13 +421,25 @@ def main() -> int:
     parser.add_argument(
         "--provider",
         default="mock",
-        choices=["antigravity", "agy", "ollama", "openai", "openrouter", "anthropic", "mock"],
+        choices=[
+            "antigravity",
+            "gemini",
+            "google",
+            "agy",
+            "mistral",
+            "mistralai",
+            "ollama",
+            "openai",
+            "openrouter",
+            "anthropic",
+            "mock",
+        ],
         help="Model provider to execute evaluation against (default: mock).",
     )
     parser.add_argument(
         "--model",
         default=None,
-        help="Model name (e.g. gemini-2.5-pro, gemini-3.8-flash-high, qwen2.5-coder:7b, gpt-4o).",
+        help="Model name (e.g. gemini-2.5-flash, codestral-latest, gemini-3.8-flash-high, qwen2.5-coder:7b, gpt-4o).",
     )
     parser.add_argument(
         "--tasks",
