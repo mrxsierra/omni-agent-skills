@@ -307,16 +307,27 @@ class OpenAICompatibleProvider(BaseModelProvider):
         provider_name: str = "openai",
     ) -> None:
         super().__init__(model_name=model_name, provider_name=provider_name)
-        self.api_key = (
-            api_key
-            or os.environ.get("OPENAI_API_KEY")
-            or os.environ.get("OPENROUTER_API_KEY")
-            or os.environ.get("GROQ_API_KEY")
-            or ""
-        )
+        if api_key is not None:
+            self.api_key = api_key
+        elif provider_name in ("mistral", "mistralai"):
+            self.api_key = os.environ.get("MISTRAL_API_KEY", "")
+        elif provider_name == "openrouter":
+            self.api_key = os.environ.get("OPENROUTER_API_KEY", "")
+        elif provider_name in ("openai", "chatgpt"):
+            self.api_key = os.environ.get("OPENAI_API_KEY", "")
+        else:
+            self.api_key = (
+                os.environ.get("OPENAI_API_KEY")
+                or os.environ.get("OPENROUTER_API_KEY")
+                or os.environ.get("MISTRAL_API_KEY")
+                or os.environ.get("GROQ_API_KEY")
+                or ""
+            )
         default_url = "https://api.openai.com/v1"
         if provider_name == "openrouter":
             default_url = "https://openrouter.ai/api/v1"
+        elif provider_name in ("mistral", "mistralai"):
+            default_url = "https://api.mistral.ai/v1"
         self.base_url = (base_url or os.environ.get("OPENAI_BASE_URL") or default_url).rstrip("/")
 
     def invoke(
@@ -327,7 +338,8 @@ class OpenAICompatibleProvider(BaseModelProvider):
         max_tokens: int = 2048,
     ) -> ModelResponse:
         if not self.api_key:
-            raise ValueError(f"Missing API key for {self.provider_name}. Set OPENAI_API_KEY or OPENROUTER_API_KEY.")
+            key_name = f"{self.provider_name.upper()}_API_KEY"
+            raise ValueError(f"Missing API key for {self.provider_name}. Set {key_name} or OPENROUTER_API_KEY.")
 
         url = f"{self.base_url}/chat/completions"
         payload_messages = []
@@ -393,12 +405,14 @@ class AntigravityProvider(BaseModelProvider):
         api_key: Optional[str] = None,
     ) -> None:
         super().__init__(model_name=model_name, provider_name="antigravity")
-        self.api_key = (
-            api_key
-            or os.environ.get("GEMINI_API_KEY")
-            or os.environ.get("GOOGLE_API_KEY")
-            or ""
-        )
+        if api_key is not None:
+            self.api_key = api_key
+        else:
+            self.api_key = (
+                os.environ.get("GEMINI_API_KEY")
+                or os.environ.get("GOOGLE_API_KEY")
+                or ""
+            )
 
     def invoke(
         self,
@@ -482,7 +496,10 @@ class AnthropicProvider(BaseModelProvider):
         api_key: Optional[str] = None,
     ) -> None:
         super().__init__(model_name=model_name, provider_name="anthropic")
-        self.api_key = api_key or os.environ.get("ANTHROPIC_API_KEY", "")
+        if api_key is not None:
+            self.api_key = api_key
+        else:
+            self.api_key = os.environ.get("ANTHROPIC_API_KEY", "")
 
     def invoke(
         self,
@@ -666,6 +683,13 @@ def get_provider(
             model_name=model or "claude-3-5-sonnet-20241022",
             api_key=api_key,
         )
+    elif p_norm in ("mistral", "mistralai"):
+        return OpenAICompatibleProvider(
+            model_name=model or "mistral-small-latest",
+            api_key=api_key or os.environ.get("MISTRAL_API_KEY"),
+            base_url=base_url or "https://api.mistral.ai/v1",
+            provider_name="mistral",
+        )
     else:
-        supported = ["agy", "antigravity", "ollama", "openai", "openrouter", "anthropic", "mock"]
+        supported = ["agy", "antigravity", "gemini", "ollama", "openai", "openrouter", "anthropic", "mistral", "mock"]
         raise ValueError(f"Unknown provider '{provider_name}'. Supported providers: {', '.join(supported)}")

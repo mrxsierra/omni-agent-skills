@@ -83,6 +83,10 @@ class TestEvalProviders(unittest.TestCase):
         self.assertIsInstance(agy_p, AntigravityCliProvider)
         self.assertEqual(agy_p.model_name, "gemini-3.8-flash-high")
 
+        mistral_p = get_provider("mistral")
+        self.assertIsInstance(mistral_p, OpenAICompatibleProvider)
+        self.assertEqual(mistral_p.base_url, "https://api.mistral.ai/v1")
+
     def test_unknown_provider_raises(self):
         with self.assertRaises(ValueError):
             get_provider("nonexistent-vendor-xyz")
