@@ -14,7 +14,8 @@ DEFAULT_OLLAMA_MODEL="qwen2.5-coder:1.5b"
 DEFAULT_AGY_MODEL="gemini-3.8-flash-high"
 DEFAULT_GEMINI_MODEL="gemini-2.5-flash"
 DEFAULT_MISTRAL_MODEL="codestral-latest"
-DEFAULT_OPENROUTER_MODEL="cohere/north-mini-code:free"
+DEFAULT_OPENROUTER_MODEL="meta-llama/llama-3.3-70b-instruct:free"
+OLLAMA_PORT="${OLLAMA_PORT:-11434}"
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 
 # Auto-source .env if present (untracked local environment variables)
