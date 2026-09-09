@@ -37,5 +37,8 @@
       ]
     }
   ],
-  "eval_tier": "L"
+  "eval_tier": "L",
+  "required_capabilities": [
+    "instruction_following"
+  ]
 }

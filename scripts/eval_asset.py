@@ -30,7 +30,7 @@ import sys
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
-from eval_providers import BaseModelProvider, ModelResponse, get_provider
+from eval_providers import BaseModelProvider, ModelResponse, get_model_capabilities, get_provider
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 TASKS_DIR = REPO_ROOT / "evals" / "tasks"
@@ -138,6 +138,7 @@ def evaluate_asset(
     provider: BaseModelProvider,
     task_suite: Dict[str, Any],
     verbose: bool = False,
+    ignore_capability_mismatch: bool = False,
 ) -> Dict[str, Any]:
     """Execute baseline vs. augmented evaluation and compute delta metrics."""
     with open(asset_path, "r", encoding="utf-8") as f:
@@ -146,6 +147,23 @@ def evaluate_asset(
     tasks = task_suite.get("tasks", [])
     if not tasks:
         raise ValueError("Task suite contains no tasks.")
+
+    # Pre-flight Model Capability Guard
+    required_caps = task_suite.get("required_capabilities", [])
+    if required_caps and provider.provider_name != "mock":
+        model_caps = get_model_capabilities(provider.provider_name, provider.model_name)
+        missing_caps = [c for c in required_caps if c not in model_caps]
+        if missing_caps:
+            msg = (
+                f"Capability Mismatch: Asset task suite '{task_suite.get('suite_id')}' requires "
+                f"capabilities {missing_caps}, but model '{provider.model_name}' "
+                f"({provider.provider_name}) only advertises {sorted(list(model_caps))}. "
+                f"Please choose a capable model (e.g. Tier M or L) or pass --ignore-capability-mismatch."
+            )
+            if not ignore_capability_mismatch:
+                raise ValueError(msg)
+            elif verbose:
+                print(f"⚠️  Warning: {msg}", file=sys.stderr)
 
     eval_tier_code, eval_tier_label = resolve_eval_tier(asset_path, task_suite)
 
@@ -244,6 +262,7 @@ def evaluate_asset(
         "token_tax_per_turn": token_tax,
         "passed_gate": passed_gate,
         "verdict": verdict,
+        "required_capabilities": required_caps,
         "harness_verification_only": provider.provider_name == "mock",
         "baseline_details": baseline_results,
         "augmented_details": augmented_results,
@@ -257,6 +276,8 @@ def print_report(results: Dict[str, Any]) -> None:
     print("=" * 70)
     print(f"Target Asset:     {results['asset_path']}")
     print(f"Capacity Tier:    {results.get('eval_tier_label', results.get('eval_tier', 'Tier M'))}")
+    if results.get("required_capabilities"):
+        print(f"Required Caps:    {', '.join(results['required_capabilities'])}")
     print(f"Provider:         {results['provider']} ({results['model']})")
     print(f"Task Suite:       {results['task_suite']} ({results['total_tasks']} tasks)")
     print("-" * 70)
@@ -517,6 +538,11 @@ def main() -> int:
         help="Output evaluation results as raw JSON.",
     )
     parser.add_argument(
+        "--ignore-capability-mismatch",
+        action="store_true",
+        help="Bypass the pre-flight model capability check and attempt execution anyway.",
+    )
+    parser.add_argument(
         "--verbose",
         action="store_true",
         help="Print verbose task-by-task execution details.",
@@ -565,7 +591,13 @@ def main() -> int:
             continue
 
         try:
-            results = evaluate_asset(asset_path, provider, suite, verbose=args.verbose)
+            results = evaluate_asset(
+                asset_path,
+                provider,
+                suite,
+                verbose=args.verbose,
+                ignore_capability_mismatch=args.ignore_capability_mismatch,
+            )
             all_results.append(results)
             if not results["passed_gate"]:
                 any_gate_failed = True

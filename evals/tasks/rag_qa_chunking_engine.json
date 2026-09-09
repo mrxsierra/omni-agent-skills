@@ -36,5 +36,9 @@
       ]
     }
   ],
-  "eval_tier": "M"
+  "eval_tier": "M",
+  "required_capabilities": [
+    "instruction_following",
+    "structured_json"
+  ]
 }

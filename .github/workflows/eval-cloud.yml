@@ -10,17 +10,17 @@ on:
         description: 'Cloud AI Provider to evaluate with'
         type: choice
         options:
+          - gemini
+          - mistral
           - openrouter
           - openai
           - anthropic
           - antigravity
-          - gemini
-          - mistral
-        default: 'openrouter'
+        default: 'gemini'
       model:
-        description: 'Model identifier (e.g. gpt-4o-mini, gemini-2.5-pro, claude-3-5-sonnet-20241022)'
+        description: 'Model identifier (leave empty to use provider free-tier default)'
         required: false
-        default: 'anthropic/claude-3.5-sonnet'
+        default: ''
       asset:
         description: 'Specific asset path (leave empty for git-delta or full sweep)'
         required: false
@@ -74,17 +74,22 @@ jobs:
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
           MISTRAL_API_KEY: ${{ secrets.MISTRAL_API_KEY }}
         run: |
-          PROVIDER="${{ inputs.provider || 'openrouter' }}"
-          MODEL="${{ inputs.model || 'anthropic/claude-3.5-sonnet' }}"
+          PROVIDER="${{ inputs.provider || 'gemini' }}"
+          MODEL_INPUT="${{ inputs.model || '' }}"
           MODE="${{ steps.scope.outputs.mode }}"
           ASSET_INPUT="${{ inputs.asset || '' }}"
 
+          MODEL_ARG=""
+          if [ -n "$MODEL_INPUT" ]; then
+            MODEL_ARG="--model $MODEL_INPUT"
+          fi
+
           if [ "$MODE" = "all" ]; then
-            python3 scripts/eval_asset.py --all --provider "$PROVIDER" --model "$MODEL" --save-baseline --json > cloud_eval_results.json
+            python3 scripts/eval_asset.py --all --provider "$PROVIDER" $MODEL_ARG --save-baseline --json > cloud_eval_results.json
           elif [ "$MODE" = "asset" ]; then
-            python3 scripts/eval_asset.py --asset "$ASSET_INPUT" --provider "$PROVIDER" --model "$MODEL" --save-baseline --json > cloud_eval_results.json
+            python3 scripts/eval_asset.py --asset "$ASSET_INPUT" --provider "$PROVIDER" $MODEL_ARG --save-baseline --json > cloud_eval_results.json
           else
-            python3 scripts/eval_asset.py --provider "$PROVIDER" --model "$MODEL" --base-ref origin/dev --save-baseline --json > cloud_eval_results.json
+            python3 scripts/eval_asset.py --provider "$PROVIDER" $MODEL_ARG --base-ref origin/dev --save-baseline --json > cloud_eval_results.json
           fi
 
       - name: Upload Evaluation Artifacts

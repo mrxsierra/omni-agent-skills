@@ -31,5 +31,9 @@
       ]
     }
   ],
-  "eval_tier": "S"
+  "eval_tier": "S",
+  "required_capabilities": [
+    "instruction_following",
+    "code_generation"
+  ]
 }
