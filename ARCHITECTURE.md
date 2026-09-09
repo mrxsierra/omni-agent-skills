@@ -239,6 +239,21 @@ Assets automatically resolve their designated capacity tier to prevent resource 
 - **Tier M (Medium 8B–32B):** `engineering/` and `web-and-geo/` (evaluated on Mistral `codestral-latest` or `qwen:14b`).
 - **Tier L (Large / Frontier 70B+):** `architecture/` and `protocols/` (evaluated on Gemini Pro or Claude Sonnet).
 
+#### Capability-Based Model Validation Preflight Guard:
+Before invoking a model, `scripts/eval_asset.py` compares the task suite's `required_capabilities` (e.g. `instruction_following`, `code_generation`, `structured_json`, `tool_calling`, `long_context`) against the model's supported capabilities. Incompatible combinations halt immediately with an informative recommendation rather than failing ambiguously or wasting API quota (bypassable with `--ignore-capability-mismatch`).
+
+#### Free-by-Default Provider Selection:
+To eliminate unexpected API charges for open-source contributors:
+- **OpenRouter:** Defaults to high-capacity zero-cost open-weights (`meta-llama/llama-3.3-70b-instruct:free`). Paid models (`anthropic/claude-3.5-sonnet`) remain accessible via `--model`.
+- **Google Gemini:** Defaults to `gemini-2.5-flash` (generous 1,500 requests/day free tier).
+- **Mistral AI:** Defaults to `codestral-latest` (free La Plateforme tier).
+- **Local Ollama:** Unlimited local compute via `qwen2.5-coder:7b`.
+- **CI (`eval-cloud.yml`):** Defaults to `gemini` with dynamic free-tier model resolution.
+
+#### Atomic Unit Testing vs. Multi-Asset Composition (ADR 0003):
+- **Atomic Primitives (`skills/`, `rules/`, `hooks/`):** Evaluated in isolation via `scripts/eval_asset.py` (Unit Tests) to measure single-asset positive delta utility ($\Delta > 0\%$) against an unassisted baseline.
+- **Pre-Assembled Compositions (`subagents/`, `workflows/`):** Subagents bundle personas, system instructions, and tool whitelists. Workflows orchestrate sequential SDLC phases. Evaluated in composite scenarios (`evals/scenarios/`) to test instruction interference, cumulative context token tax ($< 2,000$ tokens), and multi-gate compliance.
+
 ```bash
 # 1. Delta evaluation (default: auto-detects changed assets, resolving Tier S/M/L dynamically)
 python3 scripts/eval_asset.py --provider mock
@@ -248,7 +263,7 @@ python3 scripts/eval_asset.py --provider mistral --model codestral-latest
 # 2. Full catalog sweep (--all: evaluates all 16 assets across the registry)
 python3 scripts/eval_asset.py --all --provider mock --strict
 
-# 3. Single specific asset evaluation
+# 3. Single specific asset evaluation with capability checking
 python3 scripts/eval_asset.py --asset registry/skills/engineering/clean-code-auditor/SKILL.md --provider gemini
 ```
 

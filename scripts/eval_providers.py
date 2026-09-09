@@ -25,7 +25,7 @@ import sys
 import time
 import urllib.error
 import urllib.request
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Set
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
@@ -99,7 +99,7 @@ def http_request_with_retry(
                 raise RuntimeError(
                     f"OpenRouter 402 Payment Required: Model '{model_name}' requires paid credits. "
                     f"If you are using a free-tier key, you must select a model ending in ':free' "
-                    f"(e.g. '--model cohere/north-mini-code:free' or '--model google/gemma-4-26b-a4b-it:free'). "
+                    f"(e.g. '--model meta-llama/llama-3.3-70b-instruct:free' or '--model google/gemini-2.0-flash-exp:free'). "
                     f"Details: {err_body}"
                 ) from e
             elif e.code == 404 and provider_name in ("antigravity", "gemini", "google"):
@@ -122,6 +122,94 @@ def http_request_with_retry(
     raise RuntimeError(
         f"Exceeded max retries ({max_retries}) on {provider_name} due to repeated rate limits (429): {last_err}"
     )
+
+
+# ===========================================================================
+# Model Capabilities Registry & Preflight Taxonomy
+# ===========================================================================
+
+CAPABILITY_INSTRUCTION_FOLLOWING = "instruction_following"
+CAPABILITY_CODE_GENERATION = "code_generation"
+CAPABILITY_STRUCTURED_JSON = "structured_json"
+CAPABILITY_TOOL_CALLING = "tool_calling"
+CAPABILITY_LONG_CONTEXT = "long_context"
+
+ALL_CAPABILITIES: Set[str] = {
+    CAPABILITY_INSTRUCTION_FOLLOWING,
+    CAPABILITY_CODE_GENERATION,
+    CAPABILITY_STRUCTURED_JSON,
+    CAPABILITY_TOOL_CALLING,
+    CAPABILITY_LONG_CONTEXT,
+}
+
+MODEL_CAPABILITIES_REGISTRY: Dict[str, Set[str]] = {
+    # Frontier models (support all standard capabilities)
+    "claude-3-5-sonnet": ALL_CAPABILITIES,
+    "claude-3-7-sonnet": ALL_CAPABILITIES,
+    "gpt-4o": ALL_CAPABILITIES,
+    "gpt-4o-mini": ALL_CAPABILITIES,
+    "gemini-2.5-flash": ALL_CAPABILITIES,
+    "gemini-2.0-flash": ALL_CAPABILITIES,
+    "gemini-3.8-flash-high": ALL_CAPABILITIES,
+    "gemini-2.5-pro": ALL_CAPABILITIES,
+    # High-capacity code models
+    "codestral": {
+        CAPABILITY_INSTRUCTION_FOLLOWING,
+        CAPABILITY_CODE_GENERATION,
+        CAPABILITY_STRUCTURED_JSON,
+        CAPABILITY_LONG_CONTEXT,
+    },
+    "llama-3.3-70b": ALL_CAPABILITIES,
+    "llama-3.1-70b": ALL_CAPABILITIES,
+    "qwen2.5-coder:32b": ALL_CAPABILITIES,
+    "qwen2.5-coder:7b": {
+        CAPABILITY_INSTRUCTION_FOLLOWING,
+        CAPABILITY_CODE_GENERATION,
+        CAPABILITY_STRUCTURED_JSON,
+    },
+    "qwen2.5-coder:1.5b": {
+        CAPABILITY_INSTRUCTION_FOLLOWING,
+        CAPABILITY_CODE_GENERATION,
+    },
+    "nemotron": {
+        CAPABILITY_INSTRUCTION_FOLLOWING,
+        CAPABILITY_CODE_GENERATION,
+        CAPABILITY_STRUCTURED_JSON,
+    },
+    "mock": ALL_CAPABILITIES,
+}
+
+
+def get_model_capabilities(provider_name: str, model_name: str) -> Set[str]:
+    """Resolve supported capability tags for a given provider and model.
+
+    Returns a set of capability strings (e.g. {'instruction_following', 'code_generation'}).
+    """
+    p_norm = (provider_name or "").lower().strip()
+    m_norm = (model_name or "").lower().strip()
+
+    if p_norm == "mock" or "mock" in m_norm:
+        return set(ALL_CAPABILITIES)
+
+    # Direct match against registry keywords
+    matched_caps: Set[str] = set()
+    for pattern, caps in MODEL_CAPABILITIES_REGISTRY.items():
+        if pattern in m_norm:
+            matched_caps.update(caps)
+
+    if matched_caps:
+        return matched_caps
+
+    # Fallback heuristic based on model name substrings
+    caps = {CAPABILITY_INSTRUCTION_FOLLOWING}
+    if any(k in m_norm for k in ("code", "coder", "instruct", "chat", "it", "flash", "sonnet", "gpt", "deepseek")):
+        caps.add(CAPABILITY_CODE_GENERATION)
+    if any(k in m_norm for k in ("instruct", "chat", "it", "flash", "sonnet", "gpt", "70b", "32b")):
+        caps.add(CAPABILITY_STRUCTURED_JSON)
+    if any(k in m_norm for k in ("gpt-4", "claude", "gemini", "70b", "flash")):
+        caps.add(CAPABILITY_TOOL_CALLING)
+        caps.add(CAPABILITY_LONG_CONTEXT)
+    return caps
 
 
 class ModelResponse:
@@ -731,7 +819,7 @@ def get_provider(
         )
     elif p_norm == "openrouter":
         return OpenAICompatibleProvider(
-            model_name=model or "anthropic/claude-3.5-sonnet",
+            model_name=model or "meta-llama/llama-3.3-70b-instruct:free",
             api_key=api_key,
             base_url=base_url or "https://openrouter.ai/api/v1",
             provider_name="openrouter",

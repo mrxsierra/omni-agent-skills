@@ -29,6 +29,7 @@ from eval_providers import (
     ModelResponse,
     OllamaProvider,
     OpenAICompatibleProvider,
+    get_model_capabilities,
     get_provider,
     http_request_with_retry,
     load_dotenv_if_exists,
@@ -461,6 +462,64 @@ class TestEvalAssetRunner(unittest.TestCase):
         passed, reason = score_task(text, ["mock", "fixtures", "missing_1", "missing_2"], [], min_matches=3)
         self.assertFalse(passed)
         self.assertIn("Matched only 2/3", reason)
+
+    def test_get_model_capabilities(self):
+        """Verify model capability resolution across providers and models."""
+        mock_caps = get_model_capabilities("mock", "mock-deterministic-v1")
+        self.assertIn("instruction_following", mock_caps)
+        self.assertIn("tool_calling", mock_caps)
+        self.assertIn("structured_json", mock_caps)
+
+        gemini_caps = get_model_capabilities("gemini", "gemini-2.5-flash")
+        self.assertIn("tool_calling", gemini_caps)
+        self.assertIn("code_generation", gemini_caps)
+
+        codestral_caps = get_model_capabilities("mistral", "codestral-latest")
+        self.assertIn("code_generation", codestral_caps)
+        self.assertIn("structured_json", codestral_caps)
+
+        small_caps = get_model_capabilities("ollama", "qwen2.5-coder:1.5b")
+        self.assertIn("code_generation", small_caps)
+        self.assertNotIn("tool_calling", small_caps)
+        self.assertNotIn("long_context", small_caps)
+
+    def test_openrouter_free_model_default(self):
+        """Verify OpenRouter defaults to a zero-cost :free model while allowing overrides."""
+        p_default = get_provider("openrouter", api_key="test-key")
+        self.assertEqual(p_default.model_name, "meta-llama/llama-3.3-70b-instruct:free")
+
+        p_custom = get_provider("openrouter", model="anthropic/claude-3.5-sonnet", api_key="test-key")
+        self.assertEqual(p_custom.model_name, "anthropic/claude-3.5-sonnet")
+
+    def test_capability_mismatch_guard_raises_and_bypasses(self):
+        """Verify that evaluate_asset enforces required capabilities unless explicitly bypassed."""
+        # Create mock provider acting as an under-capable model
+        provider = MockProvider(model_name="qwen2.5-coder:1.5b")
+        provider.provider_name = "ollama"  # Simulate non-mock provider check
+
+        suite = {
+            "suite_id": "test_mcp_tool_suite",
+            "eval_tier": "L",
+            "required_capabilities": ["tool_calling"],
+            "tasks": [
+                {
+                    "id": "t1",
+                    "user_prompt": "run tool",
+                    "expected_keywords": ["tool"],
+                }
+            ],
+        }
+        asset_path = REPO_ROOT / "registry" / "rules" / "global" / "security_shield.md"
+
+        # Should raise ValueError due to missing tool_calling capability
+        with self.assertRaises(ValueError) as ctx:
+            evaluate_asset(asset_path, provider, suite, ignore_capability_mismatch=False)
+        self.assertIn("Capability Mismatch", str(ctx.exception))
+        self.assertIn("tool_calling", str(ctx.exception))
+
+        # Should pass when ignore_capability_mismatch=True
+        results = evaluate_asset(asset_path, provider, suite, ignore_capability_mismatch=True)
+        self.assertIn("passed_gate", results)
 
 
 if __name__ == "__main__":

@@ -96,6 +96,30 @@ This utility:
 - Checks remaining quotas (e.g. OpenRouter free-tier 50 req/day check via `/api/v1/key`).
 - Provides actionable diagnostic hints if a model slug is deprecated or rate-limited.
 
+### 6. Capability-Based Model Validation Preflight Guard
+
+To prevent false negative test failures and wasted quota, the evaluation runner implements an automated pre-flight model capability check:
+1. **Declared Asset Requirements**: Task suites in `evals/tasks/*.json` declare required model capabilities (e.g. `"required_capabilities": ["instruction_following", "code_generation"]` or `["structured_json", "tool_calling"]`).
+2. **Model Capability Profiles**: `scripts/eval_providers.py` maps capability tags across model families (e.g., verifying whether a model supports tool calling, code generation, or structured output).
+3. **Execution Guard**: If an invoked model physically lacks a required capability (e.g. testing an MCP tool-calling skill on a base model lacking function calling), the runner halts early with an explicit error and actionable model recommendation, unless explicitly bypassed with `--ignore-capability-mismatch`.
+
+### 7. Free-by-Default Model Selection & Open-Source Ergonomics
+
+To ensure open-source contributors can run live evaluations without unexpected API bills or hitting `402 Payment Required` errors:
+1. **Free-Tier OpenRouter Default**: OpenRouter provider defaults to high-performing zero-cost models (`meta-llama/llama-3.3-70b-instruct:free`). Commercial paid models (e.g. `anthropic/claude-3.5-sonnet`) remain accessible via explicit `--model` flags for users with active credits.
+2. **High-Quota CI Workflows**: `.github/workflows/eval-cloud.yml` defaults to Google Gemini (`gemini-2.5-flash`, 1,500 requests/day free tier) or Mistral (`codestral-latest`), eliminating CI failures caused by uncredited third-party accounts.
+3. **Local Zero-Cost Compute**: Local open-weight models via Ollama (`qwen2.5-coder:7b`) provide unlimited offline evaluation with zero token cost.
+
+### 8. Atomic Asset Unit Testing vs. Composite Scenario Testing (ADR 0003 Parity)
+
+Per the ADR 0003 asset taxonomy, the repository establishes a clean boundary between single atomic primitives and pre-assembled multi-asset compositions:
+1. **Atomic Primitives (`skills/`, `rules/`, `hooks/`)**: Tested in isolation via `scripts/eval_asset.py` (Unit Tests) to measure single-asset positive delta utility ($\Delta > 0\%$) against an unassisted baseline.
+2. **Pre-Assembled Compositions (`subagents/`, `workflows/`)**: Subagents pre-assemble a role persona, system instructions, tool whitelists, and invariant rules into a self-contained execution manifest. Workflows orchestrate sequential SDLC stages across multiple skills.
+3. **Composite Scenario Testing**: Multi-asset assemblies are evaluated in end-to-end integration scenarios (`evals/scenarios/`) to test three failure modes undetectable by atomic unit tests:
+   - *Instruction Interference*: Detecting contradictions between concurrently loaded skills and rules.
+   - *Cumulative Context Token Tax*: Ensuring bundled assets do not exhaust the agent's prompt budget ($< 2,000$ tokens total).
+   - *Multi-Gate Compliance*: Verifying that functional outputs satisfy affirmative skill goals while strictly adhering to negative rule constraints.
+
 ## Consequences
 
 ### Positive Consequences
