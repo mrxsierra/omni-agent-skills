@@ -39,8 +39,14 @@ for root, _, files in os.walk(REPO_ROOT):
         file_path = os.path.join(root, file)
         rel_path = os.path.relpath(file_path, REPO_ROOT)
         
-        # Skip binary files, lockfiles, or the sanitizer script itself
-        if rel_path.endswith(('.png', '.jpg', '.ico', '.lock', '.zip')) or rel_path == "scripts/sanitize.py":
+        # Skip binary files, lockfiles, the sanitizer script itself, and uncommitted local env files
+        if (
+            rel_path.endswith(('.png', '.jpg', '.ico', '.lock', '.zip'))
+            or rel_path == "scripts/sanitize.py"
+            or rel_path == ".env"
+            or (rel_path.startswith(".env.") and rel_path != ".env.example")
+            or rel_path == ".sanitize-local.json"
+        ):
             continue
             
         try:
