@@ -43,10 +43,16 @@ python3 -m unittest discover -s tests -p 'test_*.py'
 git diff --check
 ```
 
-*For new or modified registry assets, verify positive delta-utility (delta auto-detected by default):*
+*For new or modified registry assets, run preflight credential check and verify delta utility (ADR 0005 & ADR 0006):*
 ```bash
+# 1. Preflight API key and connectivity check
+./scripts/run_local_eval.sh check-keys
+
+# 2. Delta evaluation (scoped to changed asset, resolving Tier S/M/L automatically)
 python3 scripts/eval_asset.py --provider mock --strict
-# Or evaluate a specific asset: python3 scripts/eval_asset.py --asset <path> --provider mock --strict
+# Or live neural evaluation on designated tier:
+./scripts/run_local_eval.sh gemini                     # Tier S / Free Flash
+./scripts/run_local_eval.sh mistral                    # Tier M / Codestral
 ```
 
 ## Pull-request checklist

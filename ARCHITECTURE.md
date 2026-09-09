@@ -224,22 +224,37 @@ Validates executable code, shell hooks, snippet compilation, subagent schemas, a
 python3 -m unittest discover -s tests -p 'test_*.py'
 ```
 
-### Tier 2: Dual-Engine Empirical $\Delta$-Utility Evaluation
-Evaluates whether an asset genuinely improves performance over baseline models without imposing an excessive token tax. Operates in **Git-aware Delta mode by default** (only evaluating modified/added assets vs. `dev`), with an `--all` flag for full catalog sweeps:
+### Tier 2: Dual-Engine Empirical $\Delta$-Utility Evaluation & Capacity Routing (ADR 0005 & ADR 0006)
+Evaluates whether an asset genuinely improves performance over baseline models without imposing an excessive token tax. Operates in **Git-aware Delta mode by default** (only evaluating modified/added assets vs. `dev`), with an `--all` flag for full catalog sweeps.
+
+Before running neural benchmarks, credentials and model endpoints are preflight-validated:
+```bash
+# 0. Preflight credential and quota diagnostics (zero secret leakage)
+./scripts/run_local_eval.sh check-keys
+```
+
+#### Model Capacity Hierarchy & Dynamic Taxonomy Routing (ADR 0006):
+Assets automatically resolve their designated capacity tier to prevent resource waste:
+- **Tier S (Small / Compact 1B–7B):** `registry/rules/**` and `security-and-governance/` (evaluated on Ollama `qwen:1.5b` or Gemini `gemini-2.5-flash`).
+- **Tier M (Medium 8B–32B):** `engineering/` and `web-and-geo/` (evaluated on Mistral `codestral-latest` or `qwen:14b`).
+- **Tier L (Large / Frontier 70B+):** `architecture/` and `protocols/` (evaluated on Gemini Pro or Claude Sonnet).
 
 ```bash
-# 1. Delta evaluation (default: auto-detects changed assets in working tree or PR vs. origin/dev)
+# 1. Delta evaluation (default: auto-detects changed assets, resolving Tier S/M/L dynamically)
 python3 scripts/eval_asset.py --provider mock
-python3 scripts/eval_asset.py --provider ollama --model qwen2.5-coder:1.5b
-python3 scripts/eval_asset.py --provider agy --model gemini-3.8-flash-high
+python3 scripts/eval_asset.py --provider gemini --model gemini-2.5-flash
+python3 scripts/eval_asset.py --provider mistral --model codestral-latest
 
 # 2. Full catalog sweep (--all: evaluates all 16 assets across the registry)
 python3 scripts/eval_asset.py --all --provider mock --strict
-python3 scripts/eval_asset.py --all --provider ollama --model qwen2.5-coder:1.5b
 
 # 3. Single specific asset evaluation
-python3 scripts/eval_asset.py --asset registry/skills/engineering/clean-code-auditor/SKILL.md --provider agy
+python3 scripts/eval_asset.py --asset registry/skills/engineering/clean-code-auditor/SKILL.md --provider gemini
 ```
+
+#### Frontier Saturation Policy ($\Delta = 0\%$):
+- On **Tier S/M models**, positive delta ($\Delta > 0\%$) is mandatory to prove knowledge injection.
+- On **Tier L (Frontier) models**, if baseline is already 100%, the asset is accepted if and only if it maintains 100% augmented parity, zero `fail_keywords` violations, and context token tax $< 750$ tokens/turn.
 
 ---
 

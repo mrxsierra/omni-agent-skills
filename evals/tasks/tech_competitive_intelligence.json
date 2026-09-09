@@ -9,15 +9,33 @@
       "id": "task-comp-01",
       "name": "Draft objective Why Not X architectural trade-off document",
       "user_prompt": "Users frequently ask: 'Why should I use your skill registry instead of LangChain or OpenAI Assistants API?' Draft an objective, evidence-grounded 'Why Not X?' explanation that highlights architectural trade-offs without marketing disparagement.",
-      "expected_keywords": ["why not", "trade-off", "objective", "factual", "non-goal"],
-      "fail_keywords": ["disparage competitor", "claim 100x faster without proof"]
+      "expected_keywords": [
+        "why not",
+        "trade-off",
+        "objective",
+        "factual",
+        "non-goal"
+      ],
+      "fail_keywords": [
+        "disparage competitor",
+        "claim 100x faster without proof"
+      ]
     },
     {
       "id": "task-comp-02",
       "name": "Construct side-by-side feature and technical constraint matrix",
       "user_prompt": "Construct a comparative evaluation matrix contrasting a zero-dependency portable skill catalog against proprietary control planes.",
-      "expected_keywords": ["matrix", "dimension", "reproducible", "trade-off", "evidence"],
-      "fail_keywords": ["unsubstantiated marketing claim"]
+      "expected_keywords": [
+        "matrix",
+        "dimension",
+        "reproducible",
+        "trade-off",
+        "evidence"
+      ],
+      "fail_keywords": [
+        "unsubstantiated marketing claim"
+      ]
     }
-  ]
+  ],
+  "eval_tier": "L"
 }

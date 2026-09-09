@@ -30,6 +30,9 @@ show_usage() {
 omni-agent-skills Local Evaluation Helper (ADR 0005)
 
 Usage:
+  scripts/run_local_eval.sh check-keys (or doctor)
+      Run preflight credential and rate-limit diagnostics across all providers.
+
   scripts/run_local_eval.sh mock [asset-path | --all]
       Run fast deterministic mock evaluation (< 2s, offline).
       Omit asset-path to evaluate modified/added assets (delta mode).
@@ -94,6 +97,11 @@ if [[ -z "$cmd" || "$cmd" == "-h" || "$cmd" == "--help" || "$cmd" == "help" ]]; 
 fi
 
 case "$cmd" in
+    check-keys|doctor)
+        shift 1
+        python3 scripts/check_api_keys.py "$@"
+        ;;
+
     mock)
         shift 1
         arg="${1:-}"

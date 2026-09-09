@@ -9,15 +9,32 @@
       "id": "task-arch-01",
       "name": "Architect caching layer for high-throughput API",
       "user_prompt": "We need to design a caching layer for our user profile API that handles 10,000 req/sec. Some team members want Redis, others want in-memory LRU. Formulate an architecture plan outlining scope, trade-offs, and atomic tasks before writing code.",
-      "expected_keywords": ["scope", "trade-off", "non-goal", "atomic task", "verification"],
-      "fail_keywords": ["start coding immediately", "just use redis"]
+      "expected_keywords": [
+        "scope",
+        "trade-off",
+        "non-goal",
+        "atomic task",
+        "verification"
+      ],
+      "fail_keywords": [
+        "start coding immediately",
+        "just use redis"
+      ]
     },
     {
       "id": "task-arch-02",
       "name": "Plan breaking schema change with backward compatibility",
       "user_prompt": "We need to migrate our database schema across 15 microservices. Outline the architecture plan, phasing, and verification steps.",
-      "expected_keywords": ["phase", "backward compatib", "verification", "atomic task"],
-      "fail_keywords": ["no plan needed"]
+      "expected_keywords": [
+        "phase",
+        "backward compatib",
+        "verification",
+        "atomic task"
+      ],
+      "fail_keywords": [
+        "no plan needed"
+      ]
     }
-  ]
+  ],
+  "eval_tier": "L"
 }

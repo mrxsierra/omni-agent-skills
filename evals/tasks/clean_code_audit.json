@@ -9,15 +9,32 @@
       "id": "task-clean-01",
       "name": "Audit duplicate abstraction in utility module",
       "user_prompt": "Audit the following code for code smells, DRY violations, and architectural consistency:\n\ndef fetch_user(u_id):\n    data = db.query(f'SELECT * FROM users WHERE id={u_id}')\n    return User(data)\n\ndef fetch_customer(c_id):\n    data = db.query(f'SELECT * FROM users WHERE id={c_id}')\n    return User(data)\n\nAre there issues here?",
-      "expected_keywords": ["dry violation", "sql injection", "duplicate", "contract"],
-      "fail_keywords": ["code looks fine", "looks good", "no issue"]
+      "expected_keywords": [
+        "dry violation",
+        "sql injection",
+        "duplicate",
+        "contract"
+      ],
+      "fail_keywords": [
+        "code looks fine",
+        "looks good",
+        "no issue"
+      ]
     },
     {
       "id": "task-clean-02",
       "name": "Flatten nested conditionals with early returns",
       "user_prompt": "Refactor this logic to improve readability without changing behavior:\n\ndef process_transaction(txn):\n    if txn is not None:\n        if txn.amount > 0:\n            if txn.status == 'PENDING':\n                return execute(txn)\n            else:\n                return 'INVALID_STATUS'\n        else:\n            return 'INVALID_AMOUNT'\n    else:\n        return 'NULL_TXN'",
-      "expected_keywords": ["early return", "flatten", "guard clause", "preserve"],
-      "fail_keywords": ["leave as is"]
+      "expected_keywords": [
+        "early return",
+        "flatten",
+        "guard clause",
+        "preserve"
+      ],
+      "fail_keywords": [
+        "leave as is"
+      ]
     }
-  ]
+  ],
+  "eval_tier": "S"
 }
